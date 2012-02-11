@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/source/phpanvil/!svn/ver/10/trunk/modules/phpanvil/controllers
+END
+buildconfig.web.php
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/source/phpanvil/!svn/ver/10/trunk/modules/phpanvil/controllers/buildconfig.web.php
+END
+viewmodule.web.php
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/source/phpanvil/!svn/ver/10/trunk/modules/phpanvil/controllers/viewmodule.web.php
+END
+viewglobalactions.web.php
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/source/phpanvil/!svn/ver/10/trunk/modules/phpanvil/controllers/viewglobalactions.web.php
+END
+modules.controller.php
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/source/phpanvil/!svn/ver/10/trunk/modules/phpanvil/controllers/modules.controller.php
+END

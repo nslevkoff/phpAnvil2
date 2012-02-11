@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/source/phpanvil/!svn/ver/38/trunk/modules/i18n/controllers
+END
+dictionaries.controller.php
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/source/phpanvil/!svn/ver/38/trunk/modules/i18n/controllers/dictionaries.controller.php
+END
+dictionaries.web.php
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/source/phpanvil/!svn/ver/38/trunk/modules/i18n/controllers/dictionaries.web.php
+END
+dictionary.web.php
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/source/phpanvil/!svn/ver/5/trunk/modules/i18n/controllers/dictionary.web.php
+END
+phrase.web.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/source/phpanvil/!svn/ver/5/trunk/modules/i18n/controllers/phrase.web.php
+END
+phrases.web.php
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/source/phpanvil/!svn/ver/5/trunk/modules/i18n/controllers/phrases.web.php
+END
+viewdictionary.web.php
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/source/phpanvil/!svn/ver/5/trunk/modules/i18n/controllers/viewdictionary.web.php
+END
