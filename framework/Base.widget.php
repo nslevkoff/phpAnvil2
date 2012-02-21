@@ -1,7 +1,7 @@
 <?php
-require_once(PHPANVIL_TOOLS_PATH . 'atContainer.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilContainer.class.php');
 
-class BaseWidget extends atContainer {
+class BaseWidget extends anvilContainer {
 
     public $name;
     public $refName;

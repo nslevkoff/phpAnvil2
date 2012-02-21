@@ -6,19 +6,19 @@
 * @ingroup       View_Dictionary_Module phpAnvil_Controllers
 */
 
-require_once(PHPANVIL_TOOLS_PATH . 'atForm.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atEntry.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atMemo.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atCheckBox.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atComboBox.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atButton.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atContainer.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atLiteral.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atImage.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atHidden.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilForm.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilEntry.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilMemo.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilCheckBox.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilComboBox.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilButton.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilContainer.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilLiteral.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilImage.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilHidden.class.php');
 
 
-require_once(PHPANVIL_FRAMEWORK_PATH . 'Base.web.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'Base.web.php');
 
 /**
 * Web action to view dictionary for an i18n.
@@ -128,14 +128,14 @@ class PhraseWebAction extends BaseWebAction {
 					$content = $objRS->data('phrase');
 
 					if (!empty($content)) {
-						$objGridWidget->addControl(new atLiteral('', $content));
+						$objGridWidget->addControl(new anvilLiteral('', $content));
 					}
 
 					$UI->content->addControl($objGridWidget);
 				}
 				$objRS->close();
 			} else {
-				$UI->content->addControl(new atLiteral(null, '<div class="devGrid">No phrases found.</div>'));
+				$UI->content->addControl(new anvilLiteral(null, '<div class="devGrid">No phrases found.</div>'));
 			}
 
 

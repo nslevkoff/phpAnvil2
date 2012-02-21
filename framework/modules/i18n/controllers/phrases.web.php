@@ -7,16 +7,16 @@
 */
 
 
-//require_once(PHPANVIL_TOOLS_PATH . 'atLiteral.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atForm.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atHidden.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atComboBox.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atEntry.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atButton.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atLiteral.class.php');
+//require_once(PHPANVIL2_COMPONENT_PATH . 'anvilLiteral.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilForm.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilHidden.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilComboBox.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilEntry.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilButton.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilLiteral.class.php');
 
 
-require_once(PHPANVIL_FRAMEWORK_PATH . 'Base.web.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'Base.web.php');
 
 /**
 * Web action to load phrases section for an i18n.
@@ -146,14 +146,14 @@ class DictionariesWebAction extends BaseWebAction {
 						}
 
 						if (!empty($content)) {
-							$objGridWidget->addControl(new atLiteral('', $content));
+							$objGridWidget->addControl(new anvilLiteral('', $content));
 						}
 
 						$UI->content->addControl($objGridWidget);
 					}
 					$objRS->close();
 				} else {
-					$UI->content->addControl(new atLiteral(null, '<div class="atGrid">No phrases found.</div>'));
+					$UI->content->addControl(new anvilLiteral(null, '<div class="anvilGrid">No phrases found.</div>'));
 				}
 //			}
 
@@ -166,17 +166,17 @@ class DictionariesWebAction extends BaseWebAction {
 
 			//----- Filter Window
 			$panel = new PanelWidget('idFilterPanel', $phrases[PHRASE_GLOBAL_FILTER_LIST], 'panelEdit');
-			$objForm = new atForm('idFilterForm', 'post', '', null, false);
+			$objForm = new anvilForm('idFilterForm', 'post', '', null, false);
 			$objForm->innerTemplate = 'i18n/filterPhrasesPanel.tpl';
 
-//			$objForm->addControl(new atHidden('idDictionaryID', 'idDictionaryID', 0));
+//			$objForm->addControl(new anvilHidden('idDictionaryID', 'idDictionaryID', 0));
 
 			$sql = 'SELECT dictionary_id AS id, constant AS name FROM ' . SQL_TABLE_I18N_DICTIONARIES;
             $sql .= ' WHERE record_status_id = ' . RecordStatusModel::RECORD_STATUS_ACTIVE;
 			$sql .= ' ORDER BY constant';
 			$objRS = $phpAnvil->db->execute($sql);
 
-			$objComboBox = new atComboBox('idDictionaryCombo', 'dID');
+			$objComboBox = new anvilComboBox('idDictionaryCombo', 'dID');
 			$objComboBox->addPreItem(0, '** ALL Dictionaries **');
 			$objComboBox->recordset = $objRS;
 			$objForm->addControl($objComboBox);
@@ -196,8 +196,8 @@ class DictionariesWebAction extends BaseWebAction {
 
 			//----------------- See Also -----------------
 			$panel = new PanelWidget(null, 'See Also', 'panelRight');
-			$objList = new atList(null, atList::TYPE_BULLET, 'menuRight');
-			$objList->addControl(new atLink(null, 'Dictionaries', $phpAnvil->site->webPath . 'i18n/Dictionaries', 'bulletDictionary'));
+			$objList = new anvilList(null, anvilList::TYPE_BULLET, 'menuRight');
+			$objList->addControl(new anvilLink(null, 'Dictionaries', $phpAnvil->site->webPath . 'i18n/Dictionaries', 'bulletDictionary'));
 			$panel->addControl($objList);
 			$UI->rightColumn->addControl($panel);
 

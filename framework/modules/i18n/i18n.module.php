@@ -16,7 +16,7 @@
 
 require_once 'i18n.inc.php';
 
-require_once(PHPANVIL_FRAMEWORK_PATH . 'Base.module.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'Base.module.php');
 
 /**
 *
@@ -136,7 +136,7 @@ class i18nModule extends BaseModule {
 		$objRS = $phpAnvil->db->execute($sql);
 
 
-		if ($action->source == SOURCE_AJAX && $action->data['responseActionID'] == atAjax::RESPONSE_ACTION_COMBOBOX) {
+		if ($action->source == SOURCE_AJAX && $action->data['responseActionID'] == anvilAjax::RESPONSE_ACTION_COMBOBOX) {
 			$items = array(0, '-- Select Dictionary --');
 			$return = $objRS->toArray($items);
 		} else {
@@ -247,7 +247,7 @@ class i18nModule extends BaseModule {
 
 		$filePath = LANG_PATH . 'en/' . $this->dictionary->constant . '.dictionary.php';
 
-//		$this->addTraceInfo(__FILE__, __METHOD__, __LINE__, '$filePath = ' . $filePath, self::TRACE_TYPE_DEBUG);
+//		$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, '$filePath = ' . $filePath, self::TRACE_TYPE_DEBUG);
 
 
 		file_put_contents($filePath, $content);

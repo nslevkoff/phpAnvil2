@@ -5,7 +5,7 @@
  * @copyright    (c) 2010 Solutions By Design
  * @ingroup       Dev_Module Pulse_Controllers
  */
-require_once(PHPANVIL_FRAMEWORK_PATH . 'Base.controller.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'Base.controller.php');
 
 /**
  * Web action to load admin users section for an account.
@@ -65,7 +65,7 @@ class DashboardController extends BaseController
 //        #----------------- Content -----------------
 //
 //
-//        //		$UI->content->addControl(new atLiteral('test', 'test'));
+//        //		$UI->content->addControl(new anvilLiteral('test', 'test'));
 //
 //        //		$UI->content->addControl(new ImageMenuWidget("iAdminUser.png", "Admin Users", "Maintain users that have access to the admin interface."));
 //

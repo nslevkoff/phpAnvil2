@@ -4,10 +4,10 @@
 *
 */
 
-require_once(PHPANVIL_TOOLS_PATH . 'atDynamicObject.abstract.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilDynamicObject.abstract.php');
 
 
-class BaseSite extends atDynamicObjectAbstract
+class BaseSite extends anvilDynamicObjectAbstract
 {
     const ENVIRONMENT_DEVELOPMENT   = 1;
     const ENVIRONMENT_STAGING       = 2;

@@ -13,7 +13,7 @@
 */
 
 
-require_once(PHPANVIL_TOOLS_PATH . 'atCollection.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilCollection.class.php');
 
 
 /**
@@ -26,7 +26,7 @@ require_once(PHPANVIL_TOOLS_PATH . 'atCollection.class.php');
 * @copyright    Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
 * @ingroup      phpAnvil
 */
-class ControllerCollection extends atCollection
+class ControllerCollection extends anvilCollection
 {
 
 	const VERSION	= '1.0';
@@ -48,7 +48,7 @@ class ControllerCollection extends atCollection
         if (!$this->exists($offset))
         {
             $msg = 'Controller (' . $offset . ') not found.';
-                $this->addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_ERROR);
+                $this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_ERROR);
             FB::error($msg);
         } else
         {

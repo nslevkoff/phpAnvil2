@@ -6,19 +6,19 @@
 * @ingroup       Dictionary_Module phpAnvil_Controllers
 */
 
-require_once(PHPANVIL_TOOLS_PATH . 'atForm.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atEntry.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atMemo.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atCheckBox.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atComboBox.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atButton.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atContainer.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atLiteral.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atImage.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atHidden.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilForm.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilEntry.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilMemo.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilCheckBox.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilComboBox.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilButton.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilContainer.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilLiteral.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilImage.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilHidden.class.php');
 
 
-require_once(PHPANVIL_FRAMEWORK_PATH . 'Base.web.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'Base.web.php');
 
 /**
 * Web action to list dictionary section for an i18n.
@@ -135,16 +135,16 @@ class PhraseWebAction extends BaseWebAction {
 
 			//----------------- Content -----------------
 
-			$objForm = new atForm('idEntryForm', 'post', '', null, false);
+			$objForm = new anvilForm('idEntryForm', 'post', '', null, false);
 			$objForm->innerTemplate = 'i18n/editPhrase.tpl';
 
 
-			$objForm->addControl(new atHidden('idPhraseID', 'id', $modules[MODULE_I18N]->phrase->id));
-//			$objForm->addControl(new atEntry('idName', 'name', 50, 80, $modules[MODULE_I18N]->phrase->name));
-			$objForm->addControl(new atEntry('idConstant', 'constant', 50, 50, $modules[MODULE_I18N]->phrase->constant));
-			$objForm->addControl(new atMemo('idPhrase', 'phrase', 50, 4, $modules[MODULE_I18N]->phrase->phrase));
+			$objForm->addControl(new anvilHidden('idPhraseID', 'id', $modules[MODULE_I18N]->phrase->id));
+//			$objForm->addControl(new anvilEntry('idName', 'name', 50, 80, $modules[MODULE_I18N]->phrase->name));
+			$objForm->addControl(new anvilEntry('idConstant', 'constant', 50, 50, $modules[MODULE_I18N]->phrase->constant));
+			$objForm->addControl(new anvilMemo('idPhrase', 'phrase', 50, 4, $modules[MODULE_I18N]->phrase->phrase));
 
-			$dictionariesPanel = new atPanel('idDictionariesPanel');
+			$dictionariesPanel = new anvilPanel('idDictionariesPanel');
 
 			$sql = 'SELECT D.*, DP.dictionary_phrase_id';
 			$sql .= ' FROM ' . SQL_TABLE_I18N_DICTIONARIES . ' D';
@@ -164,7 +164,7 @@ class PhraseWebAction extends BaseWebAction {
 
 			if ($objRS->count() > 0) {
 				while ($objRS->read()) {
-					$newCheckBox = new atCheckBox('', 'dID[]', $objRS->data('dictionary_id'), $objRS->data('name') . '&nbsp;&nbsp;');
+					$newCheckBox = new anvilCheckBox('', 'dID[]', $objRS->data('dictionary_id'), $objRS->data('name') . '&nbsp;&nbsp;');
 					if ($objRS->data('dictionary_phrase_id') > 0) {
 						$newCheckBox->checked = true;
 					}
@@ -175,8 +175,8 @@ class PhraseWebAction extends BaseWebAction {
 			$objForm->addControl($dictionariesPanel);
 
 
-//			$objForm->addControl(new atButton('save', 'btn', atButton::TYPE_SUBMIT, 'Save', array('class' => 'button')));
-//			$objForm->addControl(new atButton('cancel', 'btn', atButton::TYPE_SUBMIT, 'Cancel', array('class' => 'button')));
+//			$objForm->addControl(new anvilButton('save', 'btn', anvilButton::TYPE_SUBMIT, 'Save', array('class' => 'button')));
+//			$objForm->addControl(new anvilButton('cancel', 'btn', anvilButton::TYPE_SUBMIT, 'Cancel', array('class' => 'button')));
 
 			$newButton = new ActionButtonWidget('idSave', 'btnSave', 'Save', '#');
 			$newButton->class = 'actionFormButton';

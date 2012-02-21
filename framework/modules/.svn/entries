@@ -1,58 +1,0 @@
-10
-
-dir
-57
-https://phpanvil.springloops.com/source/phpanvil/trunk/modules
-https://phpanvil.springloops.com/source/phpanvil
-
-
-
-2012-01-27T01:34:36.195561Z
-54
-nslevkoff
-
-
-svn:special svn:externals svn:needs-lock
-
-
-
-
-
-
-
-
-
-
-
-a02e29a9-1325-4ce8-88a7-031a7d472520
-
-bp
-dir
-
-content
-dir
-
-doxygen
-dir
-
-fuse
-dir
-
-i18n
-dir
-
-install
-dir
-
-phpanvil
-dir
-
-security
-dir
-
-session
-dir
-
-user
-dir
-

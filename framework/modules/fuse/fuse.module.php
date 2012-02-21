@@ -1,7 +1,7 @@
 <?php
 
-require_once(PHPANVIL_FRAMEWORK_PATH . 'Base.module.php');
-//require_once(PHPANVIL_FRAMEWORK_PATH . 'EventListener.class.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'Base.module.php');
+//require_once(PHPANVIL2_FRAMEWORK_PATH . 'EventListener.class.php');
 
 require_once('fuse.inc.php');
 

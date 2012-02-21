@@ -1,5 +1,5 @@
 <?php
-//require_once PHPANVIL_TOOLS_PATH . 'atDynamicObject.abstract.php';
+//require_once PHPANVIL2_COMPONENT_PATH . 'anvilDynamicObject.abstract.php';
 require_once 'Base.controller.php';
 
 

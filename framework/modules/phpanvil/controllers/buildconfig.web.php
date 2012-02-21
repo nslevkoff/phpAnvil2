@@ -6,7 +6,7 @@
 * @ingroup       Build_Config_Module phpAnvil_Controllers
 */
 
-require_once(PHPANVIL_FRAMEWORK_PATH . 'Base.web.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'Base.web.php');
 
 /**
 * Web action to list dictionaries section for an phpAnvil.

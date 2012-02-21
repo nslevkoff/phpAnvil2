@@ -1,34 +1,25 @@
 <?php
 /**
  * @file
- * phpAnvil Framework Controller
+ * phpAnvil2 Framework Controller
  *
  * @author       Nick Slevkoff <nick@slevkoff.com>
- * @copyright    Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
+ * @copyright    Copyright (c) 2010-2012 Nick Slevkoff (http://www.slevkoff.com)
  * @license
  *     This source file is subject to the new BSD license that is
  *     bundled with this package in the file LICENSE.txt. It is also
  *     available on the Internet at:  http://www.phpanvil.com/LICENSE.txt
- * @ingroup      phpAnvil
+ * @ingroup      phpAnvil2
  */
 
 
-require_once('Controller.collection.php');
-require_once('Plugin.collection.php');
-require_once('Database.collection.php');
-require_once('Module.collection.php');
-require_once('Option.collection.php');
-require_once('Path.collection.php');
 
-require_once('EventListener.class.php');
-
-require_once('Base.module.php');
-
-require_once PHPANVIL_TOOLS_PATH . 'atAjax.class.php';
-require_once PHPANVIL_TOOLS_PATH . 'atSession.class.php';
-require_once PHPANVIL_TOOLS_PATH . 'atMessage.class.php';
-require_once PHPANVIL_TOOLS_PATH . 'atDynamicObject.abstract.php';
-require_once PHPANVIL_TOOLS_PATH . 'atRegional.class.php';
+require_once PHPANVIL2_COMPONENT_PATH . 'anvilAjax.class.php';
+require_once PHPANVIL2_COMPONENT_PATH . 'anvilSession.class.php';
+//require_once PHPANVIL2_COMPONENT_PATH . 'anvilMessage.class.php';
+//require_once PHPANVIL2_COMPONENT_PATH . 'anvilDynamicObject.abstract.php';
+require_once PHPANVIL2_COMPONENT_PATH . 'anvilObject.abstract.php';
+require_once PHPANVIL2_COMPONENT_PATH . 'anvilRegional.class.php';
 
 
 /**
@@ -36,14 +27,14 @@ require_once PHPANVIL_TOOLS_PATH . 'atRegional.class.php';
  * Primary processing controller for the phpAnvil framework.
  *
  * @author       Nick Slevkoff <nick@slevkoff.com>
- * @copyright    Copyright (c) 2009-2011 Nick Slevkoff (http://www.slevkoff.com)
+ * @copyright    Copyright (c) 2009-2012 Nick Slevkoff (http://www.slevkoff.com)
  * @ingroup      phpAnvil
  */
-class phpAnvil extends atDynamicObjectAbstract
+class phpAnvil2 extends anvilObjectAbstract
 {
 
-    const VERSION = '1.8';
-    const BUILD = '5';
+    const VERSION = '2.0';
+    const BUILD = '1';
 
     public $qsModule = 'anvil_module';
     public $qsAction = 'anvil_action';
@@ -55,9 +46,9 @@ class phpAnvil extends atDynamicObjectAbstract
 
     public $session;
 
-    public $actionMsg;
-    public $errorMsg;
-    public $pageMsg;
+//    public $actionMsg;
+//    public $errorMsg;
+//    public $pageMsg;
 
     public $controller = null;
     public $database = null;
@@ -83,6 +74,13 @@ class phpAnvil extends atDynamicObjectAbstract
     public $regional = null;
     public $modelDictionary = null;
 
+    public $isNewSession;
+    public $isNewUser;
+    public $isBot;
+    public $sourceTypeID;
+    public $sourceID;
+
+
 
     public function __construct()
     {
@@ -90,12 +88,14 @@ class phpAnvil extends atDynamicObjectAbstract
 
         $this->enableLog();
 
+        $this->_core = $this;
 
-        $this->addProperty('isNewSession', false);
-        $this->addProperty('isNewUser', false);
-        $this->addProperty('isBot', false);
-        $this->addProperty('sourceTypeID', 0);
-        $this->addProperty('sourceID', 0);
+
+//        $this->addProperty('isNewSession', false);
+//        $this->addProperty('isNewUser', false);
+//        $this->addProperty('isBot', false);
+//        $this->addProperty('sourceTypeID', 0);
+//        $this->addProperty('sourceID', 0);
 
 
         $this->controller = new ControllerCollection();
@@ -111,10 +111,10 @@ class phpAnvil extends atDynamicObjectAbstract
 
         $this->path = new PathCollection();
 
-        $this->regional = new atRegional();
+        $this->regional = new anvilRegional();
 
-        //		$this->addTraceInfo(__FILE__, __METHOD__, __LINE__, 'Class Constructed.');
-        $this->logVerbose('Class Constructed.');
+        //		$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, 'Class Constructed.');
+        $this->_logVerbose('Class Constructed.');
     }
 
 
@@ -126,22 +126,22 @@ class phpAnvil extends atDynamicObjectAbstract
 
 
         //---- Initialize Message Controls
-        $this->actionMsg = new atMessage('ActionMsg', 'ActionMsg', 'msg');
+//        $this->actionMsg = new anvilMessage('ActionMsg', 'ActionMsg', 'msg');
         //        $this->actionMsg->icon = $phpAnvil->site->webPath . 'themes/default/images/iActionMsg.png';
-        $this->actionMsg->singleBox = false;
+//        $this->actionMsg->singleBox = false;
 
-        $this->errorMsg = new atMessage('ErrorMsg', 'ErrorMsg', 'msg');
+//        $this->errorMsg = new anvilMessage('ErrorMsg', 'ErrorMsg', 'msg');
         //        $this->errorMsg->enableTrace();
         //        $this->errorMsg->icon = $phpAnvil->site->webPath . 'themes/default/images/iErrorMsg.png';
-        $this->errorMsg->singleBox = false;
+//        $this->errorMsg->singleBox = false;
 
-        $this->pageMsg = new atMessage('PageMsg', 'PageMsg', 'msg');
+//        $this->pageMsg = new anvilMessage('PageMsg', 'PageMsg', 'msg');
         //        $this->pageMsg->icon = $phpAnvil->site->webPath . 'themes/default/images/iPageMsg.png';
-        $this->pageMsg->singleBox = false;
+//        $this->pageMsg->singleBox = false;
 
 
         //---- Initialize Session Object
-        $this->session = new atSession();
+        $this->session = new anvilSession();
 
 
         $this->triggerEvent('phpAnvil.init');
@@ -151,6 +151,8 @@ class phpAnvil extends atDynamicObjectAbstract
         if (isset($this->application)) {
             //---- Initialize the Application
             $return = $this->application->init();
+
+            $this->_logDebug('Post application.init...');
 
             if ($return) {
                 $this->application->requestedModule = !empty($this->moduleOverride)
@@ -175,7 +177,7 @@ class phpAnvil extends atDynamicObjectAbstract
 
         } else {
             //            FB::error('Application not set in phpAnvil.');
-            $this->logError('Application not set in phpAnvil.');
+            $this->_logError('Application not set in phpAnvil.');
         }
 
 
@@ -217,7 +219,7 @@ class phpAnvil extends atDynamicObjectAbstract
 
         } else {
             //            FB::error('Application not set in phpAnvil.');
-            $this->logError('Application not set in phpAnvil.');
+            $this->_logError('Application not set in phpAnvil.');
         }
 
     }
@@ -320,9 +322,9 @@ class phpAnvil extends atDynamicObjectAbstract
             if ($return) {
 
                 //                $msg = 'Loading controller (' . $controllerName . ') for Module (' . $moduleRefName . ')...';
-                //                $this->addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_INFO);
+                //                $this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_INFO);
                 //                FB::info($msg);
-                $this->logVerbose('Loading controller (' . $controllerName . ') for Module (' . $moduleRefName . ')...');
+                $this->_logVerbose('Loading controller (' . $controllerName . ') for Module (' . $moduleRefName . ')...');
 
 
                 //---- Build File Path to the Controller
@@ -331,14 +333,14 @@ class phpAnvil extends atDynamicObjectAbstract
                 if (file_exists(APP_PATH . $filePath)) {
                     $filePath = APP_PATH . $filePath;
                 } else {
-                    if (file_exists(PHPANVIL_FRAMEWORK_PATH . $filePath)) {
-                        $filePath = PHPANVIL_FRAMEWORK_PATH . $filePath;
+                    if (file_exists(PHPANVIL2_FRAMEWORK_PATH . $filePath)) {
+                        $filePath = PHPANVIL2_FRAMEWORK_PATH . $filePath;
                     } else
                     {
                         if (isset($this->application->catchAllAction) && $this->application->catchAllAction != $controllerName) {
                             $this->loadController($this->application->catchAllModule, $this->application->catchAllAction);
                         } else {
-                            $this->logError('Controller (' . $controllerName . ') for Module (' . $moduleRefName . ') not found.');
+                            $this->_logError('Controller (' . $controllerName . ') for Module (' . $moduleRefName . ') not found.');
                         }
                         //                    FB::error('Controller (' . $controllerName . ') for Module (' . $moduleRefName . ') not found.');
                         $return = false;
@@ -354,8 +356,8 @@ class phpAnvil extends atDynamicObjectAbstract
                     $fullControllerName = $moduleRefName . '.' . $controllerName;
 
                     if (!$this->controller->contains($fullControllerName)) {
-                        //                        $this->logDebug($fullControllerName, '$fullControllerName');
-                        //                        $this->logDebug($controllerClassName, '$controllerClassName');
+                        //                        $this->_logDebug($fullControllerName, '$fullControllerName');
+                        //                        $this->_logDebug($controllerClassName, '$controllerClassName');
 
                         $this->controller[$fullControllerName] = new $controllerClassName();
                     }
@@ -375,7 +377,7 @@ class phpAnvil extends atDynamicObjectAbstract
                             $return = $this->controller[$fullControllerName]->open();
                             if (!$return) {
                                 //                            FB::warn('Controller (' . $fullControllerName . ') failed to open.');
-                                $this->logWarning('Controller (' . $fullControllerName . ') failed to open.');
+                                $this->_logWarning('Controller (' . $fullControllerName . ') failed to open.');
                                 //                            header('Location: ' . $phpAnvil->controller[$fullControllerName]->redirectURL);
                             }
                         }
@@ -384,12 +386,12 @@ class phpAnvil extends atDynamicObjectAbstract
                     }
 
                     if (!empty($this->controller[$fullControllerName]->redirectURL)) {
-                        $this->logVerbose('Redirecting...');
+                        $this->_logVerbose('Redirecting...');
                         header('Location: ' . $this->controller[$fullControllerName]->redirectURL);
 
                     } else {
                         //                        FB::warn('Controller (' . $fullControllerName . ') failed to init.');
-                        //                        $this->logWarning('Controller (' . $fullControllerName . ') failed to init.');
+                        //                        $this->_logWarning('Controller (' . $fullControllerName . ') failed to init.');
                         //                        header('Location: ' . $phpAnvil->controller[$fullControllerName]->redirectURL);
                     }
 
@@ -411,7 +413,7 @@ class phpAnvil extends atDynamicObjectAbstract
             $moduleRefName = $this->application->defaultModule;
 
             if (empty($moduleRefName)) {
-                $this->logError('Unable to load the module, both the passed reference name and default module name are undefined.');
+                $this->_logError('Unable to load the module, both the passed reference name and default module name are undefined.');
             }
         }
 
@@ -425,9 +427,9 @@ class phpAnvil extends atDynamicObjectAbstract
             //        if (!$this->module->contains($moduleRefName)) {
 
             //            $msg = 'Loading Module (' . $moduleRefName . ')...';
-            //			$this->addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_DEBUG);
+            //			$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_DEBUG);
             //            FB::info($msg);
-            $this->logVerbose('Loading Module (' . $moduleRefName . ')...');
+            $this->_logVerbose('Loading Module (' . $moduleRefName . ')...');
 
             $filePath = 'modules/' . $moduleRefName . '/' . $moduleRefName . '.module.php';
 
@@ -437,17 +439,17 @@ class phpAnvil extends atDynamicObjectAbstract
             if (file_exists(APP_PATH . $filePath)) {
                 $filePath = APP_PATH . $filePath;
             } else {
-                if (file_exists(PHPANVIL_FRAMEWORK_PATH . $filePath)) {
-                    $filePath = PHPANVIL_FRAMEWORK_PATH . $filePath;
+                if (file_exists(PHPANVIL2_FRAMEWORK_PATH . $filePath)) {
+                    $filePath = PHPANVIL2_FRAMEWORK_PATH . $filePath;
                 } else
                 {
                     //                FB::error('Module (' . $moduleRefName . ') not found.  Please check module reference name and that the module has been installed on the server.');
-                    $this->logError('Module (' . $moduleRefName . ') not found.  Please check module reference name and that the module has been installed on the server.');
+                    $this->_logError('Module (' . $moduleRefName . ') not found.  Please check module reference name and that the module has been installed on the server.');
                     $return = false;
                 }
             }
 
-            //            $this->logDebug($filePath, '$filePath');
+            //            $this->_logDebug($filePath, '$filePath');
 
 
             if ($return) {
@@ -465,7 +467,7 @@ class phpAnvil extends atDynamicObjectAbstract
                     //                    }
                 } else {
                     //                    FB::warn('Module (' . $moduleRefName . ') failed to init.');
-                    $this->logWarning('Module (' . $moduleRefName . ') failed to init.');
+                    $this->_logWarning('Module (' . $moduleRefName . ') failed to init.');
                 }
 
             }
@@ -481,7 +483,7 @@ class phpAnvil extends atDynamicObjectAbstract
         $moduleDirectories = glob(APP_PATH . 'modules/*', GLOB_ONLYDIR);
 
         //        FB::log('Loading all custom modules...');
-        $this->logVerbose('Loading all custom modules...');
+        $this->_logVerbose('Loading all custom modules...');
 
         $count = count($moduleDirectories);
         for ($i = 0; $i < $count; $i++)
@@ -561,7 +563,7 @@ class phpAnvil extends atDynamicObjectAbstract
     public function processAjaxAction()
     {
 
-        $objAjax = new atAjax();
+        $objAjax = new anvilAjax();
         $ajaxPacket = $_POST['request_packet'];
 
         $ajaxPacket = str_replace('\"', '"', $ajaxPacket);
@@ -573,8 +575,8 @@ class phpAnvil extends atDynamicObjectAbstract
             $moduleCode = $this->getModuleCode($moduleID);
             $moduleActionID = $ajaxRequest->moduleActionID;
 
-            //			$this->addTraceInfo(__FILE__, __METHOD__, __LINE__, 'Processing Ajax Action (' . $moduleActionID . ') for Module (' . $moduleCode . ')', self::TRACE_TYPE_DEBUG);
-            $this->logVerbose('Processing Ajax Action (' . $moduleActionID . ') for Module (' . $moduleCode . ')');
+            //			$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, 'Processing Ajax Action (' . $moduleActionID . ') for Module (' . $moduleCode . ')', self::TRACE_TYPE_DEBUG);
+            $this->_logVerbose('Processing Ajax Action (' . $moduleActionID . ') for Module (' . $moduleCode . ')');
 
             $data['sourceID'] = $ajaxRequest->sourceID;
             $data['responseTargetID'] = $ajaxRequest->responseTargetID;
@@ -616,9 +618,9 @@ class phpAnvil extends atDynamicObjectAbstract
         if ($this->loadModule($moduleRefName)) {
             //		if (is_array($moduleIDs) && array_key_exists(strtolower($moduleCode), $moduleIDs)) {
             //            $msg = 'Loading Widget (' . $moduleRefName . "." . $widget . ')...';
-            //			$this->addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_INFO);
+            //			$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_INFO);
             //            FB::info($msg);
-            $this->logVerbose('Loading Widget (' . $moduleRefName . "." . $widget . ')...');
+            $this->_logVerbose('Loading Widget (' . $moduleRefName . "." . $widget . ')...');
 
 
             $filePath = 'modules/' . $moduleRefName . '/widgets/' . $widget . '.widget.php';
@@ -629,7 +631,7 @@ class phpAnvil extends atDynamicObjectAbstract
                 $filePath = APP_PATH . $filePath;
             } else
             {
-                $filePath = PHPANVIL_FRAMEWORK_PATH . $filePath;
+                $filePath = PHPANVIL2_FRAMEWORK_PATH . $filePath;
             }
 
             //            FB::log($filePath, '$filePath');
@@ -640,7 +642,7 @@ class phpAnvil extends atDynamicObjectAbstract
 
             //		} else {
 
-            //			$this->addTraceInfo(__FILE__, __METHOD__, __LINE__, "Module '" . $moduleCode . "' not installed.", self::TRACE_TYPE_DEBUG);
+            //			$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, "Module '" . $moduleCode . "' not installed.", self::TRACE_TYPE_DEBUG);
         }
 
         return $return;
@@ -656,7 +658,7 @@ class phpAnvil extends atDynamicObjectAbstract
 
         $dictionary = strtolower($dictionary);
 
-        //		$this->addTraceInfo(__FILE__, __METHOD__, __LINE__, "Loading Dictionary '" . $dictionary . "'...", self::TRACE_TYPE_DEBUG);
+        //		$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, "Loading Dictionary '" . $dictionary . "'...", self::TRACE_TYPE_DEBUG);
 
         $filePath = APP_PATH . 'lang/' . 'en/' . $dictionary . '.dictionary.php';
 
@@ -667,26 +669,26 @@ class phpAnvil extends atDynamicObjectAbstract
     public function execute()
     {
         //        FB::group('Initializing...');
-        $this->logGroup('Initializing...');
+        $this->_logGroup('Initializing...');
 
         if ($this->init()) {
-            $this->logGroupEnd();
+            $this->_logGroupEnd();
             //            FB::groupEnd();
             //            FB::group('Opening...');
-            $this->logGroup('Opening...');
+            $this->_logGroup('Opening...');
 
             $this->open();
 
-            $this->logGroupEnd();
+            $this->_logGroupEnd();
             //            FB::groupEnd();
             //            FB::group('Closing...');
-            $this->logGroup('Closing...');
+            $this->_logGroup('Closing...');
 
             $this->close();
         }
-        $this->logGroupEnd();
+        $this->_logGroupEnd();
         //        FB::groupEnd();
-        $this->logInfo('END OF LINE.');
+        $this->_logInfo('END OF LINE.');
         //        FB::info('END OF LINE.');
     }
 
@@ -701,7 +703,7 @@ class phpAnvil extends atDynamicObjectAbstract
 
         } else {
             //            FB::error('Application not set in phpAnvil.');
-            $this->logError('Application not set in phpAnvil.');
+            $this->_logError('Application not set in phpAnvil.');
         }
 
 
@@ -710,7 +712,7 @@ class phpAnvil extends atDynamicObjectAbstract
 
         $this->session->close();
 
-        //        $this->logDebug('session closed');
+        //        $this->_logDebug('session closed');
 
         sendDebugTrace();
         //		$this->db->close();
@@ -725,9 +727,9 @@ class phpAnvil extends atDynamicObjectAbstract
         if (array_key_exists($event, $this->_connectedEvents)) {
 
             //            $msg = 'Triggering event (' . $event . ')...';
-            //            $this->addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_INFO);
+            //            $this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_INFO);
             //            FB::info($msg);
-            $this->logVerbose('Triggering event (' . $event . ')...');
+            $this->_logVerbose('Triggering event (' . $event . ')...');
 
             //---- Loop through All Connected Event Listeners for Matches
             $max = count($this->_eventListeners);
@@ -746,7 +748,7 @@ class phpAnvil extends atDynamicObjectAbstract
                     } else {
                         //---- No - Report Warning
                         //                        FB::warn('Invalid Event Listener (' . $this->_eventListeners[$i]->callback . ')!');
-                        $this->logWarning('Invalid Event Listener (' . $this->_eventListeners[$i]->callback . ')!');
+                        $this->_logWarning('Invalid Event Listener (' . $this->_eventListeners[$i]->callback . ')!');
                     }
                 }
             }
@@ -771,15 +773,15 @@ class phpAnvil extends atDynamicObjectAbstract
         $newModule = new ModuleModel($this->db);
 
         if ($newModule->loadCode($moduleCode)) {
-            //            $this->addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_DEBUG);
-            //            $this->logVerbose($msg);
+            //            $this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_DEBUG);
+            //            $this->_logVerbose($msg);
 
             //---- Determine Module Type
             $filePath = 'modules/' . $moduleCode . '/';
             if ($moduleTypes[$newModule->id] == MODULE_TYPE_CUSTOM) {
                 $filePath = APP_PATH . $filePath;
             } else {
-                $filePath = PHPANVIL_FRAMEWORK_PATH . $filePath;
+                $filePath = PHPANVIL2_FRAMEWORK_PATH . $filePath;
             }
 
             if (file_exists($filePath)) {
@@ -792,7 +794,7 @@ class phpAnvil extends atDynamicObjectAbstract
                 $installers[$moduleCode]->uninstall($newModule);
             } else {
                 $msg = 'Module (' . $moduleCode . ') does not exist.';
-                //                $this->addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_ERROR);
+                //                $this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_ERROR);
                 $return = false;
             }
         } else {
@@ -800,7 +802,7 @@ class phpAnvil extends atDynamicObjectAbstract
             $return = false;
         }
         //        FB::log($msg);
-        $this->logVerbose($msg);
+        $this->_logVerbose($msg);
 
 
         return $return;

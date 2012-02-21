@@ -13,7 +13,7 @@
 */
 
 
-require_once(PHPANVIL_TOOLS_PATH . 'atCollection.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilCollection.class.php');
 
 
 /**
@@ -26,7 +26,7 @@ require_once(PHPANVIL_TOOLS_PATH . 'atCollection.class.php');
 * @copyright    Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
 * @ingroup      phpAnvil
 */
-class ModuleCollection extends atCollection {
+class ModuleCollection extends anvilCollection {
 
 	const VERSION	= '1.0';
 	const BUILD		= '1';

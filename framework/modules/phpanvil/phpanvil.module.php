@@ -15,7 +15,7 @@
 
 require_once 'phpanvil.inc.php';
 
-require_once PHPANVIL_FRAMEWORK_PATH . 'Base.module.php';
+require_once PHPANVIL2_FRAMEWORK_PATH . 'Base.module.php';
 
 /**
 *
@@ -111,7 +111,7 @@ class phpAnvilModule extends BaseModule {
 				$filePath = APP_PATH . 'build.config.php';
 				FB::log($filePath);
 
-				$this->addTraceInfo(__FILE__, __METHOD__, __LINE__, '$filePath = ' . $filePath, self::TRACE_TYPE_DEBUG);
+				$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, '$filePath = ' . $filePath, self::TRACE_TYPE_DEBUG);
 
 				FB::log($this->_configContent);
 

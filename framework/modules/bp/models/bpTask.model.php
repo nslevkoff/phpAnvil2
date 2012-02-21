@@ -9,7 +9,7 @@
 *
 */
 
-require_once(PHPANVIL_FRAMEWORK_PATH . 'RecordStatus.model.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'RecordStatus.model.php');
 
 /**
 * Database table structure model for BP Tasks.
@@ -44,7 +44,7 @@ class bpTaskModel extends RecordStatusModel
     public $recurEndDTS;
 
 
-    public function __construct($atDataConnection, $id = 0)
+    public function __construct($anvilDataConnection, $id = 0)
     {
         unset($this->bpTaskDTS);
         unset($this->bpStatusID);
@@ -83,7 +83,7 @@ class bpTaskModel extends RecordStatusModel
         $this->addProperty('recurEndDTS', 'recur_end_dts', self::DATA_TYPE_DTS, '0000-00-00 00:00:00', 'recurEndDTS');
 
 
-        parent::__construct($atDataConnection, SQL_TABLE_BP_TASKS, $id, '');
+        parent::__construct($anvilDataConnection, SQL_TABLE_BP_TASKS, $id, '');
 
     }
 

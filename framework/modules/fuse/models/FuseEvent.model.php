@@ -1,6 +1,6 @@
 <?php
 
-require_once(PHPANVIL_FRAMEWORK_PATH . 'RecordStatus2.model.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'RecordStatus2.model.php');
 
 /**
 * Database table structure model for ANDI patient.
@@ -13,7 +13,7 @@ class FuseEventModel extends RecordStatusModel2
 //    public $accountStageID;
 
 
-    public function __construct($atDataConnection, $id = 0)
+    public function __construct($anvilDataConnection, $id = 0)
     {
 
 //        unset($this->accountStageID);
@@ -32,7 +32,7 @@ class FuseEventModel extends RecordStatusModel2
         $this->addProperty('line', SQL_TABLE_FUSE_EVENTS, 'line', self::DATA_TYPE_NUMBER);
         $this->addProperty('trace', SQL_TABLE_FUSE_EVENTS, 'trace', self::DATA_TYPE_STRING);
 
-        parent::__construct($atDataConnection, SQL_TABLE_FUSE_EVENTS);
+        parent::__construct($anvilDataConnection, SQL_TABLE_FUSE_EVENTS);
         $this->id = $id;
     }
 

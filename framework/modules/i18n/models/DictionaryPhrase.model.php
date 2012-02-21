@@ -8,8 +8,8 @@
  * @ingroup        Dictionary_Phrases_Module phpAnvil_Models
  *
  */
-//require_once(PHPANVIL_FRAMEWORK_PATH . 'Base.model.php');
-require_once(PHPANVIL_FRAMEWORK_PATH . 'RecordStatus2.model.php');
+//require_once(PHPANVIL2_FRAMEWORK_PATH . 'Base.model.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'RecordStatus2.model.php');
 
 /**
  * Database table structure model for the Dictionary Phrases table.
@@ -47,7 +47,7 @@ class DictionaryPhraseModel extends RecordStatusModel2
     public $phraseID;
 
 
-    public function __construct($atDataConnection, $id = 0)
+    public function __construct($anvilDataConnection, $id = 0)
     {
         unset($this->id);
         unset($this->dictionaryID);
@@ -61,8 +61,8 @@ class DictionaryPhraseModel extends RecordStatusModel2
         $this->addProperty('dictionaryID', SQL_TABLE_I18N_DICTIONARY_PHRASES, 'dictionary_id', self::DATA_TYPE_NUMBER);
         $this->addProperty('phraseID', SQL_TABLE_I18N_DICTIONARY_PHRASES, 'phrase_id', self::DATA_TYPE_NUMBER);
 
-        parent::__construct($atDataConnection, SQL_TABLE_I18N_DICTIONARY_PHRASES, $id, '');
-        parent::__construct($atDataConnection, SQL_TABLE_I18N_PHRASES);
+        parent::__construct($anvilDataConnection, SQL_TABLE_I18N_DICTIONARY_PHRASES, $id, '');
+        parent::__construct($anvilDataConnection, SQL_TABLE_I18N_PHRASES);
         $this->id = $id;
     }
 

@@ -44,7 +44,7 @@ class SessionModule extends BaseModule {
 
 		$return = parent::__construct();
 
-		$this->addTraceInfo(__FILE__, __METHOD__, __LINE__, self::NAME . ' v' . self::VERSION . '.' . self::VERSION_BUILD . ' loaded.');
+		$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, self::NAME . ' v' . self::VERSION . '.' . self::VERSION_BUILD . ' loaded.');
 
 		return $return;
 	}

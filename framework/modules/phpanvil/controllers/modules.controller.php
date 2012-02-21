@@ -6,15 +6,15 @@
 * @ingroup       Modules phpAnvil_Controllers
 */
 
-require_once(PHPANVIL_TOOLS_PATH . 'atLiteral.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atForm.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atComboBox.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atEntry.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atButton.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atLiteral.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilLiteral.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilForm.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilComboBox.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilEntry.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilButton.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilLiteral.class.php');
 
 
-require_once(PHPANVIL_FRAMEWORK_PATH . 'Base.controller.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'Base.controller.php');
 
 /**
 * Web action to list dictionaries section for phpAnvil.
@@ -103,7 +103,7 @@ class ModulesController extends BaseController {
 
 			//----------------- Content -----------------
 			$panel = new PanelWidget(null, '');
-//			$objLink = new atLink(null, 'New Site', $phpAnvil->site->webPath . '#', 'idAddItem add');
+//			$objLink = new anvilLink(null, 'New Site', $phpAnvil->site->webPath . '#', 'idAddItem add');
 //			$panel->actions->addControl($objLink);
 
 			$sql = 'SELECT * FROM ' . SQL_TABLE_MODULES;
@@ -122,15 +122,15 @@ class ModulesController extends BaseController {
 					$objGridWidget->linkURL = $phpAnvil->site->webPath . 'phpAnvil/ViewModule?i=' . $objRS->data('module_id');
 					$objGridWidget->title = '/' . $objRS->data('code');
 
-//					$objGridWidget->addControl(new atLiteral('', $objRS->data('name') . "<br />\n"));
-					$objGridWidget->addControl(new atLiteral('', $objRS->data('name') . ' v' . $objRS->data('version') . "<br />\n"));
-					$objGridWidget->addControl(new atLiteral('', '<span class="dimBulletID">' . $objRS->data('module_id') . '</span>'));
+//					$objGridWidget->addControl(new anvilLiteral('', $objRS->data('name') . "<br />\n"));
+					$objGridWidget->addControl(new anvilLiteral('', $objRS->data('name') . ' v' . $objRS->data('version') . "<br />\n"));
+					$objGridWidget->addControl(new anvilLiteral('', '<span class="dimBulletID">' . $objRS->data('module_id') . '</span>'));
 
 					$UI->content->addControl($objGridWidget);
 				}
 				$objRS->close();
 			} else {
-				$UI->content->addControl(new atLiteral(null, '<div class="devGrid">No modules installed.</div>'));
+				$UI->content->addControl(new anvilLiteral(null, '<div class="devGrid">No modules installed.</div>'));
 			}
 
 
@@ -141,10 +141,10 @@ class ModulesController extends BaseController {
 			//----------------- Edit -----------------
 
 			$panel = new PanelWidget('idPanelEdit', 'Install Module', 'panelEdit');
-			$objForm = new atForm('idEntryForm', 'post', '', array('class' => 'idForm'), false);
+			$objForm = new anvilForm('idEntryForm', 'post', '', array('class' => 'idForm'), false);
 			$objForm->innerTemplate = 'installModule.tpl';
 
-			$objForm->addControl(new atEntry('idName', 'name', 20, 50));
+			$objForm->addControl(new anvilEntry('idName', 'name', 20, 50));
 
 			$newButton = new ActionButtonWidget('idSave', 'btnSave95', 'Install', '#');
 			$newButton->class = 'actionFormButton';
@@ -162,9 +162,9 @@ class ModulesController extends BaseController {
 
 			//----------------- See Also -----------------
 			$panel = new PanelWidget(null, 'See Also', 'panelRight');
-			$objList = new atList(null, atList::TYPE_BULLET, 'menuRight');
-			$objList->addControl(new atLink(null, 'Global Actions', $phpAnvil->site->webPath . 'phpAnvil/ViewGlobalActions', 'bulletAction'));
-			$objList->addControl(new atLink(null, 'Build Config File', $phpAnvil->site->webPath . 'phpAnvil/BuildConfig', 'bulletExport'));
+			$objList = new anvilList(null, anvilList::TYPE_BULLET, 'menuRight');
+			$objList->addControl(new anvilLink(null, 'Global Actions', $phpAnvil->site->webPath . 'phpAnvil/ViewGlobalActions', 'bulletAction'));
+			$objList->addControl(new anvilLink(null, 'Build Config File', $phpAnvil->site->webPath . 'phpAnvil/BuildConfig', 'bulletExport'));
 			$panel->addControl($objList);
 //			$UI->rightColumn->addControl($panel);
 

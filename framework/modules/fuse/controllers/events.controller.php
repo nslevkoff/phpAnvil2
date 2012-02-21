@@ -5,7 +5,7 @@
  * @copyright    (c) 2010 Solutions By Design
  * @ingroup       Dev_Module Pulse_Controllers
  */
-require_once(PHPANVIL_FRAMEWORK_PATH . 'Base.controller.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'Base.controller.php');
 
 /**
  * Web action to load admin users section for an account.

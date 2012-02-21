@@ -1,7 +1,7 @@
 <?php
 
-require_once PHPANVIL_TOOLS_PATH . 'atContainer.class.php';
-require_once PHPANVIL_TOOLS_PATH . 'atLink.class.php';
+require_once PHPANVIL2_COMPONENT_PATH . 'anvilContainer.class.php';
+require_once PHPANVIL2_COMPONENT_PATH . 'anvilLink.class.php';
 
 require_once 'Base.widget.php';
 
@@ -36,7 +36,7 @@ class BaseUIWidget extends BaseWidget {
 
         $this->contentModule = $phpAnvil->module['content'];
         $this->page = $this->contentModule->page;
-        $this->content = new atContainer('content');
+        $this->content = new anvilContainer('content');
 
 		return true;
 	}
@@ -53,7 +53,7 @@ class BaseUIWidget extends BaseWidget {
 
     public function addBreadCrumb($name, $url)
     {
-        $this->_breadCrumbs[] = new atLink('', $name, $url);
+        $this->_breadCrumbs[] = new anvilLink('', $name, $url);
     }
 
 

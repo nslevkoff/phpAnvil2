@@ -15,7 +15,7 @@
 
 require_once 'BP.inc.php';
 
-require_once PHPANVIL_FRAMEWORK_PATH . 'Base.module.php';
+require_once PHPANVIL2_FRAMEWORK_PATH . 'Base.module.php';
 
 /**
 *

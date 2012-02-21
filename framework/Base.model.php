@@ -1,8 +1,20 @@
 <?php
 
-require_once(PHPANVIL_TOOLS_PATH . 'atFormObject2.abstract.php');
+require_once PHPANVIL2_COMPONENT_PATH . 'anvilForm/anvilFormObject.abstract.php';
 
-abstract class BaseModel extends atFormObjectAbstract2 {
+abstract class BaseModel extends anvilFormObjectAbstract
+{
+
+    public function __construct(
+        $anvilDataConnection,
+        $dataFrom,
+        $dataFilter = '')
+    {
+        global $phpAnvil;
+
+        parent::__construct($anvilDataConnection, $phpAnvil->regional, $phpAnvil->modelDictionary, $dataFrom, $dataFilter);
+    }
+
 }
 
 

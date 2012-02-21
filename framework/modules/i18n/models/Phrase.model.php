@@ -10,7 +10,7 @@
  */
 
 //require_once(APP_PATH . 'app/RecordStatus.model.php');
-require_once(PHPANVIL_FRAMEWORK_PATH . 'RecordStatus2.model.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'RecordStatus2.model.php');
 
 /**
  * Database table structure model for the Phrases table.
@@ -56,7 +56,7 @@ class PhraseModel extends RecordStatusModel2
     public $phrase;
 
 
-    public function __construct($atDataConnection, $id = 0)
+    public function __construct($anvilDataConnection, $id = 0)
     {
         unset($this->id);
         unset($this->constant);
@@ -73,8 +73,8 @@ class PhraseModel extends RecordStatusModel2
         $this->addProperty('name', SQL_TABLE_I18N_PHRASES, 'name', self::DATA_TYPE_STRING);
         $this->addProperty('phrase', SQL_TABLE_I18N_PHRASES, 'phrase', self::DATA_TYPE_STRING);
 
-//        parent::__construct($atDataConnection, SQL_TABLE_I18N_PHRASES, $id, '');
-        parent::__construct($atDataConnection, SQL_TABLE_I18N_PHRASES);
+//        parent::__construct($anvilDataConnection, SQL_TABLE_I18N_PHRASES, $id, '');
+        parent::__construct($anvilDataConnection, SQL_TABLE_I18N_PHRASES);
         $this->id = $id;
     }
 

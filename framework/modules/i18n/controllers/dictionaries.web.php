@@ -6,16 +6,16 @@
  * @ingroup       Dictionaries_Module phpAnvil_Controllers
  */
 
-//require_once(PHPANVIL_TOOLS_PATH . 'atLiteral.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atForm.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atHidden.class.php');
-//require_once(PHPANVIL_TOOLS_PATH . 'atComboBox.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atEntry.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atButton.class.php');
-require_once(PHPANVIL_TOOLS_PATH . 'atLiteral.class.php');
+//require_once(PHPANVIL2_COMPONENT_PATH . 'anvilLiteral.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilForm.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilHidden.class.php');
+//require_once(PHPANVIL2_COMPONENT_PATH . 'anvilComboBox.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilEntry.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilButton.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilLiteral.class.php');
 
 
-require_once(PHPANVIL_FRAMEWORK_PATH . 'Base.web.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'Base.web.php');
 
 /**
  * Web action to list dictionaries section for an i18n.
@@ -114,7 +114,7 @@ class DictionariesWebAction extends BaseWebAction
                 }
                 $objRS->close();
             } else {
-                $UI->content->addControl(new atLiteral(null, '<div class="devGrid">No dictionaries found.</div>'));
+                $UI->content->addControl(new anvilLiteral(null, '<div class="devGrid">No dictionaries found.</div>'));
             }
 
 
@@ -127,11 +127,11 @@ class DictionariesWebAction extends BaseWebAction
 
             //----- New/Edit Window
             $panel = new PanelWidget('idEntryPanel', 'New Dictionary', 'panelEdit');
-            $objForm = new atForm('idEntryForm', 'post', '', null, false);
+            $objForm = new anvilForm('idEntryForm', 'post', '', null, false);
             $objForm->innerTemplate = 'i18n/editDictionaryPanel.tpl';
 
-            $objForm->addControl(new atHidden('idDictionaryID', 'idDictionaryID', 0));
-            $objForm->addControl(new atEntry('idConstant', 'constant', 20, 50));
+            $objForm->addControl(new anvilHidden('idDictionaryID', 'idDictionaryID', 0));
+            $objForm->addControl(new anvilEntry('idConstant', 'constant', 20, 50));
 
             $newButton = new ActionButtonWidget('idSave', 'btnSave95', 'Save', '#');
             $newButton->class = 'actionFormButton';
@@ -145,11 +145,11 @@ class DictionariesWebAction extends BaseWebAction
 
             //--------- Other Actions ---------
             $otherActionsPanel = new PanelWidget('idOtherActionsPanel', 'Other Actions', 'panelRight');
-            $objList = new atList(null, atList::TYPE_BULLET, 'menuRight');
+            $objList = new anvilList(null, anvilList::TYPE_BULLET, 'menuRight');
 
-            $objList->addControl(new atLink('idEnableDictionary', 'Enable Dictionary', '#', 'bulletEnable'));
-            $objList->addControl(new atLink('idDisableDictionary', 'Disable Dictionary', '#', 'bulletDisable'));
-            $objList->addControl(new atLink('idBuildDictionary', 'Build Dictionary File', '#', 'bulletExport'));
+            $objList->addControl(new anvilLink('idEnableDictionary', 'Enable Dictionary', '#', 'bulletEnable'));
+            $objList->addControl(new anvilLink('idDisableDictionary', 'Disable Dictionary', '#', 'bulletDisable'));
+            $objList->addControl(new anvilLink('idBuildDictionary', 'Build Dictionary File', '#', 'bulletExport'));
 
             $otherActionsPanel->addControl($objList);
             $panel->addControl($otherActionsPanel);
@@ -159,8 +159,8 @@ class DictionariesWebAction extends BaseWebAction
 
             //----------------- See Also -----------------
             $panel = new PanelWidget(null, 'See Also', 'panelRight');
-            $objList = new atList(null, atList::TYPE_BULLET, 'menuRight');
-            $objList->addControl(new atLink(null, 'Phrases', $phpAnvil->site->webPath . 'i18n/Phrases', 'bulletPhrase'));
+            $objList = new anvilList(null, anvilList::TYPE_BULLET, 'menuRight');
+            $objList->addControl(new anvilLink(null, 'Phrases', $phpAnvil->site->webPath . 'i18n/Phrases', 'bulletPhrase'));
             $panel->addControl($objList);
             $UI->rightColumn->addControl($panel);
 

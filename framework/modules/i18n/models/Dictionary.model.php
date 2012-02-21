@@ -11,7 +11,7 @@
 
 
 //require_once(APP_PATH . 'app/RecordStatus.model.php');
-require_once(PHPANVIL_FRAMEWORK_PATH . 'RecordStatus2.model.php');
+require_once(PHPANVIL2_FRAMEWORK_PATH . 'RecordStatus2.model.php');
 
 /**
  * Database table structure model for the Dictionary table.
@@ -55,7 +55,7 @@ class DictionaryModel extends RecordStatusModel2
     public $filename;
 
 
-    public function __construct($atDataConnection, $id = 0)
+    public function __construct($anvilDataConnection, $id = 0)
     {
         unset($this->id);
         unset($this->constant);
@@ -71,8 +71,8 @@ class DictionaryModel extends RecordStatusModel2
 //        $this->addProperty('name', 'name', self::DATA_TYPE_STRING, '', 'name');
 //        $this->addProperty('filename', 'filename', self::DATA_TYPE_STRING, '', 'filename');
 
-//        parent::__construct($atDataConnection, SQL_TABLE_I18N_DICTIONARIES, $id, '');
-        parent::__construct($atDataConnection, SQL_TABLE_I18N_DICTIONARIES);
+//        parent::__construct($anvilDataConnection, SQL_TABLE_I18N_DICTIONARIES, $id, '');
+        parent::__construct($anvilDataConnection, SQL_TABLE_I18N_DICTIONARIES);
         $this->id = $id;
     }
 

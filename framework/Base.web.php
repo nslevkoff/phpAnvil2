@@ -1,7 +1,7 @@
 <?php
-require_once(PHPANVIL_TOOLS_PATH . 'atObject.abstract.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilObject.abstract.php');
 
-class BaseWebAction extends atObjectAbstract {
+class BaseWebAction extends anvilObjectAbstract {
 
 	public $requiresLogin = true;
 

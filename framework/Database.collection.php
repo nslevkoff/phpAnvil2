@@ -13,7 +13,7 @@
 */
 
 
-require_once(PHPANVIL_TOOLS_PATH . 'atCollection.class.php');
+require_once(PHPANVIL2_COMPONENT_PATH . 'anvilCollection.class.php');
 
 
 /**
@@ -26,7 +26,7 @@ require_once(PHPANVIL_TOOLS_PATH . 'atCollection.class.php');
 * @copyright    Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
 * @ingroup      phpAnvil
 */
-class DatabaseCollection extends atCollection {
+class DatabaseCollection extends anvilCollection {
 
 	const VERSION	= '1.0';
 	const BUILD		= '1';
@@ -46,7 +46,7 @@ class DatabaseCollection extends atCollection {
         if (!$this->exists($offset))
         {
             $msg = 'Database, ' . $offset . ', not found.';
-            $this->addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_DEBUG);
+            $this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_DEBUG);
             FB::log($msg);
         } else
         {
