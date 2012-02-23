@@ -46,6 +46,7 @@ abstract class anvilRSModelAbstract extends anvilModelAbstract
 
         $this->fields->recordStatusID->fieldName = 'record_status_id';
         $this->fields->recordStatusID->fieldType = anvilModelField::DATA_TYPE_NUMBER;
+        $this->recordStatusID = self::RECORD_STATUS_ACTIVE;
 
         $this->fields->recordStatusDTS->fieldName = 'record_status_dts';
         $this->fields->recordStatusDTS->fieldType = anvilModelField::DATA_TYPE_DTS;
@@ -68,9 +69,13 @@ abstract class anvilRSModelAbstract extends anvilModelAbstract
 	}
 
 
-	public function getRSName()
+	public function getRSName($recordStatusID = 0)
     {
-        return $this->_rsName[$this->recordStatusID];
+        if ($recordStatusID === 0) {
+            return $this->_rsName[$this->recordStatusID];
+        } else {
+            return $this->_rsName[$recordStatusID];
+        }
 
 	}
 
@@ -133,14 +138,22 @@ abstract class anvilRSModelAbstract extends anvilModelAbstract
 
         $now = new DateTime(null, $phpAnvil->regional->dateTimeZone);
 
-		if ($this->isNew() && $this->addSourceID == 0) {
+//		if ($this->isNew() && $this->addSourceID == 0) {
+        if ($this->isNew()) {
 //			$this->addDTS = date('Y-m-d H:i:s');
             $this->addDTS = $now->format($phpAnvil->regional->dtsFormat);
-			$this->addSourceTypeID = SOURCE_TYPE_USER;
-			$this->addSourceID = $phpAnvil->application->user->id;
+
+            if (empty($this->addSourceID)) {
+                $this->addSourceTypeID = SOURCE_TYPE_USER;
+       			$this->addSourceID = $phpAnvil->application->user->id;
+            }
+            if (empty($this->recordStatusID)) {
+                $this->recordStatusID = self::RECORD_STATUS_ACTIVE;
+            }
 		}
 
-        if ($this->fields->field('recordStatusID')->changed)
+//        if ($this->fields->field('recordStatusID')->changed)
+        if ($this->fields->recordStatusID->changed)
         {
             $this->recordStatusDTS = $now->format($phpAnvil->regional->dtsFormat);
             $this->recordStatusSourceTypeID = SOURCE_TYPE_USER;

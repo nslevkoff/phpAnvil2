@@ -129,6 +129,8 @@ class anvilData_mysql_Connection extends anvilDataConnectionAbstract implements 
 	}
 
 	public function isConnected() {
+        $result = false;
+
 		if(!isset($this->_connection)) {
 			$this->open(true);
 		}
@@ -224,81 +226,17 @@ class anvilData_mysql_Connection extends anvilDataConnectionAbstract implements 
 		}
 	}
 
-
-	public function dbDTS($value, $format = 'Y-m-d H:i:s')
-	{
-        $return = "null";
-
-		if ($value) {
-            $return = "'" . date($format, strtotime($value)) . "'";
-		}
-		return $return;
-	}
-
-	public function dbDTS2($value, $format = 'Y-m-d H:i:s')
-	{
-        $return = "null";
-
-		if ($value) {
-            $return = "'" . date($format, $value) . "'";
-		}
-		return $return;
-	}
-
-	public function dbDate($value)
-	{
-        $return = "'" . date('Y-m-d', strtotime($value)) . "'";
-		return $return;
-	}
-
-    public function dbFloat($value)
-    {
-        $return = "null";
-
-        if ($value) {
-            $return = floatval($value);
-        }
-
-        return $return;
-    }
-
-    public function dbNow($anvilRegional)
+    public function dbString($value)
    	{
-        $now = new DateTime(null, $anvilRegional->dateTimeZone);
-        $return = "'" . $now->format($anvilRegional->dtsFormat) . "'";
+           $return = "null";
+
+   		if ($value && $this->isConnected()) {
+               $return = "'" . mysql_real_escape_string($value, $this->_connection) . "'";
+   		}
 
    		return $return;
    	}
 
-    public function dbNumber($value)
-    {
-        $return = "null";
-
-        if ($value) {
-            $return = intval($value);
-        }
-
-        return $return;
-    }
-
-	public function dbString($value)
-	{
-        $return = "null";
-
-		if ($value && $this->isConnected()) {
-            $return = "'" . mysql_real_escape_string($value, $this->_connection) . "'";
-		}
-
-		return $return;
-	}
-
-	public function dbBoolean($value) {
-		if ($value) {
-			return 1;
-		} else {
-			return 0;
-		}
-	}
 
 	// }}}
 }

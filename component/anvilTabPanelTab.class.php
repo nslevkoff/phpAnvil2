@@ -8,28 +8,41 @@ require_once('anvilContainer.class.php');
  *
  * @copyright       Copyright (c) 2009-2012 Nick Slevkoff (http://www.slevkoff.com)
  */
-class anvilPanel extends anvilContainer
+class anvilTabPanelTab extends anvilContainer
 {
 
-    const VERSION = '1.0';
-
-//    public $body;
-    public $footer;
-    public $headerActions;
+    public $active = false;
     public $title;
+    public $url;
 
 
-    public function __construct($id = 0, $title = '', $properties = null)
+    public function __construct($title = '', $url = '', $active = false, $properties = null)
     {
 
-        parent::__construct($id, $properties);
+        parent::__construct();
 
-        $this->headerActions = new anvilContainer();
-//        $this->body = new anvilContainer();
-        $this->footer = new anvilContainer();
+        $this->active = $active;
         $this->title = $title;
+        $this->url = $url;
     }
 
+    public function renderTab()
+    {
+        $return = '<li';
+        if ($this->active) {
+            $return .= ' class="active"';
+        }
+        $return .= '>';
+        
+        if (!empty($this->url)) {
+            $return .= '<a href="' . $this->url . '">';
+        } else {
+            $return .= '<a href="">';
+
+        }
+        
+        return $return;
+    }
 
     public function renderContent()
     {
@@ -56,23 +69,7 @@ class anvilPanel extends anvilContainer
         $return .= '>';
 
         //---- Header ----------------------------------------------------------
-        $return .= $this->_renderHeader();
-
-        //---- Body ------------------------------------------------------------
-        $return .= $this->_renderBody();
-
-        //---- Footer ----------------------------------------------------------
-        $return .= $this->_renderFooter();
-
-        $return .= '</div>';
-
-
-        return $return;
-    }
-
-    protected function _renderHeader()
-    {
-        $return = '<div class="header">';
+        $return .= '<div class="header">';
         $return .= '<h2>' . $this->title . '</h2>';
 
         //---- Actions
@@ -82,27 +79,21 @@ class anvilPanel extends anvilContainer
 
         $return .= '</div>';
 
-        return $return;
-    }
-
-    protected function _renderBody()
-    {
-        $return = '<div class="body">';
+        //---- Body ------------------------------------------------------------
+        $return .= '<div class="body">';
         $return .= $this->renderControls();
         $return .= '</div>';
 
-        return $return;
-    }
-
-    protected function _renderFooter()
-    {
-        $return = '<div class="footer">';
+        //---- Footer ----------------------------------------------------------
+        $return .= '<div class="footer">';
         $return .= $this->footer->renderControls();
         $return .= '</div>';
 
+        $return .= '</div>';
+
+
         return $return;
     }
-
 }
 
 ?>

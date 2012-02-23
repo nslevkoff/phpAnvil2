@@ -37,6 +37,11 @@ class anvilModelFields extends anvilObjectAbstract
     }
 
 
+    /**
+     * @param string $fieldName
+     * @param bool $addIfNotExist
+     * @return anvilModelField
+     */
     public function field($fieldName, $addIfNotExist = false)
     {
         $return = false;

@@ -21,6 +21,7 @@ class anvilButton extends anvilControlAbstract
     const ACTION_TYPE_BUTTON = 3;
     const ACTION_TYPE_IMAGE  = 4;
     const ACTION_TYPE_DELETE = 5;
+    const ACTION_TYPE_DISABLE = 6;
 
     private $_actionTypeText = array(
         '',
@@ -28,6 +29,7 @@ class anvilButton extends anvilControlAbstract
         'reset',
         'button',
         'image',
+        'submit',
         'submit'
     );
 
@@ -37,7 +39,8 @@ class anvilButton extends anvilControlAbstract
         0,
         0,
         0,
-        5
+        5,
+        4
     );
 
 

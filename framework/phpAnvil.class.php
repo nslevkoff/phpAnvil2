@@ -387,7 +387,13 @@ class phpAnvil2 extends anvilObjectAbstract
 
                     if (!empty($this->controller[$fullControllerName]->redirectURL)) {
                         $this->_logVerbose('Redirecting...');
-                        header('Location: ' . $this->controller[$fullControllerName]->redirectURL);
+
+                        $redirectURL = $this->controller[$fullControllerName]->redirectURL;
+                        if (substr($redirectURL, 0, 4) != 'http') {
+                            $redirectURL = $this->site->webPath . $redirectURL;
+                        }
+
+                        header('Location: ' . $redirectURL);
 
                     } else {
                         //                        FB::warn('Controller (' . $fullControllerName . ') failed to init.');

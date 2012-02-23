@@ -18,6 +18,9 @@ class anvilSession extends anvilDynamicObjectAbstract
 
     private $_timezoneDetectionEnabled = false;
 
+    /**
+     * @var anvilDataConnectionAbstract
+     */
     public $dataConnection;
 
     private $_detectExecuted = false;

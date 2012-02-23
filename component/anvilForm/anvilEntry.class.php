@@ -71,13 +71,17 @@ class anvilEntry extends anvilFormControlAbstract {
 	const TYPE_PASSWORD	= 2;
 	const TYPE_FILE		= 3;
 
+    public $appendText;
     public $disabled = false;
     public $onKeyPress;
-    public $wrapEnabled = false;
     public $maxLength;
+    public $prependText;
     public $size;
     public $type = self::TYPE_NORMAL;
     public $value;
+
+
+    public $wrapEnabled = false;
     public $wrapClass = 'inputWrap';
 
     public $placeholder;
@@ -116,11 +120,18 @@ class anvilEntry extends anvilFormControlAbstract {
 
         $return = '';
         
-        if ($this->wrapEnabled) {
-            $return .= '<p class="' . $this->wrapClass . '">';
-        }
+//        if ($this->wrapEnabled) {
+//            $return .= '<p class="' . $this->wrapClass . '">';
+//        }
         
-        $return .= $this->renderLabel();
+//        $return .= $this->renderLabel();
+
+        if (!empty($this->appendText)) {
+            $return .= '<div class="input-append">';
+        } elseif (!empty($this->prependText)) {
+            $return .= '<div class="input-prepend">';
+            $return .= '<span class="add-on">' . $this->prependText . '</span>';
+        }
 
 		$return .= '<input type="';
 
@@ -199,9 +210,17 @@ class anvilEntry extends anvilFormControlAbstract {
 
 		$return .= ' />';
 
-        if ($this->wrapEnabled) {
-            $return .= '</p>';
+        if (!empty($this->appendText)) {
+            $return .= '<span class="add-on">' . $this->appendText . '</span>';
+            $return .= '</div>';
+        } elseif (!empty($this->prependText)) {
+            $return .= '</div>';
         }
+
+
+//        if ($this->wrapEnabled) {
+//            $return .= '</p>';
+//        }
 
 //		if ($this->_type == self::TYPE_FILE) {
 //			$return .= '<input type="hidden" name="MAX_FILE_SIZE" value="' . $this->_maxFileSize . '">';

@@ -5,6 +5,9 @@ require_once 'anvilController.abstract.php';
 require_once PHPANVIL2_COMPONENT_PATH . 'anvilResponse/anvilHTMLResponse.class.php';
 
 
+/**
+ * @property anvilHTMLResponse $response
+ */
 abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
 {
 

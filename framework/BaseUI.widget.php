@@ -9,6 +9,7 @@ require_once 'Base.widget.php';
 class BaseUIWidget extends BaseWidget {
 
     private $_breadCrumbs = array();
+    public $breadcrumbSeparator = '  ::  ';
 
     private $_headStylesheets = '';
     private $_headScripts = '';
@@ -16,7 +17,6 @@ class BaseUIWidget extends BaseWidget {
 
     private $_body = array();
 
-    public $breadcrumbSeparator = '  ::  ';
     public $content;
     public $contentModule;
     public $icon;

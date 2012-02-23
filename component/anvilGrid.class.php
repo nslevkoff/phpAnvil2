@@ -17,9 +17,9 @@ $anvilGridCounter = 0;
  *
  * @copyright   Copyright (c) 2009-2011 Nick Slevkoff (http://www.phpanvil.com)
  * @license     BSD License
- *      Full copyright and license information is available in the LICENSE.txt
- *      file that was distributed with this source file or can be found online
- *      at http://www.phpanvil.com/LICENSE.txt
+ *              Full copyright and license information is available in the LICENSE.txt
+ *              file that was distributed with this source file or can be found online
+ *              at http://www.phpanvil.com/LICENSE.txt
  * @version     1.8
  * @ingroup     phpAnvilTools
  */
@@ -30,29 +30,28 @@ class anvilGrid extends anvilControlAbstract
 
 
     #---- Column Format Constants
-    const COLUMN_FORMAT_NONE = 0;
+    const COLUMN_FORMAT_NONE    = 0;
     const COLUMN_FORMAT_PERCENT = 1;
-    const COLUMN_FORMAT_MONEY = 2;
-    const COLUMN_FORMAT_NUMBER = 3;
-    const COLUMN_FORMAT_DATE = 4;
-    const COLUMN_FORMAT_DTS = 5;
+    const COLUMN_FORMAT_MONEY   = 2;
+    const COLUMN_FORMAT_NUMBER  = 3;
+    const COLUMN_FORMAT_DATE    = 4;
+    const COLUMN_FORMAT_DTS     = 5;
 
     #---- Calculation Constants
     const CALC_DIVIDE_PERCENT = 1;
-    const CALC_DIVIDE_MONEY = 2;
-    const CALC_SUBTRACT = 3;
+    const CALC_DIVIDE_MONEY   = 2;
+    const CALC_SUBTRACT       = 3;
 
     #---- Total Type Constants
     const TOTAL_TYPE_COUNT = 1;
-    const TOTAL_TYPE_SUM = 2;
+    const TOTAL_TYPE_SUM   = 2;
 
     public $striped = false;
     public $bordered = false;
-    public $condensed = false;
+    public $condensed = true;
 
 
-
-    public $statePrefix = 'atg';
+    public $statePrefix = 'ag';
 
     public $db;
     public $baseSQL;
@@ -114,6 +113,7 @@ class anvilGrid extends anvilControlAbstract
     public $baseQueryString;
     public $rowHoverClass = 'rowHover';
 
+
     public function __construct(
         $anvilDataConnection = null,
         $sql = '',
@@ -124,26 +124,26 @@ class anvilGrid extends anvilControlAbstract
     {
         global $anvilGridCounter;
 
-//        $this->enableLog();
+        //        $this->enableLog();
 
 
-//        $this->addProperty('rowOffset', 0);
-//        $this->addProperty('maxRows', 25);
-//        $this->addProperty('baseURL', '');
-//        $this->addProperty('baseQueryString', '');
-//        $this->addProperty('rowHoverClass', 'rowHover');
+        //        $this->addProperty('rowOffset', 0);
+        //        $this->addProperty('maxRows', 25);
+        //        $this->addProperty('baseURL', '');
+        //        $this->addProperty('baseQueryString', '');
+        //        $this->addProperty('rowHoverClass', 'rowHover');
 
         $this->columns = new anvilGridColumns(true);
 
-        $this->db = $anvilDataConnection;
+        $this->db      = $anvilDataConnection;
         $this->baseSQL = $sql;
-        $this->htmlID = $id;
+        $this->htmlID  = $id;
 
-//        $this->statePrefix = $this->htmlID . '_';
+        //        $this->statePrefix = $this->htmlID . '_';
 
         $this->mainClass = $mainClass;
 
-        $this->baseURL = $this->getPagePath();
+        $this->baseURL   = $this->getPagePath();
         $this->imagePath = $this->getBasePath() . '/images/';
         $anvilGridCounter++;
         $this->statePrefix .= $anvilGridCounter . '_';
@@ -160,7 +160,7 @@ class anvilGrid extends anvilControlAbstract
 
     public function setOrderBy($orderBy, $isDescending = false)
     {
-        $this->defaultOrderBy = $orderBy;
+        $this->defaultOrderBy     = $orderBy;
         $this->defaultOrderByDesc = $isDescending;
     }
 
@@ -191,9 +191,9 @@ class anvilGrid extends anvilControlAbstract
 
     function addQSVar($url, $key, $value)
     {
-//        $url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
-//        $url = preg_replace('/(?:&|(\?))' . $key . '=[^&]*(?(1)&|)?/i', '$1$2$4', $url . '&');
-//        $url = substr($url, 0, -1);
+        //        $url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
+        //        $url = preg_replace('/(?:&|(\?))' . $key . '=[^&]*(?(1)&|)?/i', '$1$2$4', $url . '&');
+        //        $url = substr($url, 0, -1);
         $url = $this->removeQSVar($url, $key);
         if (strpos($url, '?') === false) {
             return ($url . '?' . $key . '=' . $value);
@@ -205,7 +205,7 @@ class anvilGrid extends anvilControlAbstract
 
     function removeQSVar($url, $key)
     {
-//        $url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
+        //        $url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
         $url = preg_replace('/(?:&|(\?))' . $key . '=[^&]*(?(1)&|)?/i', '$1$2$4', $url . '&');
         $url = substr($url, 0, -1);
         return $url;
@@ -215,7 +215,8 @@ class anvilGrid extends anvilControlAbstract
     public function getBasePath()
     {
         $path = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on')
-                ? 'https://' : 'http://';
+                ? 'https://'
+                : 'http://';
         $path .= $_SERVER["SERVER_NAME"];
         if ($_SERVER["SERVER_PORT"] != '80' && $_SERVER["SERVER_PORT"] != '443') {
             $path .= ':' . $_SERVER["SERVER_PORT"];
@@ -224,15 +225,16 @@ class anvilGrid extends anvilControlAbstract
         return $path;
     }
 
+
     public function getPagePath()
     {
         $pagePath = $this->getBasePath();
-//        $pagePath = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on')
-//                ? 'https://' : 'http://';
-//        $pagePath .= $_SERVER["SERVER_NAME"];
-//        if ($_SERVER["SERVER_PORT"] != '80' && $_SERVER["SERVER_PORT"] != '443') {
-//            $pagePath .= ':' . $_SERVER["SERVER_PORT"];
-//        }
+        //        $pagePath = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on')
+        //                ? 'https://' : 'http://';
+        //        $pagePath .= $_SERVER["SERVER_NAME"];
+        //        if ($_SERVER["SERVER_PORT"] != '80' && $_SERVER["SERVER_PORT"] != '443') {
+        //            $pagePath .= ':' . $_SERVER["SERVER_PORT"];
+        //        }
         $pagePath .= $_SERVER["REQUEST_URI"];
 
         $pagePath = $this->removeQSVar($pagePath, $this->statePrefix . 'o');
@@ -246,13 +248,13 @@ class anvilGrid extends anvilControlAbstract
     {
         //        global $firePHP;
 
-        $html = '';
+        $html      = '';
         $startTime = microtime(true);
         $this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, 'Executing...');
 
         if (isset($this->anvilPageNav)) {
             $this->rowOffset = $this->anvilPageNav->itemOffset;
-            $this->maxRows = $this->anvilPageNav->itemsPerPage;
+            $this->maxRows   = $this->anvilPageNav->itemsPerPage;
 
             if ($this->pageNavHeaderEnabled || $this->pageNavFooterEnabled) {
                 $pageNavHTML = $this->anvilPageNav->render();
@@ -264,7 +266,7 @@ class anvilGrid extends anvilControlAbstract
             }
         }
 
-        $orderBy = $this->defaultOrderBy;
+        $orderBy   = $this->defaultOrderBy;
         $orderDesc = $this->defaultOrderByDesc;
 
         if ($orderDesc) {
@@ -336,11 +338,11 @@ class anvilGrid extends anvilControlAbstract
 
 
         //---- disabled in v2 --------------------------------------------------
-//        if ($this->useDIV) {
-//            $html .= '<div id="' . $this->htmlID . '" class="' . $this->mainClass . '">';
-//        } else {
-//            $html .= '<table id="' . $this->htmlID . '" class="' . $this->mainClass . '" width="100%"><tr><td>';
-//        }
+        //        if ($this->useDIV) {
+        //            $html .= '<div id="' . $this->htmlID . '" class="' . $this->mainClass . '">';
+        //        } else {
+        //            $html .= '<table id="' . $this->htmlID . '" class="' . $this->mainClass . '" width="100%"><tr><td>';
+        //        }
         //----------------------------------------------------------------------
 
 
@@ -464,7 +466,7 @@ class anvilGrid extends anvilControlAbstract
                             //                                }
                             $html .= $this->renderColumnStyle($columnOptions);
 
-//                            $html .= '><nobr>';
+                            //                            $html .= '><nobr>';
                             $html .= '>';
 
                             #---- Column Sort Order Link
@@ -472,19 +474,19 @@ class anvilGrid extends anvilControlAbstract
                             if (!$columnOptions || ($columnOptions && $columnOptions->sortable)) {
                                 $url = $this->addQSVar($this->baseURL, $this->statePrefix . 'oc', $objColumn->name);
 
-//                                $html .= '<a href="' . htmlentities($baseURL . $currentPageURL);
-//                                $html .= htmlentities('&' . $this->statePrefix . 'oc=' . $objColumn->name);
+                                //                                $html .= '<a href="' . htmlentities($baseURL . $currentPageURL);
+                                //                                $html .= htmlentities('&' . $this->statePrefix . 'oc=' . $objColumn->name);
                                 if ($objColumn->name == $orderBy) {
                                     if ($orderDesc) {
-//                                        $html .= htmlentities('&' . $this->statePrefix . 'o=a');
+                                        //                                        $html .= htmlentities('&' . $this->statePrefix . 'o=a');
                                         $url = $this->addQSVar($url, $this->statePrefix . 'o', 'a');
                                     } else {
-//                                        $html .= htmlentities('&' . $this->statePrefix . 'o=d');
+                                        //                                        $html .= htmlentities('&' . $this->statePrefix . 'o=d');
                                         $url = $this->addQSVar($url, $this->statePrefix . 'o', 'd');
                                     }
                                 }
                                 $html .= '<a href="' . htmlentities($url) . '">';
-//                                $html .= '">';
+                                //                                $html .= '">';
                             }
 
                             $html .= $columnTitle;
@@ -493,10 +495,10 @@ class anvilGrid extends anvilControlAbstract
 
                             if ($objColumn->name == $orderBy && (!$columnOptions || ($columnOptions && $columnOptions->sortable))) {
                                 if ($orderDesc) {
-//                                    $html .= '&nbsp;<img alt="Descending Order" src="' . $this->imagePath . $this->imageSortDesc . '">';
+                                    //                                    $html .= '&nbsp;<img alt="Descending Order" src="' . $this->imagePath . $this->imageSortDesc . '">';
                                     $html .= '&nbsp;<i class="icon-chevron-down"></i>';
                                 } else {
-//                                    $html .= '&nbsp;<img alt="Ascending Order" src="' . $this->imagePath . $this->imageSortAsc . '">';
+                                    //                                    $html .= '&nbsp;<img alt="Ascending Order" src="' . $this->imagePath . $this->imageSortAsc . '">';
                                     $html .= '&nbsp;<i class="icon-chevron-up"></i>';
                                 }
                             }
@@ -504,7 +506,7 @@ class anvilGrid extends anvilControlAbstract
                             if (!$columnOptions || ($columnOptions && $columnOptions->sortable)) {
                                 $html .= '</a>';
                             }
-//                            $html .= '</nobr></th>';
+                            //                            $html .= '</nobr></th>';
                             $html .= '</th>';
                         }
                     }
@@ -556,8 +558,8 @@ class anvilGrid extends anvilControlAbstract
                         $html .= $entry;
 
                         if (empty($entry)) {
-//                            $entry = new anvilEntry('', $this->statePrefix . $objColumn->name, $columnOptions->filterEntrySize, 40, '');
-//                            $html .= $entry->render();
+                            //                            $entry = new anvilEntry('', $this->statePrefix . $objColumn->name, $columnOptions->filterEntrySize, 40, '');
+                            //                            $html .= $entry->render();
                         }
 
                         //                            $html .= $columnTitle;
@@ -593,13 +595,13 @@ class anvilGrid extends anvilControlAbstract
                     switch ($this->rowData['record_status_id'])
                     {
                         //---- Disabled
-                        case 20:
+                        case anvilRSModelAbstract::RECORD_STATUS_DISABLED:
                             $this->rowClass .= ' disabled';
 //                                $rowHoverClass .= ' disabled';
                             break;
 
                         //---- Deleted
-                        case 30:
+                        case anvilRSModelAbstract::RECORD_STATUS_DELETED:
                             $this->rowClass .= ' deleted';
 //                                $rowHoverClass .= ' deleted';
                             break;
@@ -610,7 +612,7 @@ class anvilGrid extends anvilControlAbstract
 
 
                 #---- Execute Row Begin Callback
-//                $this->executeCallback('rowRenderBegin', $this);
+                //                $this->executeCallback('rowRenderBegin', $this);
 
                 //                    if (!empty($this->rowRenderBeginCallback)) {
                 //                        call_user_func($this->rowRenderBeginCallback, $this);
@@ -645,7 +647,7 @@ class anvilGrid extends anvilControlAbstract
                         }
 
                         $useColumnURL = false;
-                        $useRowURL = false;
+                        $useRowURL    = false;
 
                         //---- Use Column URL?
                         if ($columnOptions && !empty($columnOptions->url)) {
@@ -670,7 +672,7 @@ class anvilGrid extends anvilControlAbstract
                             $html .= 'cell';
                         }
 
-//                        if (($columnOptions && !empty($columnOptions->url)) || (!empty($this->rowURL) && $columnOptions && $columnOptions->rowClickable)) {
+                        //                        if (($columnOptions && !empty($columnOptions->url)) || (!empty($this->rowURL) && $columnOptions && $columnOptions->rowClickable)) {
                         if ($useColumnURL || $useRowURL) {
                             $html .= ' link';
                         } else {
@@ -705,7 +707,7 @@ class anvilGrid extends anvilControlAbstract
                                 $html .= htmlentities($this->rowData[$columnOptions->urlColumn]);
                             }
                             $html .= '">';
-//                        } elseif (!empty($this->rowURL) && $columnOptions && $columnOptions->rowClickable) {
+                            //                        } elseif (!empty($this->rowURL) && $columnOptions && $columnOptions->rowClickable) {
                         } elseif ($useRowURL) {
                             $html .= '<a href="' . htmlentities($this->rowURL);
                             if (!empty($this->rowURLKeyColumn)) {
@@ -715,16 +717,16 @@ class anvilGrid extends anvilControlAbstract
 
                             if (empty($content)) {
                                 $html .= '&nbsp;';
-                            }                           
+                            }
                         }
 
                         $html .= $content;
 
                         #---- Is Column Linked? ----
                         //                            if (array_key_exists($objColumn->name, $this->_columnHref)) {
-//                        if ($columnOptions && !empty($columnOptions->url)) {
-//                        if (($columnOptions && !empty($columnOptions->url)) || !empty($this->rowURL)) {
-//                        if (($columnOptions && !empty($columnOptions->url)) || (!empty($this->rowURL) && $columnOptions && $columnOptions->rowClickable)) {
+                        //                        if ($columnOptions && !empty($columnOptions->url)) {
+                        //                        if (($columnOptions && !empty($columnOptions->url)) || !empty($this->rowURL)) {
+                        //                        if (($columnOptions && !empty($columnOptions->url)) || (!empty($this->rowURL) && $columnOptions && $columnOptions->rowClickable)) {
                         if ($useColumnURL || $useRowURL) {
                             $html .= '</a>';
                         }
@@ -758,7 +760,7 @@ class anvilGrid extends anvilControlAbstract
                 }
 
                 #---- Execute Row End Callback
-//                $this->executeCallback('rowRenderEnd', $this);
+                //                $this->executeCallback('rowRenderEnd', $this);
 
                 $html .= '</tr>';
             } while ($objRS->read());
@@ -773,7 +775,7 @@ class anvilGrid extends anvilControlAbstract
             if ($this->columnTotalEnabled) {
                 $html .= '<tfoot><tr class="footer">';
                 for ($objRS->columns->moveFirst(); $objRS->columns->hasMore(); $objRS->columns->moveNext()) {
-                    $objColumn = $objRS->columns->current();
+                    $objColumn     = $objRS->columns->current();
                     $columnOptions = $this->columns->column($objColumn->name);
 
                     //                        if (!array_key_exists($objColumn->name, $this->columnVisible) || $this->columnVisible[$objColumn->name]) {
@@ -876,11 +878,11 @@ class anvilGrid extends anvilControlAbstract
         //        }
 
         //---- disabled in v2 --------------------------------------------------
-//        if ($this->useDIV) {
-//            $html .= '</div>';
-//        } else {
-//            $html .= '</td></tr></table>';
-//        }
+        //        if ($this->useDIV) {
+        //            $html .= '</div>';
+        //        } else {
+        //            $html .= '</td></tr></table>';
+        //        }
         //----------------------------------------------------------------------
 
 
@@ -963,7 +965,7 @@ class anvilGrid extends anvilControlAbstract
 
     public function setColumnFormat($columnName, $formanvilType, $decimals = 0)
     {
-        $this->_columnFormat[$columnName] = $formanvilType;
+        $this->_columnFormat[$columnName]            = $formanvilType;
         $this->_columnFormanvilDecimals[$columnName] = $decimals;
 
         if ($formanvilType != self::COLUMN_FORMAT_NONE) {
@@ -1016,7 +1018,7 @@ class anvilGrid extends anvilControlAbstract
         $columnOptions = $this->columns->column($columnName, true);
 
         $columnOptions->calcField1 = $field1;
-        $columnOptions->calcType = $calcType;
+        $columnOptions->calcType   = $calcType;
         $columnOptions->calcField2 = $field2;
 
         $return = true;
@@ -1081,9 +1083,9 @@ class anvilGrid extends anvilControlAbstract
  *
  * @copyright   Copyright (c) 2009-2011 Nick Slevkoff (http://www.phpanvil.com)
  * @license     BSD License
- *      Full copyright and license information is available in the LICENSE.txt
- *      file that was distributed with this source file or can be found online
- *      at http://www.phpanvil.com/LICENSE.txt
+ *              Full copyright and license information is available in the LICENSE.txt
+ *              file that was distributed with this source file or can be found online
+ *              at http://www.phpanvil.com/LICENSE.txt
  * @ingroup     anvilGrid
  */
 class anvilGridColumns
@@ -1099,6 +1101,11 @@ class anvilGridColumns
 //    }
 
 
+/**
+ * @param string $name
+ * @param bool $addIfNotExist
+ * @return anvilGridColumn
+ */
     public function column($name, $addIfNotExist = false)
     {
         //        global $firePHP;
@@ -1114,7 +1121,7 @@ class anvilGridColumns
             //            $firePHP->_log('Column NOT Found!');
             if ($addIfNotExist) {
                 $this->_columns[$name] = new anvilGridColumn();
-                $return = $this->_columns[$name];
+                $return                = $this->_columns[$name];
             } else {
                 $return = false;
             }
@@ -1176,20 +1183,21 @@ class anvilGridColumns
  *
  * @copyright   Copyright (c) 2009-2011 Nick Slevkoff (http://www.phpanvil.com)
  * @license     BSD License
- *      Full copyright and license information is available in the LICENSE.txt
- *      file that was distributed with this source file or can be found online
- *      at http://www.phpanvil.com/LICENSE.txt
+ *              Full copyright and license information is available in the LICENSE.txt
+ *              file that was distributed with this source file or can be found online
+ *              at http://www.phpanvil.com/LICENSE.txt
  * @ingroup     anvilGrid
  */
 class anvilGridColumn
 {
     #---- Column Format Constants
-    const FORMAT_NONE = 0;
+    const FORMAT_NONE    = 0;
     const FORMAT_PERCENT = 1;
-    const FORMAT_MONEY = 2;
-    const FORMAT_NUMBER = 3;
-    const FORMAT_DATE = 4;
-    const FORMAT_DTS = 5;
+    const FORMAT_MONEY   = 2;
+    const FORMAT_NUMBER  = 3;
+    const FORMAT_DATE    = 4;
+    const FORMAT_DTS     = 5;
+    const FORMAT_EMAIL   = 6;
 
     public $title;
     public $visible = true;

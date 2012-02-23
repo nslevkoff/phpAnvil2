@@ -30,7 +30,7 @@ class anvilContainer extends anvilControlAbstract
     /**
      * Collection of children controls within the container.
      *
-     * @var anvilCollection $controls
+     * @var anvilCollection
      */
     public $controls = null;
 
@@ -40,7 +40,7 @@ class anvilContainer extends anvilControlAbstract
     /**
      * anvilTemplate to use for rendering inside the container.
      *
-     * @var anvilTemplate $innerTemplate
+     * @var anvilTemplateAbstract
      */
     public $innerTemplate;
 

@@ -6,6 +6,10 @@ require_once PHPANVIL2_COMPONENT_PATH . 'anvilObject.abstract.php';
 require_once 'anvilModelFields.class.php';
 require_once 'anvilModelField.class.php';
 
+/**
+ * @property anvilModelFields $fields
+ * @property anvilDataConnectionAbstract $dataConnection
+ */
 abstract class anvilModelAbstract extends anvilObjectAbstract
 {
 
@@ -14,6 +18,7 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
 //    public $id = 0;
 
     public $dataConnection;
+
     public $regional;
 
     public $primaryTableName;
@@ -44,10 +49,10 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
 
         $this->_newFields();
 
-        $this->primaryTableName = $primaryTableName;
+        $this->primaryTableName  = $primaryTableName;
         $this->primaryColumnName = $primaryColumnName;
-        $this->dataConnection   = $phpAnvil->db;
-        $this->regional         = $phpAnvil->regional;
+        $this->dataConnection    = $phpAnvil->db;
+        $this->regional          = $phpAnvil->regional;
     }
 
 
@@ -156,7 +161,7 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
             for ($i = 0; $i < $count; $i++)
             {
                 if ($this->fields->field($i)->name != $this->primaryFieldName) {
-//                    $dataFields .= ', ' . $this->formanvilDataField($i);
+                    //                    $dataFields .= ', ' . $this->formanvilDataField($i);
                     $dataFields .= ', ' . $this->fields->field($i)->toSave($this->dataConnection);
                 }
             }
@@ -173,7 +178,7 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
             {
                 if ($this->fields->field($i)->name != $this->primaryFieldName && $this->fields->field($i)->fieldType != anvilModelField::DATA_TYPE_ADD_DTS) {
                     if ($forceUpdateAll || (!$forceUpdateAll && $this->fields->field($i)->changed)) {
-//                        $dataFields .= ', ' . $this->fields->field($i)->fieldName . '=' . $this->formanvilDataField($i);
+                        //                        $dataFields .= ', ' . $this->fields->field($i)->fieldName . '=' . $this->formanvilDataField($i);
                         $dataFields .= ', ' . $this->fields->field($i)->fieldName . '=' . $this->fields->field($i)->toSave($this->dataConnection);
                     }
                 }
@@ -184,13 +189,14 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
             //			$sql .= ' WHERE ' . $this->_dataFields['id'] . '=' . $this->id;
             $sql .= ' WHERE ' . $this->primaryColumnName . '=' . intval($this->fields->field($this->primaryFieldName)->value);
 
-//            if (!empty($this->dataFilter)) {
-//                $sql .= ' AND ' . $this->dataFilter;
-//            }
+            //            if (!empty($this->dataFilter)) {
+            //                $sql .= ' AND ' . $this->dataFilter;
+            //            }
         }
 
         return $sql;
     }
+
 
     protected function _newFields()
     {
@@ -238,6 +244,7 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
         return $this->_isLoaded;
     }
 
+
     public function isNew()
     {
         return intval($this->fields->field($this->primaryFieldName)->value) === 0;
@@ -251,8 +258,8 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
 
         #---- Build SQL if Empty
         if (empty($sql)) {
-//            $this->_logDebug($this->primaryFieldName, '$this->primaryFieldName');
-//            $this->_logDebug($this->fields, '$this->fields');
+            //            $this->_logDebug($this->primaryFieldName, '$this->primaryFieldName');
+            //            $this->_logDebug($this->fields, '$this->fields');
 
 
             $primaryValue = $this->fields->field($this->primaryFieldName)->value;
@@ -276,9 +283,9 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
             $sql .= ' FROM ' . $this->primaryTableName;
             $sql .= ' WHERE ' . $this->primaryColumnName . '=' . intval($primaryValue);
 
-//            if (!empty($this->dataFilter)) {
-//                $sql .= ' AND ' . $this->dataFilter;
-//            }
+            //            if (!empty($this->dataFilter)) {
+            //                $sql .= ' AND ' . $this->dataFilter;
+            //            }
         }
 
         //        $this->_logDebug($sql, '$sql');
@@ -294,7 +301,7 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
             {
 
                 $this->fields->field($i)->value = $objRS->data($this->fields->field($i)->fieldName);
-//                $this->fields->field($i)->value = $this->formanvilDisplayField($this->fields->field($i)->name);
+                //                $this->fields->field($i)->value = $this->formanvilDisplayField($this->fields->field($i)->name);
 
             }
 

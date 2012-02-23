@@ -12,17 +12,37 @@ require_once 'anvilHTMLResponseHead.class.php';
  * phpAnvil HTML Response Abstract Control
  *
  * @copyright       Copyright (c) 2012 Nick Slevkoff (http://www.slevkoff.com)
+ *
+ * @property anvilHTMLResponseHead $head
  */
 class anvilHTMLResponse extends anvilResponseAbstract
 {
 
     const VERSION = '1.0';
 
+
+    private $_breadcrumbTitle = array();
+    private $_breadcrumbURL = array();
+    public $breadcrumbDivider = '/';
+
+    /**
+     * @var anvilTemplateAbstract
+     */
     public $template;
+
+    /**
+     * @var string
+     */
     public $templateFilename;
 
-//    public $alerts;
+    /**
+     * @var anvilHTMLResponseHead
+     */
     public $head;
+
+    /**
+     * @var array
+     */
     public $page = array();
 
     private $_preClientScript;
@@ -40,6 +60,14 @@ class anvilHTMLResponse extends anvilResponseAbstract
     }
 
 
+    public function addBreadcrumb($title, $url)
+    {
+        $this->_breadcrumbTitle[] = $title;
+        $this->_breadcrumbURL[] = $url;
+
+        return true;
+    }
+
     public function assign($var, $value)
     {
         $this->template->assign($var, $value);
@@ -48,6 +76,8 @@ class anvilHTMLResponse extends anvilResponseAbstract
 
     public function assignTokens()
     {
+        global $phpAnvil;
+
         $this->head->render();
         $this->head->html .= $this->_preClientScript;
 
@@ -57,6 +87,31 @@ class anvilHTMLResponse extends anvilResponseAbstract
 
         $this->assign('page', $this->page);
 
+        //---- Prepare Breadcrumbs ---------------------------------------------
+        $count = count($this->_breadcrumbTitle);
+
+        $html = '';
+
+        if ($count > 0) {
+            $html .= '<ul class="breadcrumb">';
+
+            for ($i=0; $i < $count; $i++) {
+                $html .= '<li';
+                if ($i === ($count-1)) {
+                    $html .= ' class="active">';
+                    $html .= $this->_breadcrumbTitle[$i];
+                } else {
+                    $html .= '>';
+                    $html .= '<a href="' . $phpAnvil->site->webPath . $this->_breadcrumbURL[$i] . '">';
+                    $html .= $this->_breadcrumbTitle[$i];
+                    $html .= '</a> <span class="divider">' . $this->breadcrumbDivider . '</span>';
+                }
+                $html .= '</li>';
+            }
+            $html .= '</ul>';
+        }
+
+        $this->assign('breadcrumbs', $html);
 //        $this->assign('alerts', $this->alerts->renderControls());
 
     }

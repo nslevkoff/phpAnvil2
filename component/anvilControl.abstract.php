@@ -87,7 +87,7 @@ abstract class anvilControlAbstract extends anvilObjectAbstract
     /**
      * anvilTemplate object for rendering the control.
      *
-     * @var anvilTemplate $anvilTemplate
+     * @var anvilTemplateAbstract
      */
     public $anvilTemplate;
 
@@ -187,9 +187,12 @@ abstract class anvilControlAbstract extends anvilObjectAbstract
     public function renderTemplate()
     {
         $return = '';
+        $_anvilTemplate = '';
+
         if (is_object($this->anvilTemplate)) {
             $_anvilTemplate = clone $this->anvilTemplate;
         }
+
         if (is_object($_anvilTemplate)) {
             if ($this->outerTemplateID != '') {
                 $_anvilTemplate->assign($this->outerTemplateID, $this->renderContent());

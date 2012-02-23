@@ -10,30 +10,37 @@ require_once('anvilControl.abstract.php');
 class anvilLabel extends anvilControlAbstract
 {
 
-    const TYPE_DEFAULT = '';
-    const TYPE_SUCCESS = 'success';
-    const TYPE_WARNING = 'warning';
-    const TYPE_IMPORTANT = 'important';
-    const TYPE_INFO = 'info';
+    const TYPE_DEFAULT = 0;
+    const TYPE_SUCCESS = 1;
+    const TYPE_WARNING = 2;
+    const TYPE_IMPORTANT = 3;
+    const TYPE_INFO = 4;
 
-    const VERSION = '1.0';
+    private $_typeClass = array(
+        '',
+        'label-success',
+        'label-warning',
+        'label-important',
+        'label-info'
+    );
 
 
     public $type;
     public $value;
 
 
-    public function __construct($id = '', $value = '', $properties = null)
+    public function __construct($id = '', $value = '', $type = self::TYPE_DEFAULT, $properties = null)
     {
-        unset($this->type);
-        unset($this->value);
+//        unset($this->type);
+//        unset($this->value);
 
 
-        $this->addProperty('type', self::TYPE_DEFAULT);
-        $this->addProperty('value', '');
+//        $this->addProperty('type', self::TYPE_DEFAULT);
+//        $this->addProperty('value', '');
 
-        parent::__construct($id, $properties, false);
+        parent::__construct($id, $properties);
 
+        $this->type = $type;
         $this->value = $value;
 
     }
@@ -41,10 +48,8 @@ class anvilLabel extends anvilControlAbstract
 
     public function renderContent()
     {
-        $return = '<span class="inlineLabel';
-        if ($this->type != self::TYPE_DEFAULT) {
-            $return .= ' inlineLabel-' . $this->type;
-        }
+        $return = '<span class="label';
+        $return .= ' ' . $this->_typeClass[$this->type];
         $return .= '">' . $this->value . '</span>';
 
         return $return;
