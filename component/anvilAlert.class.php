@@ -34,6 +34,7 @@ class anvilAlert extends anvilContainer
     public $type = self::TYPE_DEFAULT;
     public $message;
     public $block = false;
+    public $closeable = true;
 
 
     public function __construct($id = 0, $type = self::TYPE_DEFAULT, $title = '', $message = '', $properties = null)
@@ -81,7 +82,9 @@ class anvilAlert extends anvilContainer
         $return .= '>';
         
         //---- Close Button
-        $return .= '<a class="close" data-dismiss="alert">×</a>';
+        if ($this->closeable) {
+            $return .= '<a class="close" data-dismiss="alert">×</a>';
+        }
 
         //---- Title
         if (!empty($this->title)) {

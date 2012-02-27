@@ -28,7 +28,7 @@ abstract class anvilControllerAbstract extends anvilObjectAbstract
 
         parent::__construct();
 
-        //        $this->enableLog();
+        $this->enableLog();
 
         $this->plugins = new PluginCollection();
         //        $this->alerts = new anvilContainer();
@@ -45,11 +45,15 @@ abstract class anvilControllerAbstract extends anvilObjectAbstract
         $return = true;
 
         $this->webPath = $phpAnvil->site->webPath;
-        if (isset($_SERVER['REDIRECT_URL'])) {
-            $this->webPath .= ltrim($_SERVER['REDIRECT_URL'], '/');
+        if (isset($_SERVER['REDIRECT_SCRIPT_URL'])) {
+//            $this->_logDebug($_SERVER['REDIRECT_SCRIPT_URL'], '$_SERVER[REDIRECT_SCRIPT_URL]');
+
+//            phpInfo();
+
+            $this->webPath .= ltrim($_SERVER['REDIRECT_SCRIPT_URL'], '/');
         }
 
-        //        $this->_logDebug($this->pagePath, 'pagePath');
+//        $this->_logDebug($this->webPath, 'webPath');
 
 
         //        $phpAnvil->triggerEvent($this->module . '.' . $this->refName . '_controller.init');

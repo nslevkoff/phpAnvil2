@@ -76,7 +76,7 @@ class anvilTabs extends anvilContainer
         for ($this->_tabs->controls->moveFirst(); $this->_tabs->controls->hasMore(); $this->_tabs->controls->moveNext()) {
 
             $objTab = $this->_tabs->controls->current();
-            /** @var $objTab anvilTabPanelTab  */
+            /** @var $objTab anvilTabItem  */
 
             $return .= '<li';
             if ($objTab->active) {
@@ -92,6 +92,10 @@ class anvilTabs extends anvilContainer
             }
 
             $return .= $objTab->title;
+
+            if (!empty($objTab->rightIcon)) {
+                $return .= ' <span class="pull-right"><i class="' . $objTab->rightIcon . '"></i></span>';
+            }
             $return .= '</a></li>';
         }
 

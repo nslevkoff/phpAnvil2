@@ -97,6 +97,21 @@ class anvilModelFields extends anvilObjectAbstract
     }
 
 
+    public function isChanged()
+    {
+        $count = $this->count();
+
+        for ($i = 0; $i < $count; $i++)
+        {
+            if ($this->_fields[$this->_fieldIndex[$i]]->changed) {
+                return true;
+            };
+        }
+
+        return false;
+    }
+
+
     public function reset()
     {
         $count = $this->count();

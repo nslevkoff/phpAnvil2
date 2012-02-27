@@ -1,27 +1,11 @@
 <?php
-/**
-* @file
-* @author		Nick Slevkoff <nick@slevkoff.com>
-* @copyright 	Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
-* @license
-* 	This source file is subject to the new BSD license that is
-* 	bundled with this package in the file LICENSE.txt. It is also
-* 	available on the Internet at:  http://www.phpanvil.com/LICENSE.txt
-* @ingroup 		phpAnvilTools
-*/
-
-
 require_once('anvilFormControl.abstract.php');
 
 
 /**
 * Combo Box
 *
-* @version		1.0
-* @date			8/26/2010
-* @author		Nick Slevkoff <nick@slevkoff.com>
-* @copyright 	Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
-* @ingroup 		phpAnvilTools
+* @copyright 	Copyright (c) 2010-2012 Nick Slevkoff (http://www.slevkoff.com)
 */
 class anvilComboBox extends anvilFormControlAbstract {
 
@@ -32,42 +16,42 @@ class anvilComboBox extends anvilFormControlAbstract {
 	public $recordset;
 
 
-	public $dataValue;
-	public $dataName;
+	public $dataValue = 'id';
+	public $dataName = 'name';
 	public $directory;
     public $directoryRegEx;
-	public $postbackEnabled;
+	public $postbackEnabled = false;
 	public $value;
-    public $wrapEnabled = false;
+//    public $wrapEnabled = false;
 
 
-	public function __construct($id = '', $name = '', $value = '', $properties = array(), $traceEnabled = false) {
+	public function __construct($id = '', $name = '', $value = '', $properties = array()) {
 //		$this->_traceEnabled = $traceEnabled;
 
 //        $this->enableLog();
 
-		unset($this->dataValue);
-		unset($this->dataName);
-		unset($this->directory);
-        unset($this->directoryRegEx);
-		unset($this->postbackEnabled);
-		unset($this->value);
-        unset($this->wrapEnabled);
+//		unset($this->dataValue);
+//		unset($this->dataName);
+//		unset($this->directory);
+//        unset($this->directoryRegEx);
+//		unset($this->postbackEnabled);
+//		unset($this->value);
+//        unset($this->wrapEnabled);
 
 
-		$this->addProperty('dataValue', 'id');
-		$this->addProperty('dataName', 'name');
-		$this->addProperty('directory', null);
-        $this->addProperty('directoryRegEx', null);
-		$this->addProperty('postbackEnabled', false);
+//		$this->addProperty('dataValue', 'id');
+//		$this->addProperty('dataName', 'name');
+//		$this->addProperty('directory', null);
+//        $this->addProperty('directoryRegEx', null);
+//		$this->addProperty('postbackEnabled', false);
 //		$this->addProperty('recordset', null);
-		$this->addProperty('value', '');
-        $this->addProperty('wrapEnabled', false);
-        $this->addProperty('wrapClass', 'selectWrap');
+//		$this->addProperty('value', '');
+//        $this->addProperty('wrapEnabled', false);
+//        $this->addProperty('wrapClass', 'selectWrap');
 
 		$this->value = $value;
 
-		parent::__construct($id, $name, $properties, $traceEnabled);
+		parent::__construct($id, $name, $properties);
 	}
 
 	public function addPreItem($value, $name) {
@@ -84,9 +68,9 @@ class anvilComboBox extends anvilFormControlAbstract {
 
         $return = '';
 
-        if ($this->wrapEnabled) {
-            $return .= '<p class="' . $this->wrapClass . '">';
-        }
+//        if ($this->wrapEnabled) {
+//            $return .= '<p class="' . $this->wrapClass . '">';
+//        }
 
         $return .= $this->renderLabel();
 
@@ -110,12 +94,12 @@ class anvilComboBox extends anvilFormControlAbstract {
         }
 
 
-		$triggers = $this->renderTriggers();
+//		$triggers = $this->renderTriggers();
 
-		$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $triggers, self::TRACE_TYPE_DEBUG);
+//		$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $triggers, self::TRACE_TYPE_DEBUG);
 
 //		$return .= $this->renderTriggers();
-		$return .= $triggers;
+//		$return .= $triggers;
 
 
 
@@ -280,9 +264,9 @@ class anvilComboBox extends anvilFormControlAbstract {
 		$return .= '</select>' . "\n";
 
 //        fb::log($return);
-        if ($this->wrapEnabled) {
-            $return .= '</p>';
-        }
+//        if ($this->wrapEnabled) {
+//            $return .= '</p>';
+//        }
 
 		return $return;
 	}

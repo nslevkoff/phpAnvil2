@@ -11,12 +11,14 @@ require_once PHPANVIL2_COMPONENT_PATH . 'anvilTabPanel.class.php';
 class anvilFormTabPanel extends anvilTabPanel
 {
 
-    const STATUS_ACTIVE = 1;
-    const STATUS_DISABLED = 2;
-    const STATUS_DELETED = 3;
+    const STATUS_SETUP = 1;
+    const STATUS_ACTIVE = 2;
+    const STATUS_DISABLED = 3;
+    const STATUS_DELETED = 4;
 
     private $_statusClass = array(
         '',
+        'setup',
         '',
         'disabled',
         'deleted'
@@ -31,6 +33,10 @@ class anvilFormTabPanel extends anvilTabPanel
         $this->status = $status;
 
         switch ($status) {
+            case self::STATUS_SETUP:
+                $title .= ' (setup)';
+                break;
+
             case self::STATUS_DISABLED:
                 $title .= ' (disabled)';
                 break;

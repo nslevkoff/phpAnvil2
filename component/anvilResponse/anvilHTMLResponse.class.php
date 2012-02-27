@@ -24,6 +24,7 @@ class anvilHTMLResponse extends anvilResponseAbstract
     private $_breadcrumbTitle = array();
     private $_breadcrumbURL = array();
     public $breadcrumbDivider = '/';
+//    public $breadcrumbLastDivider = '/';
 
     /**
      * @var anvilTemplateAbstract
@@ -97,15 +98,20 @@ class anvilHTMLResponse extends anvilResponseAbstract
 
             for ($i=0; $i < $count; $i++) {
                 $html .= '<li';
-                if ($i === ($count-1)) {
-                    $html .= ' class="active">';
-                    $html .= $this->_breadcrumbTitle[$i];
-                } else {
+//                if ($i === ($count-1)) {
+//                    $html .= ' class="active">';
+//                    $html .= $this->_breadcrumbTitle[$i];
+//                } else {
                     $html .= '>';
-                    $html .= '<a href="' . $phpAnvil->site->webPath . $this->_breadcrumbURL[$i] . '">';
+                    if (!empty($this->_breadcrumbURL[$i])) {
+                        $html .= '<a href="' . $phpAnvil->site->webPath . $this->_breadcrumbURL[$i] . '">';
+                    }
                     $html .= $this->_breadcrumbTitle[$i];
-                    $html .= '</a> <span class="divider">' . $this->breadcrumbDivider . '</span>';
-                }
+                    if (!empty($this->_breadcrumbURL[$i])) {
+                        $html .= '</a>';
+                    }
+                    $html .= ' <span class="divider">' . $this->breadcrumbDivider . '</span>';
+//                }
                 $html .= '</li>';
             }
             $html .= '</ul>';

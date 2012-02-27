@@ -17,6 +17,7 @@ class anvilPanel extends anvilContainer
     public $footer;
     public $headerActions;
     public $title;
+    public $subTitle;
 
 
     public function __construct($id = 0, $title = '', $properties = null)
@@ -73,7 +74,11 @@ class anvilPanel extends anvilContainer
     protected function _renderHeader()
     {
         $return = '<div class="header">';
-        $return .= '<h2>' . $this->title . '</h2>';
+        $return .= '<h2>' . $this->title;
+        if (!empty($this->subTitle)) {
+            $return .= ' <small>' . $this->subTitle . '</small>';
+        }
+        $return .= '</h2>';
 
         //---- Actions
         $return .= '<div class="actions">';

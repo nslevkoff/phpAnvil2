@@ -1,41 +1,28 @@
 <?php
-/**
-* @file
-* @author		Nick Slevkoff <nick@slevkoff.com>
-* @copyright	Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
-* @license
-*     This source file is subject to the new BSD license that is
-*     bundled with this package in the file LICENSE.txt. It is also
-*     available on the Internet at:  http://www.phpanvil.com/LICENSE.txt
-* @ingroup		phpAnvilTools anvilData anvilData_MySQL
-*/
 
-require_once('anvilDynamicObject.abstract.php');
-require_once('anvilCollection.class.php');
-require_once('anvilDataRecordset.interface.php');
+require_once PHPANVIL2_COMPONENT_PATH . 'anvilCollection.class.php';
+require_once 'anvilDataRecordset.abstract.php';
+require_once 'anvilDataRecordset.interface.php';
 require_once('anvilData_array_Column.class.php');
 
 
 /**
-* MySQL Recordset
+* Array Recordset
 *
-* @version		1.0
-* @date			8/25/2010
-* @author		Nick Slevkoff <nick@slevkoff.com>
-* @copyright 	Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
-* @ingroup 		phpAnvilTools anvilData anvilData_MySQL
+* @copyright 	Copyright (c) 2010-2012 Nick Slevkoff (http://www.slevkoff.com)
 */
-class anvilData_array_Recordset extends anvilDynamicObjectAbstract
+class anvilData_array_Recordset extends anvilDataRecordsetAbstract
 	implements anvilDataRecordsetInterface
 {
 	const VERSION	= '1.0';
 	const ENGINE 	= 'array';
 
-	private $_columns;
-	private $_row;
-	private $_hasRows = false;
-
+//	private $_columns;
+//	private $_row;
+//	private $_hasRows = false;
+//
     public $array = array();
+    public $rowNumber = -1;
 
 	/**
 	* construct
@@ -47,10 +34,12 @@ class anvilData_array_Recordset extends anvilDynamicObjectAbstract
 	*/
 	public function __construct($array)
 	{
-        unset($this->array);
+//        unset($this->array);
 
-		$this->addProperty('array', '');
-		$this->addProperty('rowNumber', -1);
+//		$this->addProperty('array', '');
+//		$this->addProperty('rowNumber', -1);
+
+        $this->enableLog();
 
 		$this->array = $array;
 
@@ -188,10 +177,14 @@ class anvilData_array_Recordset extends anvilDynamicObjectAbstract
 //            $edition[$key] = $row['edition'];
 //        }
 
+        $sortColumn = array();
+
         $totalRows = $this->count();
 
         for ($i=0; $i < $totalRows; $i++)
         {
+            $this->_logDebug($i, '$i');
+
             $sortColumn[$i] = $this->array[$i][$column];
         }
 

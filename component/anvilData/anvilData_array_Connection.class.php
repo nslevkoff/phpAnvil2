@@ -105,47 +105,45 @@ class anvilData_array_Connection extends anvilDataConnectionAbstract implements 
 	}
 
 
-	public function dbDTS($original_dts)
+    public function dbDTS($value, $format = 'm/d/Y H:i:s')
 	{
-		if (!$original_dts)
+		if (!$value)
         {
 			$new_dts = 'null';
 		} else {
-			$new_dts = date('m/d/Y H:i:s', strtotime($original_dts));
+			$new_dts = date($format, strtotime($value));
 		}
 		return $new_dts;
 	}
 
 
-	public function dbDTS2($original_dts)
+    public function dbDTS2($value, $format = 'm/d/Y H:i:s')
 	{
-		if (!$original_dts) {
+		if (!$value) {
 			$new_dts = 'null';
 		} else {
-            $new_dts = date('m/d/Y H:i:s', $original_dts);
+            $new_dts = date($format, $value);
 		}
 		return $new_dts;
 	}
 
 
-	public function dbDate($original_date)
+	public function dbDate($value)
 	{
-		$new_date = date('m/d/Y', strtotime($original_date));
+		$new_date = date('m/d/Y', strtotime($value));
 		return $new_date;
 	}
 
 
-	public function dbString($original_str)
+	public function dbString($value)
 	{
-		if (!$original_str) {
-			$new_str = "null";
-		} else {
-			if ($this->isConnected()) {
-				$new_str = $original_str;
-			}
+        $return = "null";
+
+		if ($value && $this->isConnected()) {
+            $return = $value;
 		}
 
-		return $new_str;
+		return $return;
 	}
 
 	public function dbBoolean($value) {

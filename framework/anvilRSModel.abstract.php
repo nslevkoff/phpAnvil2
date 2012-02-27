@@ -4,12 +4,14 @@ require_once 'anvilModel.abstract.php';
 
 abstract class anvilRSModelAbstract extends anvilModelAbstract
 {
-	const RECORD_STATUS_ACTIVE		= 1;
-	const RECORD_STATUS_DISABLED	= 2;
-	const RECORD_STATUS_DELETED		= 3;
+    const RECORD_STATUS_SETUP		= 1;
+	const RECORD_STATUS_ACTIVE		= 2;
+	const RECORD_STATUS_DISABLED	= 3;
+	const RECORD_STATUS_DELETED		= 4;
 
     private $_rsName = array(
         'Unknown',
+        'Setup',
         'Active',
         'Disabled',
         'Deleted'
@@ -96,6 +98,11 @@ abstract class anvilRSModelAbstract extends anvilModelAbstract
     {
 		return $this->recordStatusID == self::RECORD_STATUS_DELETED;
 	}
+
+    public function isSetup()
+       {
+   		return $this->recordStatusID == self::RECORD_STATUS_SETUP;
+   	}
 
 
     public function setRecordStatus($newStatus)

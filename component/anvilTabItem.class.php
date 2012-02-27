@@ -14,6 +14,8 @@ class anvilTabItem extends anvilContainer
     public $active = false;
     public $title;
     public $url;
+    public $rightIcon;
+    public $rightCounter;
 
 
     public function __construct($id, $title = '', $url = '', $active = false, $properties = null)

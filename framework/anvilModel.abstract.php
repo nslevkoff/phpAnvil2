@@ -137,6 +137,7 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
     protected function _buildSaveSQL($forceUpdateAll = false)
     {
         $dataFields = '';
+        $sql = '';
 
         if ($this->isNew()) {
             $sql = 'INSERT INTO ' . $this->primaryTableName . ' (';
@@ -170,7 +171,7 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
 
             $sql .= ')';
 
-        } else {
+        } elseif ($this->isChanged()) {
             $sql = 'UPDATE ' . $this->primaryTableName . ' SET ';
 
             $count = $this->fields->count();
@@ -232,6 +233,11 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
         return $return;
     }
 
+
+    public function isChanged()
+    {
+        return $this->fields->isChanged();
+    }
 
     public function isField($name)
     {
@@ -311,6 +317,7 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
         $objRS->close();
 
         $this->_isLoaded = $return;
+        $this->resetChanged();
 
         return $return;
     }
@@ -341,18 +348,24 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
 
         $this->_logVerbose($sql, 'Save SQL');
 
-        $return = $this->dataConnection->execute($sql);
+        if (empty($sql)) {
+            $return = true;
+        } else {
+            $return = $this->dataConnection->execute($sql);
 
-        if ($this->isNew()) {
-            if (empty($id_sql)) {
-                //				$id_sql = 'SELECT LAST_INSERT_ID() AS id FROM ' . $this->dataFrom;
-                $id_sql = 'SELECT LAST_INSERT_ID() AS id';
+            if ($this->isNew()) {
+                if (empty($id_sql)) {
+                    //				$id_sql = 'SELECT LAST_INSERT_ID() AS id FROM ' . $this->dataFrom;
+                    $id_sql = 'SELECT LAST_INSERT_ID() AS id';
+                }
+
+                $objRS = $this->dataConnection->execute($id_sql);
+                if ($objRS->read()) {
+                    $this->fields->field($this->primaryFieldName)->value = $objRS->data('id');
+                }
             }
 
-            $objRS = $this->dataConnection->execute($id_sql);
-            if ($objRS->read()) {
-                $this->fields->field($this->primaryFieldName)->value = $objRS->data('id');
-            }
+            $this->resetChanged();
         }
 
         return $return;
