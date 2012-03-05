@@ -19,18 +19,26 @@ class anvilRegional extends anvilObjectAbstract
     //---- Depreciated, use $regional->dateTimeZone->getOffset()
     public $timezoneOffset = -8;
 
+    public $defaultTimezone = 'America/Los_Angeles';
+
 	public function __construct()
     {
         $this->enableLog();
 
         //---- Create DateTimeZone defaulting to PST ---------------------------
         //-- Change timezones using $regional->dateTimeZone->setTimezone($timezone)
-        $this->dateTimeZone = new DateTimeZone('America/Los_Angeles');
+        $this->dateTimeZone = new DateTimeZone($this->defaultTimezone);
 	}
 
     public function setTimezone($timezone)
     {
+        if (empty($timezone)) {
+            $this->_logVerbose('Timezone not set, using default (' . $this->defaultTimezone . '...');
+            $timezone = $this->defaultTimezone;
+        }
+
         $this->_logVerbose('Setting regional timezone to ' . $timezone . '...');
+
         $this->dateTimeZone = new DateTimeZone($timezone);
 
         return true;

@@ -6,7 +6,26 @@ require_once PHPANVIL2_COMPONENT_PATH . 'anvilObject.abstract.php';
 abstract class anvilControllerAbstract extends anvilObjectAbstract
 {
 
+    /**
+     * @var phpAnvil2
+     */
+    protected $_core;
+
+    /**
+     * @var anvilApplicationAbstract
+     */
+    protected $_application;
+
+    /**
+     * @var anvilSiteAbstract
+     */
+    protected $_site;
+
+    /**
+     * @var anvilModuleAbstract
+     */
     public $module;
+
     public $name;
     public $refName;
     public $version = '1.0';
@@ -15,8 +34,11 @@ abstract class anvilControllerAbstract extends anvilObjectAbstract
 
     public $requiresAuthentication = true;
     public $redirectURL = '';
-    public $webPath;
+//    public $webPath;
     public $plugins;
+
+    protected $_pagePath;
+    protected $_webPath;
 
     public $response;
 
@@ -25,10 +47,15 @@ abstract class anvilControllerAbstract extends anvilObjectAbstract
 
     function __construct()
     {
+        global $phpAnvil;
 
         parent::__construct();
 
         $this->enableLog();
+
+        $this->_core = $phpAnvil;
+        $this->_application = $phpAnvil->application;
+        $this->_site = $phpAnvil->site;
 
         $this->plugins = new PluginCollection();
         //        $this->alerts = new anvilContainer();
@@ -44,14 +71,16 @@ abstract class anvilControllerAbstract extends anvilObjectAbstract
 
         $return = true;
 
-        $this->webPath = $phpAnvil->site->webPath;
+        $this->_webPath = $phpAnvil->site->webPath;
+        $this->_pagePath = $this->_webPath;
         if (isset($_SERVER['REDIRECT_SCRIPT_URL'])) {
 //            $this->_logDebug($_SERVER['REDIRECT_SCRIPT_URL'], '$_SERVER[REDIRECT_SCRIPT_URL]');
 
 //            phpInfo();
 
-            $this->webPath .= ltrim($_SERVER['REDIRECT_SCRIPT_URL'], '/');
+            $this->_pagePath .= ltrim($_SERVER['REDIRECT_SCRIPT_URL'], '/');
         }
+
 
 //        $this->_logDebug($this->webPath, 'webPath');
 

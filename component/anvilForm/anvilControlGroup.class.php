@@ -28,7 +28,11 @@ class anvilControlGroup extends anvilContainer
     public function renderContent()
     {
 
-        $return = '<div class="control-group">';
+        $return = '<div class="control-group';
+        if (!empty($this->class)) {
+            $return .= ' ' . $this->class;
+        }
+        $return .= '">';
 
         if (!empty($this->label)) {
             $return .= '<label class="control-label" for="' . $this->labelForID . '">' . $this->label . '</label>';

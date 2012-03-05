@@ -12,7 +12,7 @@ class anvilDataComboBox extends anvilComboBox
 {
     public $field;
 
-    public function __construct($field, $properties = null)
+    public function __construct($field, $size = self::SIZE_MEDIUM, $properties = null)
     {
 
 //        $this->enableLog();
@@ -22,7 +22,7 @@ class anvilDataComboBox extends anvilComboBox
         $id = $field->tableName . '_' . $field->name;
         $name = $field->tableName . '[' . $field->name . ']';
 
-        parent::__construct($id, $name, $field->value, $properties);
+        parent::__construct($id, $name, $size, $field->value, $properties);
     }
 
 

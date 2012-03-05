@@ -11,7 +11,47 @@ class anvilComboBox extends anvilFormControlAbstract {
 
 	const VERSION        	= '1.0';
 
-	protected $_preItems = array();
+    private $_sizeClass = array(
+        'input-mini',
+        'input-small',
+        'input-medium',
+        'input-large',
+        'input-xlarge',
+        'input-xxlarge',
+        'span1',
+        'span2',
+        'span3',
+        'span4',
+        'span5',
+        'span6',
+        'span7',
+        'span8',
+        'span9',
+        'span10',
+        'span11',
+        'span12'
+    );
+
+    const SIZE_MINI    = 0;
+    const SIZE_SMALL   = 1;
+    const SIZE_MEDIUM  = 2;
+    const SIZE_LARGE   = 3;
+    const SIZE_XLARGE  = 4;
+    const SIZE_XXLARGE = 5;
+    const SIZE_SPAN1   = 6;
+    const SIZE_SPAN2   = 7;
+    const SIZE_SPAN3   = 8;
+    const SIZE_SPAN4   = 9;
+    const SIZE_SPAN5   = 10;
+    const SIZE_SPAN6   = 11;
+    const SIZE_SPAN7   = 12;
+    const SIZE_SPAN8   = 13;
+    const SIZE_SPAN9   = 14;
+    const SIZE_SPAN10  = 15;
+    const SIZE_SPAN11  = 16;
+    const SIZE_SPAN12  = 17;
+
+    protected $_preItems = array();
 	protected $_postItems = array();
 	public $recordset;
 
@@ -21,11 +61,12 @@ class anvilComboBox extends anvilFormControlAbstract {
 	public $directory;
     public $directoryRegEx;
 	public $postbackEnabled = false;
-	public $value;
+    public $size;
+    public $value;
 //    public $wrapEnabled = false;
 
 
-	public function __construct($id = '', $name = '', $value = '', $properties = array()) {
+	public function __construct($id = '', $name = '', $size = self::SIZE_MEDIUM, $value = '', $properties = array()) {
 //		$this->_traceEnabled = $traceEnabled;
 
 //        $this->enableLog();
@@ -49,6 +90,7 @@ class anvilComboBox extends anvilFormControlAbstract {
 //        $this->addProperty('wrapEnabled', false);
 //        $this->addProperty('wrapClass', 'selectWrap');
 
+        $this->size = $size;
 		$this->value = $value;
 
 		parent::__construct($id, $name, $properties);
@@ -85,9 +127,11 @@ class anvilComboBox extends anvilFormControlAbstract {
 			$return .= ' name="' . $this->name . '"';
 		}
 
+        $return .= ' class="' . $this->_sizeClass[$this->size];
         if ($this->class) {
-            $return .= ' class="' . $this->class . '"';
+            $return .= ' ' . $this->class;
         }
+        $return .= '"';
 
         if ($this->style) {
             $return .= ' style="' . $this->style . '"';
@@ -271,28 +315,6 @@ class anvilComboBox extends anvilFormControlAbstract {
 		return $return;
 	}
 
-	public function renderPreClientScript()
-    {
-		$return = '';
-
-//        fb::log($this->id, 'renderPreClientScript()');
-
-		if ($this->postbackEnabled)
-        {
-            $this->_logDebug('Adding onchange trigger...');
-
-			$this->addTrigger('onchange', 'object.form.submit();');
-		}
-
-		$return .= parent::renderPreClientScript();
-		return $return;
-	}
-
-	public function renderPostClientScript() {
-		$return = '';
-		$return .= parent::renderPostClientScript();
-		return $return;
-	}
 }
 
 ?>

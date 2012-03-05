@@ -30,7 +30,12 @@ class anvilFieldset extends anvilContainer
     public function renderContent()
     {
 
-        $return = '<fieldset>';
+        $return = '<fieldset';
+
+        if (!empty($this->class)) {
+            $return .= ' class="' . $this->class . '"';
+        }
+        $return .= '>';
 
         if (!empty($this->title)) {
             $return .= '<legend>' . $this->title . '</legend>';

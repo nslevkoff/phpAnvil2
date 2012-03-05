@@ -126,11 +126,28 @@ class anvilEntry extends anvilFormControlAbstract {
         
 //        $return .= $this->renderLabel();
 
-        if (!empty($this->appendText)) {
-            $return .= '<div class="input-append">';
-        } elseif (!empty($this->prependText)) {
-            $return .= '<div class="input-prepend">';
-            $return .= '<span class="add-on">' . $this->prependText . '</span>';
+        if (!empty($this->prependText) || !empty($this->appendText)) {
+
+//            if (!empty($this->appendText)) {
+//                $return .= '<div class="input-append">';
+//            } elseif (!empty($this->prependText)) {
+//                $return .= '<div class="input-prepend">';
+//                $return .= '<span class="add-on">' . $this->prependText . '</span>';
+//            }
+
+                $return .= '<div class="';
+            if (!empty($this->appendText)) {
+                $return .= ' input-append';
+            }
+
+            if (!empty($this->prependText)) {
+                $return .= ' input-prepend';
+            }
+            $return .= '">';
+
+            if (!empty($this->prependText)) {
+                $return .= '<span class="add-on">' . $this->prependText . '</span>';
+            }
         }
 
 		$return .= '<input type="';
@@ -210,13 +227,17 @@ class anvilEntry extends anvilFormControlAbstract {
 
 		$return .= ' />';
 
-        if (!empty($this->appendText)) {
-            $return .= '<span class="add-on">' . $this->appendText . '</span>';
-            $return .= '</div>';
-        } elseif (!empty($this->prependText)) {
-            $return .= '</div>';
+        if (!empty($this->prependText) || !empty($this->appendText)) {
+            if (!empty($this->appendText)) {
+                $return .= '<span class="add-on">' . $this->appendText . '</span>';
+            }
+//            if (!empty($this->appendText)) {
+//                $return .= '<span class="add-on">' . $this->appendText . '</span>';
+//                $return .= '</div>';
+//            } elseif (!empty($this->prependText)) {
+                $return .= '</div>';
+//            }
         }
-
 
 //        if ($this->wrapEnabled) {
 //            $return .= '</p>';
