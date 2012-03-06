@@ -1,46 +1,79 @@
 <?php
 
 require_once 'anvilController.abstract.php';
-//require_once PHPANVIL2_COMPONENT_PATH . 'anvilContainer.class.php';
-require_once PHPANVIL2_COMPONENT_PATH . 'anvilResponse/anvilHTMLResponse.class.php';
-
+require_once PHPANVIL2_COMPONENT_PATH . 'anvilAlert.class.php';
+require_once PHPANVIL2_COMPONENT_PATH . 'anvilContainer.class.php';
+require_once PHPANVIL2_COMPONENT_PATH . 'anvilResponse/anvilHTMLResponseHead.class.php';
 
 /**
- * @property anvilHTMLResponse $response
+ * @property anvilContainer $response
  */
 abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
 {
 
-//    public $templateFilename = 'default.tpl';
-//    private $_content;
+    private $_breadcrumbTitle = array();
+    private $_breadcrumbURL = array();
+    public $breadcrumbDivider = '/';
+//    public $breadcrumbLastDivider = '/';
+
+    /**
+     * @var anvilTemplateAbstract
+     */
+    protected $_template;
+
+    /**
+     * @var string
+     */
+    protected $_templateFilename;
+
+    /**
+     * @var anvilHTMLResponseHead
+     */
+    protected $_head;
+
+    /**
+     * @var array
+     */
+    public $page = array();
+
+    private $_preClientScript;
+    private $_postClientScript;
+
+    protected $_tokenArray = array();
 
 
-	function __construct()
+    function __construct()
     {
-        global $phpAnvil;
-
         parent::__construct();
 
         $this->enableLog();
 
-        $this->response = new anvilHTMLResponse();
-        $this->response->template = $phpAnvil->application->newTemplate();
-//        $this->_content = new anvilContainer('content');
+        $this->_template = $this->_application->newTemplate();
+        $this->_head   = new anvilHTMLResponseHead();
 
-		return true;
+        $this->response = new anvilContainer();
+//        $this->alerts = new anvilContainer();
+
+        //---- Set Initial Tokens ----------------------------------------------
+        $appTokens = array(
+            'name'          => $this->_application->name,
+            'refName'       => $this->_application->refName,
+            'version'       => $this->_application->version,
+            'build'         => $this->_application->build,
+            'copyright'     => $this->_application->copyright,
+            'copyrightHTML' => $this->_application->copyrightHTML
+        );
+        $this->_tokenArray['app'] = $appTokens;
+
+        $this->_tokenArray['webPath'] = $this->_site->webPath;
+
+        return true;
 	}
 
 
     function init()
     {
-//        global $phpAnvil;
-
         $return = parent::init();
-
-        if ($return) {
-
-//            $this->page = new anvilPage('', '', null, true);
-        }
 
         return $return;
     }
@@ -48,72 +81,156 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
 
     function open()
     {
-        global $phpAnvil;
-
         $return = parent::open();
-
-        if ($return) {
-//            if (!is_object($this->page->template)) {
-//                $this->page->anvilTemplate = $this->template;
-//                $this->page->template = $phpAnvil->application->newTemplate();
-//                $this->page->template = $phpAnvil->application->newTemplate();
-//            }
-        }
 
         return $return;
     }
 
 
-    public function addControl($control)
+    protected function _addBreadcrumb($title, $url)
+    {
+        $this->_breadcrumbTitle[] = $title;
+        $this->_breadcrumbURL[]   = $url;
+
+        return true;
+    }
+
+
+    protected function _addControl($control)
     {
         $this->response->addControl($control);
     }
 
-//    public function addContentControl($control)
-//    {
-//        $this->_content->addControl($control);
-//    }
 
-    public function assign($var, $value)
+    protected function _assign($var, $value)
     {
-        $this->response->template->assign($var, $value);
+        $this->_template->assign($var, $value);
     }
 
-    function display()
+
+    protected function _assignTokens()
     {
         global $phpAnvil;
 
-//        $this->response->innerTemplate = $this->templateFilename;
+        $this->_head->render();
+        $this->_head->html .= $this->_preClientScript;
 
-//        $this->assign('applicationName', $phpAnvil->application->name);
-//        $this->assign('applicationRefName', $phpAnvil->application->refName);
-//        $this->assign('applicationVersion', $phpAnvil->application->version);
-//        $this->assign('applicationBuild', $phpAnvil->application->build);
-//        $this->assign('applicationCopyright', $phpAnvil->application->copyright);
+        $this->_tokenArray['head'] = (array)$this->_head;
+//        $this->_assign('head', (array)$this->_head);
 
-//        $this->addControl($this->_content);
+//        $this->_assign('postClientScript', $this->_postClientScript);
 
-        $appTokens = array(
-            'name'          => $phpAnvil->application->name,
-            'refName'       => $phpAnvil->application->refName,
-            'version'       => $phpAnvil->application->version,
-            'build'         => $phpAnvil->application->build,
-            'copyright'     => $phpAnvil->application->copyright,
-            'copyrightHTML' => $phpAnvil->application->copyrightHTML
-        );
-        $this->assign('app', $appTokens);
+//        $this->_assign('page', $this->page);
+
+        //---- Prepare Breadcrumbs ---------------------------------------------
+        $count = count($this->_breadcrumbTitle);
+
+        $html = '';
+
+        if ($count > 0) {
+            $html .= '<ul class="breadcrumb">';
+
+            for ($i = 0; $i < $count; $i++) {
+                $html .= '<li>';
+
+                if (!empty($this->_breadcrumbURL[$i])) {
+                    $html .= '<a href="' . $phpAnvil->site->webPath . $this->_breadcrumbURL[$i] . '">';
+                }
+                $html .= $this->_breadcrumbTitle[$i];
+                if (!empty($this->_breadcrumbURL[$i])) {
+                    $html .= '</a>';
+                }
+                $html .= ' <span class="divider">' . $this->breadcrumbDivider . '</span>';
+                $html .= '</li>';
+            }
+            $html .= '</ul>';
+        }
+
+//        $this->_assign('breadcrumbs', $html);
+        $this->_tokenArray['page']['breadcrumbs'] = $html;
+
+
+        //---- Assign Tokens to Template ---------------------------------------
+        $tokenKeys = array_keys($this->_tokenArray);
+        $count = count($tokenKeys);
+
+        $this->_logDebug($count, '$count');
+
+        for ($i=0; $i < $count; $i++) {
+            $this->_assign($tokenKeys[$i], $this->_tokenArray[$tokenKeys[$i]]);
+        }
+    }
+
+
+
+    protected function _display()
+    {
+        global $phpAnvil;
+
+//        $appTokens = array(
+//            'name'          => $phpAnvil->application->name,
+//            'refName'       => $phpAnvil->application->refName,
+//            'version'       => $phpAnvil->application->version,
+//            'build'         => $phpAnvil->application->build,
+//            'copyright'     => $phpAnvil->application->copyright,
+//            'copyrightHTML' => $phpAnvil->application->copyrightHTML
+//        );
+//        $this->assign('app', $appTokens);
 
 
         //---- HEAD ------------------------------------------------------------
-        $this->assign('webPath', $phpAnvil->site->webPath);
+//        $this->assign('webPath', $phpAnvil->site->webPath);
 
-        $alerts = $this->renderAlerts();
+        $alerts = $this->_renderAlerts();
 //        $this->_logDebug($alerts, '$alerts');
-        $this->assign('alerts', $alerts);
+//        $this->_assign('alerts', $alerts);
+        $this->_tokenArray['app']['alerts'] = $alerts;
 
 
-        return $this->response->display();
+
+        if (is_object($this->_template)) {
+            $this->_template = clone $this->_template;
+        }
+
+        $this->_displayControls();
+
+        $this->_assignTokens();
+
+        return $this->_template->display($this->_templateFilename);
+
+//        return $this->response->display();
     }
+
+
+    protected function _displayControls()
+    {
+        //		$this->_logDebug('Executing...');
+
+        //        fb::log('anvilPage.displayControls()');
+        $this->_preClientScript  = $this->response->renderPreClientScript();
+        $this->_postClientScript = $this->response->renderPostClientScript();
+
+        $return = '';
+        for ($this->response->controls->moveFirst(); $this->response->controls->hasMore(); $this->response->controls->moveNext()) {
+            $objControl = $this->response->controls->current();
+            //			$this->_logDebug('Display Control:id_' . $objControl->id);
+            $this->response->preRenderControl($objControl);
+            if ($this->_templateFilename && is_object($this->_template)) {
+
+                $msg = 'Assign Control-Template:id_' . $objControl->id;
+                $this->_logDebug($msg);
+
+                //        fb::log($msg);
+                $html = $objControl->render($this->_template);
+
+                $this->_logDebug($html);
+
+                $this->_assign('id_' . $objControl->id, $html);
+            }
+        }
+        return $return;
+    }
+
 
     private function _renderAlertType($type, $typeName)
     {
@@ -146,7 +263,9 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
         return $html;
     }
 
-    public function renderAlerts()
+
+
+    protected function _renderAlerts()
     {
         $html = '';
         $html .= $this->_renderAlertType(anvilAlert::TYPE_ERROR, 'error');

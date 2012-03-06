@@ -13,8 +13,6 @@ abstract class anvilResponseAbstract extends anvilContainer
 
     public function __construct($properties = null)
     {
-//        $this->enableLog();
-
         parent::__construct(0, $properties);
     }
 

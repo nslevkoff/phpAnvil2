@@ -73,6 +73,7 @@ abstract class anvilTemplateAbstract extends anvilDynamicObjectAbstract {
 	}
 
 	public function display($template) {
+        return true;
 	}
 
 	public function render($template) {

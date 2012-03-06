@@ -1,14 +1,4 @@
 <?php
-/**
- * @file
- * @author          Nick Slevkoff <nick@slevkoff.com>
- * @copyright       Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
- * @license
- *                  This source file is subject to the new BSD license that is
- *                  bundled with this package in the file LICENSE.txt. It is also
- *                  available on the Internet at:  http://www.phpanvil.com/LICENSE.txt
- * @ingroup         phpAnvilTools
- */
 
 require_once('anvilObject.abstract.php');
 
@@ -18,14 +8,9 @@ require_once('anvilObject.abstract.php');
  *
  * This class is used for managing collections of objects.
  *
- * @version         1.0
- * @date            8/25/2010
- * @author          Nick Slevkoff <nick@slevkoff.com>
- * @copyright       Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
- * @ingroup         phpAnvilTools
+ * @copyright       Copyright (c) 2010-2012 Nick Slevkoff (http://www.slevkoff.com)
  */
-class anvilCollection extends anvilObjectAbstract implements ArrayAccess, Countable,
-    IteratorAggregate
+class anvilCollection extends anvilObjectAbstract implements ArrayAccess, Countable, IteratorAggregate
 {
     /**
      * Version number for this class release.
@@ -82,11 +67,12 @@ class anvilCollection extends anvilObjectAbstract implements ArrayAccess, Counta
     /**
      * Moves the index pointer to the first item in the collection.
      *
+     * @return mixed
      */
     public function moveFirst()
     {
         //		$this->index = 0;
-        reset($this->_items);
+        return reset($this->_items);
     }
 
 
@@ -115,6 +101,7 @@ class anvilCollection extends anvilObjectAbstract implements ArrayAccess, Counta
     /**
      * Moves the index pointer to the last item in the collection.
      *
+     * @return mixed
      */
     public function moveLast()
     {
@@ -123,7 +110,7 @@ class anvilCollection extends anvilObjectAbstract implements ArrayAccess, Counta
 
 
     /**
-     * Determins if there are more items in the collection after the current index.
+     * Determin if there are more items in the collection after the current index.
      *
      * @return boolean True if there are more items after the current indexed item in the collection.
      */

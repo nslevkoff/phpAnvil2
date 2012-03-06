@@ -63,7 +63,7 @@ class anvilContainer extends anvilControlAbstract
     }
 
 
-    protected function preRenderControl($control)
+    public function preRenderControl($control)
     {
     }
 
