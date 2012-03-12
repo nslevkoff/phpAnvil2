@@ -10,17 +10,20 @@ require_once 'anvilComboBox.class.php';
  */
 class anvilDataComboBox extends anvilComboBox
 {
+    /**
+     * @var anvilModelField
+     */
     public $field;
 
-    public function __construct($field, $size = self::SIZE_MEDIUM, $properties = null)
+    public function __construct(anvilModelField $field, $size = self::SIZE_MEDIUM, $properties = null)
     {
 
 //        $this->enableLog();
 
         $this->field = $field;
 
-        $id = $field->tableName . '_' . $field->name;
-        $name = $field->tableName . '[' . $field->name . ']';
+        $id = $field->formName . '_' . $field->name;
+        $name = $field->formName . '[' . $field->name . ']';
 
         parent::__construct($id, $name, $size, $field->value, $properties);
     }

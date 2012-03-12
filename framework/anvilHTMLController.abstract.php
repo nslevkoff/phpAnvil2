@@ -46,7 +46,7 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
     {
         parent::__construct();
 
-        $this->enableLog();
+//        $this->enableLog();
 
         $this->_template = $this->_application->newTemplate();
         $this->_head   = new anvilHTMLResponseHead();
@@ -151,10 +151,12 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
 
 
         //---- Assign Tokens to Template ---------------------------------------
+//        $this->_logDebug($this->_tokenArray, 'tokenArray');
+
         $tokenKeys = array_keys($this->_tokenArray);
         $count = count($tokenKeys);
 
-        $this->_logDebug($count, '$count');
+//        $this->_logDebug($count, '$count');
 
         for ($i=0; $i < $count; $i++) {
             $this->_assign($tokenKeys[$i], $this->_tokenArray[$tokenKeys[$i]]);
@@ -192,9 +194,9 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
             $this->_template = clone $this->_template;
         }
 
-        $this->_displayControls();
-
         $this->_assignTokens();
+
+        $this->_displayControls();
 
         return $this->_template->display($this->_templateFilename);
 
@@ -218,12 +220,12 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
             if ($this->_templateFilename && is_object($this->_template)) {
 
                 $msg = 'Assign Control-Template:id_' . $objControl->id;
-                $this->_logDebug($msg);
+//                $this->_logDebug($msg);
 
                 //        fb::log($msg);
                 $html = $objControl->render($this->_template);
 
-                $this->_logDebug($html);
+//                $this->_logDebug($html);
 
                 $this->_assign('id_' . $objControl->id, $html);
             }

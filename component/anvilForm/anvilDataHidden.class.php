@@ -9,17 +9,20 @@ require_once 'anvilHidden.class.php';
 */
 class anvilDataHidden extends anvilHidden {
 
+    /**
+     * @var anvilModelField
+     */
     public $field;
 
-    public function __construct($field, $properties = null)
+    public function __construct(anvilModelField $field, $properties = null)
     {
 
 //        $this->enableLog();
 
         $this->field = $field;
 
-        $id = $field->tableName . '_' . $field->name;
-        $name = $field->tableName . '[' . $field->name . ']';
+        $id = $field->formName . '_' . $field->name;
+        $name = $field->formName . '[' . $field->name . ']';
 
         parent::__construct($id, $name, $field->value, $properties);
     }

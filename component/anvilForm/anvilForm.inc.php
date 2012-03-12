@@ -15,6 +15,7 @@ require_once 'anvilRadio.class.php';
 
 require_once 'anvilDataCheckBox.class.php';
 require_once 'anvilDataComboBox.class.php';
+require_once 'anvilDataControlGroup.class.php';
 require_once 'anvilDataEntry.class.php';
 require_once 'anvilDataHidden.class.php';
 require_once 'anvilDataMemo.class.php';

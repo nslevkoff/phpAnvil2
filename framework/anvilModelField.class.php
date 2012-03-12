@@ -33,6 +33,7 @@ class anvilModelField
     public $priorValue;
 
     public $tableName;
+    public $formName;
     public $fieldName;
     public $fieldType = self::DATA_TYPE_STRING;
     public $maxLength;
@@ -52,6 +53,7 @@ class anvilModelField
         //        $this->model = $model;
         $this->name      = $name;
         $this->tableName = $model->primaryTableName;
+        $this->formName = $model->formName;
     }
 
 

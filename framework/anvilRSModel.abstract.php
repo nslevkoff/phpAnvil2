@@ -33,9 +33,9 @@ abstract class anvilRSModelAbstract extends anvilModelAbstract
 //    public $primaryTable;
 
 
-    public function __construct($primaryTableName = '', $primaryFieldName = 'id')
+    public function __construct($primaryTableName = '', $primaryFieldName = 'id', $formName = '')
     {
-        parent::__construct($primaryTableName, $primaryFieldName);
+        parent::__construct($primaryTableName, $primaryFieldName, $formName);
 
         $this->fields->addDTS->fieldName = 'add_dts';
         $this->fields->addDTS->fieldType = anvilModelField::DATA_TYPE_DTS;

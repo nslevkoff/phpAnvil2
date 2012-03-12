@@ -38,9 +38,9 @@ class anvilContainer extends anvilControlAbstract
     //---- Define Properties for Documentation and IDE Use
 
     /**
-     * anvilTemplate to use for rendering inside the container.
+     * Filename of the template to use for rendering inside the container.
      *
-     * @var anvilTemplateAbstract
+     * @var string
      */
     public $innerTemplate;
 
@@ -50,7 +50,7 @@ class anvilContainer extends anvilControlAbstract
 
         parent::__construct($id, $properties);
 
-        //        $this->enableLog();
+//                $this->enableLog();
 
         $this->controls = new anvilCollection();
 
@@ -60,6 +60,8 @@ class anvilContainer extends anvilControlAbstract
     public function addControl($control)
     {
         $this->controls->add($control);
+
+        return true;
     }
 
 

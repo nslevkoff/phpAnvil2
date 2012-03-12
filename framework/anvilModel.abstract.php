@@ -38,8 +38,10 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
 
     public $autoLoadAll = false;
 
+    public $formName;
 
-    public function __construct($primaryTableName = '', $primaryColumnName = 'id')
+
+    public function __construct($primaryTableName = '', $primaryColumnName = 'id', $formName = '')
     {
         global $phpAnvil;
 
@@ -53,6 +55,12 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
         $this->primaryColumnName = $primaryColumnName;
         $this->dataConnection    = $phpAnvil->db;
         $this->regional          = $phpAnvil->regional;
+
+        if (empty($formName)) {
+            $this->formName = $this->primaryTableName;
+        } else {
+            $this->formName = $formName;
+        }
     }
 
 
@@ -375,10 +383,14 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
     public function setFieldValues(array $fieldValues = null)
     {
 
+        $return = 0;
+
         if (is_array($fieldValues)) {
             foreach ($fieldValues as $name => $newValue)
             {
                 if ($this->fields->exists($name)) {
+                    $return++;
+
                     if ($this->fields->field($name)->value != $newValue) {
                         $this->fields->field($name)->priorValue = $this->fields->field($name)->value;
                         $this->fields->field($name)->changed    = true;
@@ -388,8 +400,14 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
                 }
             }
         }
+
+        return $return;
     }
 
+    public function setFieldValuesFromPOST()
+    {
+        return $this->setFieldValues($_POST[$this->formName]);
+    }
 
     public function toArray()
     {

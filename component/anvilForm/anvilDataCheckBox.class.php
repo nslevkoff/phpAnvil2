@@ -10,9 +10,12 @@ require_once 'anvilCheckBox.class.php';
  */
 class anvilDataCheckBox extends anvilCheckBox
 {
+    /**
+     * @var anvilModelField
+     */
     public $field;
 
-    public function __construct($field, $text, $properties = null)
+    public function __construct(anvilModelField $field, $text, $properties = null)
     {
 
 //        $this->enableLog();
@@ -21,9 +24,9 @@ class anvilDataCheckBox extends anvilCheckBox
 
 //        $id = $field->tableName . '_' . $field->name;
         $id = '';
-        $name = $field->tableName . '[' . $field->name . ']';
+        $name = $this->field->formName . '[' . $this->field->name . ']';
 
-        parent::__construct($id, $name, $text, $field->value, $properties);
+        parent::__construct($id, $name, $text, $this->field->value, $properties);
     }
 
 

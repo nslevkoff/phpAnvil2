@@ -10,17 +10,20 @@ require_once 'anvilMemo.class.php';
  */
 class anvilDataMemo extends anvilMemo
 {
+    /**
+     * @var anvilModelField
+     */
     public $field;
 
-    public function __construct($field, $size = self::SIZE_MEDIUM, $rows = 3, $properties = null)
+    public function __construct(anvilModelField $field, $size = self::SIZE_MEDIUM, $rows = 3, $properties = null)
     {
 
 //        $this->enableLog();
 
         $this->field = $field;
 
-        $id = $field->tableName . '_' . $field->name;
-        $name = $field->tableName . '[' . $field->name . ']';
+        $id = $field->formName . '_' . $field->name;
+        $name = $field->formName . '[' . $field->name . ']';
 
         parent::__construct($id, $name, $size, $rows, $field->value, $properties);
     }
