@@ -124,7 +124,7 @@ class anvilGrid extends anvilControlAbstract
     {
         global $anvilGridCounter;
 
-        //        $this->enableLog();
+                $this->enableLog();
 
 
         //        $this->addProperty('rowOffset', 0);
@@ -157,6 +157,21 @@ class anvilGrid extends anvilControlAbstract
         $this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, '... done (' . date('h:i:s A') . ')');
     }
 
+
+    protected function _processTokens($value, $data, $delimiterLeft = '{{$', $delimiterRight = '}}')
+    {
+        $return = $value;
+
+//        $this->_logDebug($value, '$value');
+//        $this->_logDebug($data, '$data');
+        foreach ($data as $dataKey => $dataValue) {
+            if (!is_numeric($dataKey)) {
+                $return = str_ireplace($delimiterLeft . $dataKey . $delimiterRight, $dataValue, $return);
+            }
+        }
+
+        return $return;
+    }
 
     public function setOrderBy($orderBy, $isDescending = false)
     {
@@ -356,10 +371,10 @@ class anvilGrid extends anvilControlAbstract
             $sql .= ' LIMIT ' . $this->rowOffset . ',' . $this->maxRows;
         }
 
-        $this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $sql);
+//        $this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $sql);
         //            $firePHP->_log($sql);
         //            fb::Log($sql, '$sql');
-        $this->_logDebug($sql, 'anvilGrid SQL');
+//        $this->_logDebug($sql, 'anvilGrid SQL');
 
         if (isset($this->gridRS)) {
             $objRS = $this->gridRS;
@@ -702,14 +717,14 @@ class anvilGrid extends anvilControlAbstract
                                                     }
                         */
                         if ($useColumnURL) {
-                            $html .= '<a href="' . htmlentities($columnOptions->url);
+                            $html .= '<a href="' . htmlentities($this->_processTokens($columnOptions->url, $this->rowData));
                             if (!empty($columnOptions->urlColumn)) {
                                 $html .= htmlentities($this->rowData[$columnOptions->urlColumn]);
                             }
                             $html .= '">';
                             //                        } elseif (!empty($this->rowURL) && $columnOptions && $columnOptions->rowClickable) {
                         } elseif ($useRowURL) {
-                            $html .= '<a href="' . htmlentities($this->rowURL);
+                            $html .= '<a href="' . htmlentities($this->_processTokens($this->rowURL, $this->rowData));
                             if (!empty($this->rowURLKeyColumn)) {
                                 $html .= htmlentities($this->rowData[$this->rowURLKeyColumn]);
                             }

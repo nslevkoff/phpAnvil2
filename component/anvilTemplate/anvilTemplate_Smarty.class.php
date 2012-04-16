@@ -22,6 +22,8 @@ require_once('anvilTemplate.abstract.php');
 * @author		Nick Slevkoff <nick@slevkoff.com>
 * @copyright 	Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
 * @ingroup 		phpAnvilTools
+ *
+ * @property Smarty $engine
 */
 class anvilTemplate_Smarty extends anvilTemplateAbstract {
 

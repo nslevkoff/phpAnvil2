@@ -44,6 +44,9 @@ class phpAnvil2 extends anvilObjectAbstract
     public $moduleOverride;
     public $actionOverride;
 
+    /**
+     * @var anvilSession
+     */
     public $session;
 
 //    public $actionMsg;
@@ -57,11 +60,21 @@ class phpAnvil2 extends anvilObjectAbstract
     public $option = null;
     public $path = null;
 
-    public $db = null;
+    /**
+     * @var anvilDataConnectionAbstract
+     */
+    public $db;
 
-    public $ui = null;
+    public $ui;
 
+    /**
+     * @var anvilSiteAbstract
+     */
     public $site;
+
+    /**
+     * @var anvilApplicationAbstract
+     */
     public $application;
     public $userAuthenticated = false;
 
@@ -71,6 +84,9 @@ class phpAnvil2 extends anvilObjectAbstract
     private $_connectedEvents = array();
 
 
+    /**
+     * @var anvilRegional|null
+     */
     public $regional = null;
     public $modelDictionary = null;
 
@@ -80,6 +96,7 @@ class phpAnvil2 extends anvilObjectAbstract
     public $sourceTypeID;
     public $sourceID;
 
+    public $requestPathArray;
 
 
     public function __construct()
@@ -114,7 +131,11 @@ class phpAnvil2 extends anvilObjectAbstract
         $this->regional = new anvilRegional();
 
         //		$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, 'Class Constructed.');
-        $this->_logVerbose('Class Constructed.');
+//        $this->_logVerbose('Class Constructed.');
+
+//        $requestPath = $_SERVER['SCRIPT_URL'];
+//        $this->_logDebug($requestPath, '$requestPath');
+//        $this->requestPathArray = explode('/', $requestPath);
     }
 
 
@@ -122,6 +143,10 @@ class phpAnvil2 extends anvilObjectAbstract
     {
         $return = false;
 
+        $requestPath = $_SERVER['SCRIPT_URL'];
+//        $this->_logDebug($requestPath, '$requestPath2');
+        $this->requestPathArray = explode('/', $requestPath);
+//        $this->_logDebug($this->requestPathArray, '$this->requestPathArray');
         //        $this->webRootPath = str_replace('index.php', '', $_SERVER["SCRIPT_NAME"]);
 
 
@@ -152,7 +177,7 @@ class phpAnvil2 extends anvilObjectAbstract
             //---- Initialize the Application
             $return = $this->application->init();
 
-            $this->_logDebug('Post application.init...');
+//            $this->_logDebug('Post application.init...');
 
             if ($return) {
                 $this->application->requestedModule = !empty($this->moduleOverride)
@@ -187,6 +212,8 @@ class phpAnvil2 extends anvilObjectAbstract
 
     function open()
     {
+        $return = false;
+
         #--- Set Server App Timezone
         if (version_compare(phpversion(), "5.1.0", ">")) {
             date_default_timezone_set($this->site->timeZone);
@@ -205,7 +232,8 @@ class phpAnvil2 extends anvilObjectAbstract
         //        FB::log('test');
 
         if (!empty($this->regional->timezoneOffset)) {
-            $this->regional->dateTimeZone = new DateTimeZone('Etc/GMT' . $this->regional->timezoneOffset);
+//            $this->regional->dateTimeZone = new DateTimeZone('Etc/GMT' . $this->regional->timezoneOffset);
+            $this->regional->dateTimeZone = new DateTimeZone('UTC' . $this->regional->timezoneOffset);
             //            FB::log('regional->dateTimeZone set.');
         }
 
@@ -215,13 +243,14 @@ class phpAnvil2 extends anvilObjectAbstract
         //---- Check if Application is Set
         if (isset($this->application)) {
             //---- Open the Application
-            $this->application->open();
+            $return = $this->application->open();
 
         } else {
             //            FB::error('Application not set in phpAnvil.');
             $this->_logError('Application not set in phpAnvil.');
         }
 
+        return $return;
     }
 
 
@@ -681,6 +710,9 @@ class phpAnvil2 extends anvilObjectAbstract
             $this->_logGroupEnd();
             //            FB::groupEnd();
             //            FB::group('Opening...');
+
+//            $this->_logDebug('Opening...');
+
             $this->_logGroup('Opening...');
 
             $this->open();
@@ -691,6 +723,8 @@ class phpAnvil2 extends anvilObjectAbstract
             $this->_logGroup('Closing...');
 
             $this->close();
+        } else {
+            $this->_logError('Initializing failed...');
         }
         $this->_logGroupEnd();
         //        FB::groupEnd();
@@ -1139,6 +1173,24 @@ class phpAnvil2 extends anvilObjectAbstract
     }
 
 
+    public function encrypt($value, $key = '')
+    {
+        if (empty($key)) {
+            $key = $this->application->cryptKey;
+        }
+        return base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $value, MCRYPT_MODE_CBC, md5(md5($key))));
+    }
+
+
+    public function decrypt($value, $key = '')
+    {
+        if (empty($key)) {
+            $key = $this->application->cryptKey;
+        }
+        return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($value), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
+    }
+
+
     public function generateToken($length = 8)
     {
         $charset = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -1151,6 +1203,12 @@ class phpAnvil2 extends anvilObjectAbstract
         }
 
         return $token;
+    }
+
+
+    public function hash($value)
+    {
+        return md5(utf8_encode($value));
     }
 }
 

@@ -97,12 +97,10 @@ abstract class anvilControllerAbstract extends anvilObjectAbstract
             $phpAnvil->userAuthenticated = $return;
 
             if (!$phpAnvil->userAuthenticated) {
+                $this->_authFailed();
+
                 $this->_logVerbose('Setting redirect to login page.');
-                $this->redirectURL = $phpAnvil->site->webPath;
-                if (!empty($phpAnvil->application->_loginModule)) {
-                    $this->redirectURL .= $phpAnvil->application->_loginModule . '/';
-                }
-                $this->redirectURL .= $phpAnvil->application->_loginAction;
+                $this->redirectURL = $this->_application->loginURL;
             }
         }
 
@@ -142,6 +140,11 @@ abstract class anvilControllerAbstract extends anvilObjectAbstract
                   'controller' => $this->refName));
 
         return true;
+    }
+
+
+    protected function _authFailed()
+    {
     }
 
 

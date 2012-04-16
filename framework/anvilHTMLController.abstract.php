@@ -41,6 +41,8 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
 
     protected $_tokenArray = array();
 
+    protected $_webPath;
+
 
     function __construct()
     {
@@ -66,6 +68,7 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
         $this->_tokenArray['app'] = $appTokens;
 
         $this->_tokenArray['webPath'] = $this->_site->webPath;
+        $this->_webPath = $this->_site->webPath;
 
         return true;
 	}

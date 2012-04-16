@@ -163,6 +163,11 @@ abstract class anvilDataConnectionAbstract extends anvilObjectAbstract
     {
         return isset($this->_connection);
     }
+
+    public function open($persistent = true)
+    {
+        return true;
+    }
 }
 
 ?>

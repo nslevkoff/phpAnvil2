@@ -4,6 +4,7 @@
  *
  * @version       2.0
  * @copyright     Copyright (c) 2010-2012 Nick Slevkoff (http://www.slevkoff.com)
+ *
  */
 abstract class anvilObjectAbstract
 {

@@ -1,8 +1,4 @@
 <?php
-/**
-* @file
-*/
-
 require_once(PHPANVIL2_COMPONENT_PATH . 'anvilObject.abstract.php');
 
 
@@ -16,6 +12,10 @@ abstract class anvilApplicationAbstract extends anvilObjectAbstract
     public $copyright = '(c) 2012';
     public $copyrightHTML = '&copy; 2012';
 
+    public $cookieAccountToken = '_anvila';
+    public $cookieUserID = '_anvilu';
+    public $cookieUserToken = '_anvilt';
+
     public $configFilename = 'application.config.php';
 
     public $catchAllModule;
@@ -26,6 +26,20 @@ abstract class anvilApplicationAbstract extends anvilObjectAbstract
     public $loginAction;
     public $requestedModule = 'phpAnvil';
     public $requestedAction;
+
+    public $defaultURL;
+    public $loginURL;
+
+    public $account;
+
+    /**
+     * @var anvilUserModelAbstract
+     */
+    public $user;
+
+    //---- Application Encryption Key - OVERRIDE PER APPLICATION ---------------
+    public $cryptKey = 'anvil';
+
 
 	function __construct()
     {
@@ -50,6 +64,10 @@ abstract class anvilApplicationAbstract extends anvilObjectAbstract
             //---- Initialize the Site
             $phpAnvil->site->init();
             $return = true;
+
+            $this->defaultURL = $phpAnvil->site->webPath;
+            $this->loginURL = $this->defaultURL . 'Login/';
+
         } else {
             FB::error('Site not set in phpAnvil.');
         }
@@ -61,6 +79,8 @@ abstract class anvilApplicationAbstract extends anvilObjectAbstract
     function open()
     {
         global $phpAnvil;
+
+        $return = false;
 
         $phpAnvil->triggerEvent('application.open');
 

@@ -16,7 +16,7 @@ abstract class anvilModuleAbstract extends anvilObjectAbstract
     public $version = '1.0';
     public $build = '1';
 
-    public $defaultController = 'Dashboard';
+    public $defaultController = '';
 
 
     protected $_isInitialized = false;
