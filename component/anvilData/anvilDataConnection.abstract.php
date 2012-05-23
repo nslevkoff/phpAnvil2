@@ -158,6 +158,13 @@ abstract class anvilDataConnectionAbstract extends anvilObjectAbstract
         }
     }
 
+    /**
+     * @param $sql string
+     * @return anvilDataRecordsetAbstract
+     */
+    public function execute($sql)
+    {
+    }
 
     public function isConnected()
     {

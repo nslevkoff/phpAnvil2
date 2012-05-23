@@ -1,7 +1,18 @@
 <?php
 require_once 'anvilModel.abstract.php';
 
-
+/**
+ * @property string $addDTS
+ * @property int    $addSourceTypeID
+ * @property int    $addSourceID
+ * @property int    $recordStatusID
+ * @property string $recordStatusDTS
+ * @property int    $recordStatusSourceTypeID
+ * @property int    $recordStatusSourceID
+ * @property string $importDTS
+ * @property int    $importSourceTypeID
+ * @property int    $importSourceID
+ */
 abstract class anvilRSModelAbstract extends anvilModelAbstract
 {
     const RECORD_STATUS_SETUP		= 1;
@@ -16,22 +27,6 @@ abstract class anvilRSModelAbstract extends anvilModelAbstract
         'Disabled',
         'Deleted'
     );
-
-//    public $addDTS;
-//    public $addSourceTypeID;
-//    public $addSourceID;
-//
-//    public $recordStatusID;
-//    public $recordStatusDTS;
-//    public $recordStatusSourceTypeID;
-//    public $recordStatusSourceID;
-//
-//    public $importDTS;
-//    public $importSourceTypeID;
-//    public $importSourceID;
-//
-//    public $primaryTable;
-
 
     public function __construct($primaryTableName = '', $primaryFieldName = 'id', $formName = '')
     {

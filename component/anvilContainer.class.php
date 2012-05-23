@@ -75,6 +75,8 @@ class anvilContainer extends anvilControlAbstract
 //        $this->_logDebug('Executing...id_' . $this->id);
         $return         = '';
         $_anvilTemplate = null;
+
+//        $this->_logDebug(is_object($this->anvilTemplate), 'Is Template Availabe?');
         if (is_object($this->anvilTemplate)) {
 //            $this->_logDebug('clone anvilTemplate:id_' . $this->id);
             $_anvilTemplate = clone $this->anvilTemplate;

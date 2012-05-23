@@ -60,6 +60,8 @@ abstract class anvilControllerAbstract extends anvilObjectAbstract
         $this->plugins = new PluginCollection();
         //        $this->alerts = new anvilContainer();
 
+        $this->_webPath  = $phpAnvil->site->webPath;
+        $this->_pagePath = $this->_webPath;
 
         return true;
     }
@@ -71,8 +73,6 @@ abstract class anvilControllerAbstract extends anvilObjectAbstract
 
         $return = true;
 
-        $this->_webPath = $phpAnvil->site->webPath;
-        $this->_pagePath = $this->_webPath;
         if (isset($_SERVER['REDIRECT_SCRIPT_URL'])) {
 //            $this->_logDebug($_SERVER['REDIRECT_SCRIPT_URL'], '$_SERVER[REDIRECT_SCRIPT_URL]');
 

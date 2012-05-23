@@ -74,6 +74,11 @@ class anvilDataRecordsetAbstract extends anvilObjectAbstract
     }
 
 
+    public function read()
+    {
+        return true;
+    }
+
     public function toArray($rows = array())
     {
         if ($this->read()) {

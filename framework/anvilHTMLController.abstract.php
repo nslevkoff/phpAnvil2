@@ -48,7 +48,7 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
     {
         parent::__construct();
 
-//        $this->enableLog();
+        $this->enableLog();
 
         $this->_template = $this->_application->newTemplate();
         $this->_head   = new anvilHTMLResponseHead();
@@ -68,7 +68,7 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
         $this->_tokenArray['app'] = $appTokens;
 
         $this->_tokenArray['webPath'] = $this->_site->webPath;
-        $this->_webPath = $this->_site->webPath;
+//        $this->_webPath = $this->_site->webPath;
 
         return true;
 	}
@@ -137,7 +137,11 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
                 $html .= '<li>';
 
                 if (!empty($this->_breadcrumbURL[$i])) {
-                    $html .= '<a href="' . $phpAnvil->site->webPath . $this->_breadcrumbURL[$i] . '">';
+                    if (strpos($this->_breadcrumbURL[$i], 'http') === false) {
+                        $html .= '<a href="' . $phpAnvil->site->webPath . $this->_breadcrumbURL[$i] . '">';
+                    } else {
+                        $html .= '<a href="' . $this->_breadcrumbURL[$i] . '">';
+                    }
                 }
                 $html .= $this->_breadcrumbTitle[$i];
                 if (!empty($this->_breadcrumbURL[$i])) {
@@ -154,7 +158,7 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
 
 
         //---- Assign Tokens to Template ---------------------------------------
-//        $this->_logDebug($this->_tokenArray, 'tokenArray');
+        $this->_logDebug($this->_tokenArray, 'tokenArray');
 
         $tokenKeys = array_keys($this->_tokenArray);
         $count = count($tokenKeys);

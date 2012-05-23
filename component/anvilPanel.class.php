@@ -19,6 +19,10 @@ class anvilPanel extends anvilContainer
     public $title;
     public $subTitle;
 
+    public $headerEnabled = true;
+    public $bodyEnabled = true;
+    public $footerEnabled = true;
+
 
     public function __construct($id = 0, $title = '', $properties = null)
     {
@@ -57,13 +61,19 @@ class anvilPanel extends anvilContainer
         $return .= '>';
 
         //---- Header ----------------------------------------------------------
-        $return .= $this->_renderHeader();
+        if ($this->headerEnabled) {
+            $return .= $this->_renderHeader();
+        }
 
         //---- Body ------------------------------------------------------------
-        $return .= $this->_renderBody();
+        if ($this->bodyEnabled) {
+            $return .= $this->_renderBody();
+        }
 
         //---- Footer ----------------------------------------------------------
-        $return .= $this->_renderFooter();
+        if ($this->footerEnabled) {
+            $return .= $this->_renderFooter();
+        }
 
         $return .= '</div>';
 
