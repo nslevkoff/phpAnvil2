@@ -28,8 +28,6 @@ class anvilData_mysql_Connection extends anvilDataConnectionAbstract implements 
 
 	const ENGINE = 'mysql';
 
-    public $dateFormat = 'Y-m-d';
-    public $dtsFormat = 'Y-m-d H:i:s';
 
 //	private $_connection;
 
@@ -58,6 +56,8 @@ class anvilData_mysql_Connection extends anvilDataConnectionAbstract implements 
 	public function __construct($server, $database, $username, $password,
         $persistent = false, $tablePrefix = '')
     {
+        $this->dateFormat = 'Y-m-d';
+        $this->dtsFormat = 'Y-m-d H:i:s';
 
         parent::__construct($server, $database, $username, $password,
             $persistent, $tablePrefix);

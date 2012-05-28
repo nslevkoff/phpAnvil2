@@ -266,6 +266,54 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
     }
 
 
+    public function formatForDisplay($value, $dataType = anvilModelField::DATA_TYPE_STRING)
+    {
+        $return = '';
+
+        switch ($dataType) {
+            case anvilModelField::DATA_TYPE_DATE:
+
+                if (!empty($value) && strtolower($value) != 'null') {
+                    if (isset($this->regional->dateTimeZone)) {
+                        $dateTime = new DateTime($value, $this->regional->dateTimeZone);
+                        $return = $dateTime->format($this->regional->dateFormat);
+                    } else {
+                        $dateTime  = new DateTime($value, new DateTimeZone('PST'));
+                        $return = $dateTime->format($this->regional->dateFormat);
+                    }
+                }
+                break;
+
+            case anvilModelField::DATA_TYPE_DTS:
+            case anvilModelField::DATA_TYPE_ADD_DTS:
+                if (!empty($value) && strtolower($value) != 'null') {
+                    if (isset($this->regional->dateTimeZone)) {
+                        $dateTime = new DateTime($value, $this->regional->dateTimeZone);
+                        $return   = $dateTime->format($this->regional->dtsFormat);
+                    } else {
+                        $dateTime = new DateTime($value, new DateTimeZone('PST'));
+                        $return   = $dateTime->format($this->regional->dtsFormat);
+                    }
+                }
+                break;
+
+            case anvilModelField::DATA_TYPE_STRING:
+                $return = stripslashes($value);
+                break;
+
+            case anvilModelField::DATA_TYPE_BOOLEAN:
+            case anvilModelField::DATA_TYPE_DECIMAL:
+            case anvilModelField::DATA_TYPE_FLOAT:
+            case anvilModelField::DATA_TYPE_NUMBER:
+            default:
+                $return = $value;
+                break;
+        }
+
+        return $return;
+    }
+
+
     public function load($sql = '')
     {
         $return     = false;
@@ -314,9 +362,11 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
 
             for ($i = 0; $i < $count; $i++)
             {
+//                $dbValue = $objRS->data($this->fields->field($i)->fieldName);
 
-                $this->fields->field($i)->value = $objRS->data($this->fields->field($i)->fieldName);
-                //                $this->fields->field($i)->value = $this->formanvilDisplayField($this->fields->field($i)->name);
+//                $this->fields->field($i)->value = $objRS->data($this->fields->field($i)->fieldName);
+//                $this->fields->field($i)->value = $this->formatForDisplay($dbValue, $this->fields->field($i)->fieldType);
+                $this->fields->field($i)->value = $objRS->data($this->fields->field($i)->fieldName, $this->fields->field($i)->fieldType);
 
             }
 

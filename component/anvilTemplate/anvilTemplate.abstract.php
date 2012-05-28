@@ -29,6 +29,7 @@ abstract class anvilTemplateAbstract extends anvilDynamicObjectAbstract {
 
 	
 	public $cachePath;
+
 	public $engine;
 	public $enginePath;
 	public $theme;

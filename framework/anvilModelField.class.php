@@ -119,6 +119,11 @@ class anvilModelField
     }
 
 
+    /**
+     * @param anvilDataConnectionAbstract $dataConnection
+     *
+     * @return DateTime|float|int|null|string
+     */
     public function toSave($dataConnection)
     {
         $return = '';

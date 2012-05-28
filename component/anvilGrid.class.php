@@ -658,7 +658,7 @@ class anvilGrid extends anvilControlAbstract
 
                             $content = $this->applyColumnCalc($this->rowData, $objColumn->name, $content);
                         } else {
-                            $content = $this->applyColumnCalc($this->rowData, $objColumn->name, $objRS->data($objColumn->name));
+                            $content = $this->applyColumnCalc($this->rowData, $objColumn->name, $objRS->data($objColumn->name, $columnOptions->dataType));
                         }
 
                         $useColumnURL = false;
@@ -1214,6 +1214,7 @@ class anvilGridColumn
     const FORMAT_DTS     = 5;
     const FORMAT_EMAIL   = 6;
 
+    public $dataType = 0;
     public $title;
     public $visible = true;
     public $sortable = true;

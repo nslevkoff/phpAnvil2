@@ -72,6 +72,12 @@ class anvilTemplate_Smarty extends anvilTemplateAbstract {
 		$this->engine->display($template);
 	}
 
+
+    /**
+     * @param string $template
+     *
+     * @return string
+     */
 	public function render($template) {
 //		$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, 'template_dir = ' . $this->engine->template_dir, DevTrace::TYPE_DEBUG);
 //		$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, 'compile_dir = ' . $this->engine->compile_dir, DevTrace::TYPE_DEBUG);

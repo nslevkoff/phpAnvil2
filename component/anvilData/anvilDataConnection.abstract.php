@@ -42,6 +42,9 @@ abstract class anvilDataConnectionAbstract extends anvilObjectAbstract
 
     public $errorCallback;
 
+    public $dateFormat = 'Y-m-d';
+    public $dtsFormat = 'Y-m-d H:i:s';
+
 
     /**
      * construct

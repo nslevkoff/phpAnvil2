@@ -223,7 +223,7 @@ class anvilComboBox extends anvilFormControlAbstract {
 					}
 
 
-					$return .= '>' . $objRS->data($this->dataName) . "</option>\n";
+					$return .= '>' . $objRS->data($this->dataName, DATA_TYPE_STRING) . "</option>\n";
 
 				} while($objRS->read());
 

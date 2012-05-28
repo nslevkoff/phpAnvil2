@@ -1078,41 +1078,33 @@ class phpAnvil2 extends anvilObjectAbstract
     }
 
 
-    public function ago($datetime)
+    public function ago($i)
     {
-        $interval = date_create('now')->diff($datetime);
-        $suffix = ($interval->invert ? ' ago' : '');
-        if ($v = $interval->y >= 1) {
-            return $this->pluralize($interval->y, 'year') . $suffix;
+        if (!is_numeric($i)) {
+            date_default_timezone_set($this->regional->dateTimeZone->getName());
+            $i = strtotime($i);
+            date_default_timezone_set('UTC');
         }
-        if ($v = $interval->m >= 1) {
-            return $this->pluralize($interval->m, 'month') . $suffix;
-        }
-        if ($v = $interval->d >= 1) {
-            return $this->pluralize($interval->d, 'day') . $suffix;
-        }
-        if ($v = $interval->h >= 1) {
-            return $this->pluralize($interval->h, 'hour') . $suffix;
-        }
-        if ($v = $interval->i >= 1) {
-            return $this->pluralize($interval->i, 'minute') . $suffix;
-        }
-        return $this->pluralize($interval->s, 'second') . $suffix;
-    }
 
-
-    public function ago2($i)
-    {
         $m = time() - $i;
         $o = 'just now';
-        $t = array('year' => 31556926, 'month' => 2629744, 'week' => 604800, 'day' => 86400, 'hour' => 3600, 'minute' => 60, 'second' => 1);
+        $t = array('year'   => 31556926,
+                   'month'  => 2629744,
+                   'week'   => 604800,
+                   'day'    => 86400,
+                   'hour'   => 3600,
+                   'minute' => 60,
+                   'second' => 1);
         foreach ($t as $u => $s) {
             if ($s <= $m) {
                 $v = floor($m / $s);
-                $o = "$v $u" . ($v == 1 ? '' : 's') . ' ago';
+                $o = "$v $u" . ($v == 1
+                        ? ''
+                        : 's') . ' ago';
                 break;
             }
         }
+
         return $o;
     }
 

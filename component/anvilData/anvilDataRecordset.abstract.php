@@ -1,4 +1,5 @@
 <?php
+require_once PHPANVIL2_FRAMEWORK_PATH . 'anvilModelField.class.php';
 
 require_once PHPANVIL2_COMPONENT_PATH . 'anvilObject.abstract.php';
 //require_once('anvilCollection.class.php');
@@ -56,9 +57,58 @@ class anvilDataRecordsetAbstract extends anvilObjectAbstract
         }
     }
 
-    public function data($column)
+    public function data($column, $dataType = 0)
     {
-        return $this->_row[$column];
+        global $phpAnvil;
+
+        $return = $this->_row[$column];
+
+        if ($dataType > 0) {
+            $regional = $phpAnvil->regional;
+            $value = $return;
+
+            switch ($dataType) {
+                case anvilModelField::DATA_TYPE_DATE:
+
+                    if (!empty($value) && strtolower($value) != 'null') {
+                        if (isset($regional->dateTimeZone)) {
+                            $dateTime = new DateTime($value, $regional->dateTimeZone);
+                            $return   = $dateTime->format($regional->dateFormat);
+                        } else {
+                            $dateTime = new DateTime($value, new DateTimeZone('PST'));
+                            $return   = $dateTime->format($regional->dateFormat);
+                        }
+                    }
+                    break;
+
+                case anvilModelField::DATA_TYPE_DTS:
+                case anvilModelField::DATA_TYPE_ADD_DTS:
+                    if (!empty($value) && strtolower($value) != 'null') {
+                        if (isset($regional->dateTimeZone)) {
+                            $dateTime = new DateTime($value, $regional->dateTimeZone);
+                            $return   = $dateTime->format($regional->dtsFormat);
+                        } else {
+                            $dateTime = new DateTime($value, new DateTimeZone('PST'));
+                            $return   = $dateTime->format($regional->dtsFormat);
+                        }
+                    }
+                    break;
+
+                case anvilModelField::DATA_TYPE_STRING:
+                    $return = stripslashes($value);
+                    break;
+
+                case anvilModelField::DATA_TYPE_BOOLEAN:
+                case anvilModelField::DATA_TYPE_DECIMAL:
+                case anvilModelField::DATA_TYPE_FLOAT:
+                case anvilModelField::DATA_TYPE_NUMBER:
+                default:
+                    $return = $value;
+                    break;
+            }
+        }
+
+        return $return;
     }
 
 
