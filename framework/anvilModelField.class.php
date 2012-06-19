@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * @property mixed  $value
+ * @property string $displayName
+ */
 class anvilModelField
 {
     const DATA_TYPE_IGNORE  = 0;
@@ -27,6 +30,7 @@ class anvilModelField
 //    public $model;
 
     public $name;
+    protected $_displayName;
     public $defaultValue = null;
     protected $_value;
     public $changed = false;
@@ -53,7 +57,7 @@ class anvilModelField
         //        $this->model = $model;
         $this->name      = $name;
         $this->tableName = $model->primaryTableName;
-        $this->formName = $model->formName;
+        $this->formName  = $model->formName;
     }
 
 
@@ -61,8 +65,22 @@ class anvilModelField
     {
         $return = null;
 
-        if ($name == 'value') {
-            $return = $this->_value;
+        switch (strtolower($name)) {
+            case 'value':
+                $return = $this->_value;
+                break;
+
+            case 'displayname':
+                if ($this->_displayName <> '') {
+                    $return = $this->_displayName;
+                } else {
+//                    $return = ucwords(str_replace('_', ' ', $this->name));
+
+//                    $words = preg_split('/([[:upper:]][[:lower:]]+)/', $this->name, null, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+                    $return = ucwords(implode(' ', preg_split('/([[:upper:]][[:lower:]]+)/', $this->name, null, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY)));
+
+                }
+                break;
         }
 
         return $return;
@@ -73,25 +91,31 @@ class anvilModelField
     {
         $return = false;
 
-        if ($name == 'value') {
-            //            fb::log('Checking if value is set for ' . $this->name . '...');
+        switch (strtolower($name)) {
+            case 'value':
+                $value = $this->_value;
 
-            $value = $this->_value;
+                //---- Process for empty() PHP function
+                if ($value === 0 && !is_null($value)) {
+                    #---- return false so that empty() works correctly with 0 numbers.
+                } else {
+                    $return = $value != '';
+                }
+                break;
 
-            //            fb::log($value, '$value');
+            case 'displayname':
+                $displayName = $this->_displayName;
 
-            //---- Process for empty() PHP function
-            if ($value === 0 && !is_null($value)) {
-                //                fb::log('-- FALSE! --');
-                #---- return false so that empty() works correctly with 0 numbers.
-            } else {
-                $return = $value != '';
-            }
+                //---- Process for empty() PHP function
+                if ($displayName === 0 && !is_null($displayName)) {
+                    #---- return false so that empty() works correctly with 0 numbers.
+                } else {
+                    $return = $displayName != '';
+                }
+                break;
 
-            //           fb::log($return, '$return');
-
-        } else {
-            $return = parent::__isset($name);
+            default:
+                $return = parent::__isset($name);
         }
 
         return $return;
@@ -100,15 +124,22 @@ class anvilModelField
 
     public function __set($name, $value)
     {
-        if ($name == 'value') {
-            if ($this->_value != $value) {
-                $this->priorValue = $this->_value;
-                $this->changed    = true;
-            }
+        switch (strtolower($name)) {
+            case 'value':
+                if ($this->_value != $value) {
+                    $this->priorValue = $this->_value;
+                    $this->changed    = true;
+                }
 
-            $this->_value = $value;
-        } else {
-            throw new Exception('Invalid property "' . $name . '"!');
+                $this->_value = $value;
+                break;
+
+            case 'displayname':
+                $this->_displayName = $value;
+                break;
+
+            default:
+                throw new Exception('Invalid property "' . $name . '"!');
         }
     }
 
@@ -128,8 +159,7 @@ class anvilModelField
     {
         $return = '';
 
-        switch ($this->fieldType)
-        {
+        switch ($this->fieldType) {
             case self::DATA_TYPE_BOOLEAN:
                 $return = $dataConnection->dbBoolean($this->_value);
                 break;
@@ -170,6 +200,30 @@ class anvilModelField
                 }
 
                 break;
+
+            case self::DATA_TYPE_PHONE:
+
+                $value = '';
+
+                if (isset($this->_value)) {
+                    $pattern = '/[^0-9]*/';
+                    $value   = preg_replace($pattern, '', $this->_value);
+                }
+
+                $return = $value != ''
+                        ? $dataConnection->dbString($value)
+                        : ($this->allowNull
+                                ? null
+                                : (isset($this->defaultValue)
+                                        ? $dataConnection->dbString($this->defaultValue)
+                                        : $dataConnection->dbString('')));
+
+                if ($return == '') {
+                    $return = null;
+                }
+
+                break;
+
             case self::DATA_TYPE_STRING:
 
                 $return = isset($this->_value)

@@ -28,6 +28,7 @@ class anvilEntry extends anvilFormControlAbstract {
 	const VERSION        = '1.0.2';
 
     private $_sizeClass = array(
+        'spanAuto',
         'input-mini',
         'input-small',
         'input-medium',
@@ -48,32 +49,35 @@ class anvilEntry extends anvilFormControlAbstract {
         'span12'
     );
 
-    const SIZE_MINI = 0;
-    const SIZE_SMALL = 1;
-    const SIZE_MEDIUM = 2;
-    const SIZE_LARGE = 3;
-    const SIZE_XLARGE = 4;
-    const SIZE_XXLARGE = 5;
-    const SIZE_SPAN1 = 6;
-    const SIZE_SPAN2 = 7;
-    const SIZE_SPAN3 = 8;
-    const SIZE_SPAN4 = 9;
-    const SIZE_SPAN5 = 10;
-    const SIZE_SPAN6 = 11;
-    const SIZE_SPAN7 = 12;
-    const SIZE_SPAN8 = 13;
-    const SIZE_SPAN9 = 14;
-    const SIZE_SPAN10 = 15;
-    const SIZE_SPAN11 = 16;
-    const SIZE_SPAN12 = 17;
+    const SIZE_AUTO = 0;
+    const SIZE_MINI = 1;
+    const SIZE_SMALL = 2;
+    const SIZE_MEDIUM = 3;
+    const SIZE_LARGE = 4;
+    const SIZE_XLARGE = 5;
+    const SIZE_XXLARGE = 6;
+    const SIZE_SPAN1 = 7;
+    const SIZE_SPAN2 = 8;
+    const SIZE_SPAN3 = 9;
+    const SIZE_SPAN4 = 10;
+    const SIZE_SPAN5 = 11;
+    const SIZE_SPAN6 = 12;
+    const SIZE_SPAN7 = 13;
+    const SIZE_SPAN8 = 14;
+    const SIZE_SPAN9 = 15;
+    const SIZE_SPAN10 = 16;
+    const SIZE_SPAN11 = 17;
+    const SIZE_SPAN12 = 18;
 
-	const TYPE_NORMAL	= 1;
+
+    const TYPE_NORMAL	= 1;
 	const TYPE_PASSWORD	= 2;
 	const TYPE_FILE		= 3;
 
     public $appendText;
     public $disabled = false;
     public $onKeyPress;
+    public $length;
     public $maxLength;
     public $prependText;
     public $size;
@@ -85,6 +89,10 @@ class anvilEntry extends anvilFormControlAbstract {
     public $wrapClass = 'inputWrap';
 
     public $placeholder;
+
+    //---- Validation Properties
+    public $validation = true;
+    public $required = false;
 
 
 	public function __construct($id = '', $name = 'unknown', $size = self::SIZE_MEDIUM, $value = '', $properties = null) {
@@ -126,6 +134,7 @@ class anvilEntry extends anvilFormControlAbstract {
         
 //        $return .= $this->renderLabel();
 
+        //---- Render Prepend or Start Append Wrapper --------------------------
         if (!empty($this->prependText) || !empty($this->appendText)) {
 
 //            if (!empty($this->appendText)) {
@@ -150,6 +159,8 @@ class anvilEntry extends anvilFormControlAbstract {
             }
         }
 
+
+        //---- Render INPUT Tag ------------------------------------------------
 		$return .= '<input type="';
 
 		switch ($this->type) {
@@ -174,19 +185,29 @@ class anvilEntry extends anvilFormControlAbstract {
 			$return .= ' name="' . $this->name . '"';
 		}
 
-		if ($this->size) {
-			$return .= ' size="' . $this->size . '"';
+		if ($this->length) {
+			$return .= ' size="' . $this->length . '"';
 		}
 
 		if ($this->maxLength) {
 			$return .= ' maxlength="' . $this->maxLength . '"';
 		}
 
-        $return .= ' class="' . $this->_sizeClass[$this->size];
+        $return .= ' class="';
+
+//        if ($this->size != self::SIZE_LENGTH) {
+            $return .= $this->_sizeClass[$this->size];
+//        }
+
         if ($this->class) {
             $return .= ' ' . $this->class;
         }
-        $return .= '"';
+
+        if ($this->validation && $this->required) {
+            $return .= ' required';
+        }
+
+            $return .= '"';
 
         if ($this->style) {
             $return .= ' style="' . $this->style . '"';
@@ -204,7 +225,11 @@ class anvilEntry extends anvilFormControlAbstract {
 //			$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $this->name . ' = FAILED! (' . $this->value . ')', DevTrace::TYPE_DEBUG);
 		}
 
-        if (!empty($this->onKeyPress))
+//        if ($this->validation && $this->required) {
+//            $return .= ' onchange="validateRequired();"';
+//        }
+
+            if (!empty($this->onKeyPress))
         {
             $return .= ' onkeypress="' . $this->onKeyPress . '"';
         } else if ($this->defaultButtonID) {
@@ -227,6 +252,8 @@ class anvilEntry extends anvilFormControlAbstract {
 
 		$return .= ' />';
 
+
+        //---- Render Append or Close Prepend Wrapper --------------------------
         if (!empty($this->prependText) || !empty($this->appendText)) {
             if (!empty($this->appendText)) {
                 $return .= '<span class="add-on">' . $this->appendText . '</span>';
@@ -237,6 +264,14 @@ class anvilEntry extends anvilFormControlAbstract {
 //            } elseif (!empty($this->prependText)) {
                 $return .= '</div>';
 //            }
+        }
+
+        //---- Render Validation Placeholder -----------------------------------
+        if ($this->validation && $this->required) {
+            $return .= '<span class="help-inline">';
+            $return .= '<span class="label"></span>';
+            $return .= '<span class="description"></span>';
+            $return .= '</span>';
         }
 
 //        if ($this->wrapEnabled) {

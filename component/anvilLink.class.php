@@ -58,6 +58,8 @@ class anvilLink extends anvilControlAbstract
     public $type;
     public $size;
 
+    public $tooltip = '';
+
 
 //    public $confirmURL;
 
@@ -119,6 +121,10 @@ class anvilLink extends anvilControlAbstract
             $render .= ' ' . $this->class;
         }
         $render .= '"';
+
+        if (!empty($this->tooltip)) {
+            $render .= ' rel="tooltip" title="' . $this->tooltip . '"';
+        }
 
         $render .= '>';
 

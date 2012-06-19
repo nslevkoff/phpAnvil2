@@ -1,7 +1,9 @@
 <?php
 //---- Required Special Classes
 //require_once('Action.class.php');
-//require_once('Module.model.php');
+
+require_once('activity.model.php');
+require_once('activitytype.model.php');
 
 require_once('EventListener.class.php');
 

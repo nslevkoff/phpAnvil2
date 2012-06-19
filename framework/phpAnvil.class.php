@@ -1,17 +1,16 @@
 <?php
 /**
  * @file
- * phpAnvil2 Framework Controller
+ *               phpAnvil2 Framework Controller
  *
  * @author       Nick Slevkoff <nick@slevkoff.com>
  * @copyright    Copyright (c) 2010-2012 Nick Slevkoff (http://www.slevkoff.com)
  * @license
- *     This source file is subject to the new BSD license that is
- *     bundled with this package in the file LICENSE.txt. It is also
- *     available on the Internet at:  http://www.phpanvil.com/LICENSE.txt
+ *               This source file is subject to the new BSD license that is
+ *               bundled with this package in the file LICENSE.txt. It is also
+ *               available on the Internet at:  http://www.phpanvil.com/LICENSE.txt
  * @ingroup      phpAnvil2
  */
-
 
 
 require_once PHPANVIL2_COMPONENT_PATH . 'anvilAjax.class.php';
@@ -20,6 +19,8 @@ require_once PHPANVIL2_COMPONENT_PATH . 'anvilSession.class.php';
 //require_once PHPANVIL2_COMPONENT_PATH . 'anvilDynamicObject.abstract.php';
 require_once PHPANVIL2_COMPONENT_PATH . 'anvilObject.abstract.php';
 require_once PHPANVIL2_COMPONENT_PATH . 'anvilRegional.class.php';
+
+require_once MOBILE_DETECT_PATH . 'Mobile_Detect.php';
 
 
 /**
@@ -34,7 +35,18 @@ class phpAnvil2 extends anvilObjectAbstract
 {
 
     const VERSION = '2.0';
-    const BUILD = '1';
+    const BUILD   = '1';
+
+    const SOURCE_TYPE_UNKNOWN   = 1;
+    const SOURCE_TYPE_USER      = 2;
+    const SOURCE_TYPE_SYSTEM    = 3;
+    const SOURCE_TYPE_AJAX      = 4;
+    const SOURCE_TYPE_BP        = 5;
+    const SOURCE_TYPE_API       = 6;
+    const SOURCE_TYPE_GENERATED = 7;
+    const SOURCE_TYPE_EMAIL     = 8;
+    const SOURCE_TYPE_IMPORT    = 9;
+
 
     public $qsModule = 'anvil_module';
     public $qsAction = 'anvil_action';
@@ -54,6 +66,7 @@ class phpAnvil2 extends anvilObjectAbstract
 //    public $pageMsg;
 
     public $controller = null;
+
     public $database = null;
 //    public $listener;
     public $module = null;
@@ -93,10 +106,16 @@ class phpAnvil2 extends anvilObjectAbstract
     public $isNewSession;
     public $isNewUser;
     public $isBot;
-    public $sourceTypeID;
+    public $sourceTypeID = self::SOURCE_TYPE_USER;
     public $sourceID;
 
     public $requestPathArray;
+
+    public $isCLI = false;
+    public $isConsole = false;
+
+    /** @var Mobile_Detect */
+    public $mobileDetect;
 
 
     public function __construct()
@@ -106,6 +125,15 @@ class phpAnvil2 extends anvilObjectAbstract
         $this->enableLog();
 
         $this->_core = $this;
+
+        $this->isCLI = PHP_SAPI == 'cli';
+        $this->isConsole = $this->isCLI;
+
+        if ($this->isCLI) {
+            $this->sourceTypeID = self::SOURCE_TYPE_BP;
+        } else {
+            $this->sourceTypeID = self::SOURCE_TYPE_USER;
+        }
 
 
 //        $this->addProperty('isNewSession', false);
@@ -143,9 +171,16 @@ class phpAnvil2 extends anvilObjectAbstract
     {
         $return = false;
 
-        $requestPath = $_SERVER['SCRIPT_URL'];
+        if ($this->isCLI) {
+            $this->requestPathArray[0] = SITE_DOMAIN;
+            $this->requestPathArray[1] = 'bp';
+        } else {
+            $this->mobileDetect = new Mobile_Detect();
+
+            $requestPath = $_SERVER['SCRIPT_URL'];
+            $this->requestPathArray = explode('/', $requestPath);
+        }
 //        $this->_logDebug($requestPath, '$requestPath2');
-        $this->requestPathArray = explode('/', $requestPath);
 //        $this->_logDebug($this->requestPathArray, '$this->requestPathArray');
         //        $this->webRootPath = str_replace('index.php', '', $_SERVER["SCRIPT_NAME"]);
 
@@ -272,7 +307,7 @@ class phpAnvil2 extends anvilObjectAbstract
 
     function connectEventListener($eventListener)
     {
-        $this->_eventListeners[] = $eventListener;
+        $this->_eventListeners[]                       = $eventListener;
         $this->_connectedEvents[$eventListener->event] = true;
         return true;
     }
@@ -292,7 +327,7 @@ class phpAnvil2 extends anvilObjectAbstract
     {
         global $moduleIDs, $actions;
 
-        $return = -1;
+        $return     = -1;
         $moduleCode = strtolower($moduleCode);
 
         if (isset($actions[$moduleCode][$actionConstant])) {
@@ -330,7 +365,7 @@ class phpAnvil2 extends anvilObjectAbstract
     {
         global $phpAnvil;
 
-        $moduleRefName = strtolower($moduleRefName);
+        $moduleRefName  = strtolower($moduleRefName);
         $controllerName = strtolower($controllerName);
 
         $return = true;
@@ -364,8 +399,7 @@ class phpAnvil2 extends anvilObjectAbstract
                 } else {
                     if (file_exists(PHPANVIL2_FRAMEWORK_PATH . $filePath)) {
                         $filePath = PHPANVIL2_FRAMEWORK_PATH . $filePath;
-                    } else
-                    {
+                    } else {
                         if (isset($this->application->catchAllAction) && $this->application->catchAllAction != $controllerName) {
                             $this->loadController($this->application->catchAllModule, $this->application->catchAllAction);
                         } else {
@@ -391,7 +425,7 @@ class phpAnvil2 extends anvilObjectAbstract
                         $this->controller[$fullControllerName] = new $controllerClassName();
                     }
 
-                    $this->controller[$fullControllerName]->module = $this->module[$moduleRefName];
+                    $this->controller[$fullControllerName]->module  = $this->module[$moduleRefName];
                     $this->controller[$fullControllerName]->refName = $controllerName;
 
                     $return = $this->controller[$fullControllerName]->init();
@@ -476,8 +510,7 @@ class phpAnvil2 extends anvilObjectAbstract
             } else {
                 if (file_exists(PHPANVIL2_FRAMEWORK_PATH . $filePath)) {
                     $filePath = PHPANVIL2_FRAMEWORK_PATH . $filePath;
-                } else
-                {
+                } else {
                     //                FB::error('Module (' . $moduleRefName . ') not found.  Please check module reference name and that the module has been installed on the server.');
                     $this->_logError('Module (' . $moduleRefName . ') not found.  Please check module reference name and that the module has been installed on the server.');
                     $return = false;
@@ -521,8 +554,7 @@ class phpAnvil2 extends anvilObjectAbstract
         $this->_logVerbose('Loading all custom modules...');
 
         $count = count($moduleDirectories);
-        for ($i = 0; $i < $count; $i++)
-        {
+        for ($i = 0; $i < $count; $i++) {
             //            FB::log(basename($moduleDirectories[$i]), 'Module Directory');
             $this->loadModule(basename($moduleDirectories[$i]));
         }
@@ -537,9 +569,8 @@ class phpAnvil2 extends anvilObjectAbstract
     public function openModules()
     {
         $moduleKeys = $this->module->keys();
-        $max = count($moduleKeys);
-        for ($i = 0; $i < $max; $i++)
-        {
+        $max        = count($moduleKeys);
+        for ($i = 0; $i < $max; $i++) {
             $this->module[$moduleKeys[$i]]->open();
         }
     }
@@ -548,13 +579,70 @@ class phpAnvil2 extends anvilObjectAbstract
     public function prepareNewAction($source, $module, $type, $data)
     {
 
-        $action = new Action();
+        $action         = new Action();
         $action->source = $source;
         $action->module = $module;
-        $action->type = $type;
-        $action->data = $data;
+        $action->type   = $type;
+        $action->data   = $data;
 
         return $action;
+    }
+
+
+    public function processBP($controllerName = '', $batch = null, $task = null)
+    {
+        global $phpAnvil;
+
+        $return = true;
+
+        $controllerName = strtolower($controllerName);
+
+        $controllerClassName = $controllerName . 'BP';
+
+        if (!$this->controller->contains('bp.' . $controllerName)) {
+
+            $this->_logVerbose('Loading BP controller (' . $controllerName . ')...');
+
+
+            //---- Build File Path to the Controller
+            $filePath = 'bp/' . $controllerName . '.bp.php';
+
+            if (file_exists(APP_PATH . $filePath)) {
+                $filePath = APP_PATH . $filePath;
+            } else {
+                $this->_logError('BP Controller (' . $controllerName . ') not found.');
+                $return = false;
+            }
+
+            if ($return) {
+                include_once $filePath;
+
+                $fullControllerName = 'bp.' . $controllerName;
+
+                if (!$this->controller->contains($fullControllerName)) {
+                    if ($batch) {
+                        if ($task) {
+                            $this->controller[$fullControllerName] = new $controllerClassName($batch, $task);
+                        } else {
+                            $this->controller[$fullControllerName] = new $controllerClassName($batch);
+                        }
+                    } else {
+                        $this->controller[$fullControllerName] = new $controllerClassName();
+                    }
+                }
+
+//                    $this->controller[$fullControllerName]->module  = '';
+//                    $this->controller[$fullControllerName]->refName = $controllerName;
+
+                $return = $this->controller[$fullControllerName]->init();
+                if ($return) {
+                    $return = $this->controller[$fullControllerName]->process();
+                    $return = $this->controller[$fullControllerName]->close();
+                }
+            }
+        }
+
+        return $return;
     }
 
 
@@ -584,8 +672,7 @@ class phpAnvil2 extends anvilObjectAbstract
         } else {
             $max = $this->module->count();
 
-            for ($i = 0; $i < $max; $i++)
-            {
+            for ($i = 0; $i < $max; $i++) {
                 $return = $this->module[$i]->processAction($action);
             }
 
@@ -598,22 +685,22 @@ class phpAnvil2 extends anvilObjectAbstract
     public function processAjaxAction()
     {
 
-        $objAjax = new anvilAjax();
+        $objAjax    = new anvilAjax();
         $ajaxPacket = $_POST['request_packet'];
 
-        $ajaxPacket = str_replace('\"', '"', $ajaxPacket);
+        $ajaxPacket    = str_replace('\"', '"', $ajaxPacket);
         $requestPacket = json_decode($ajaxPacket);
 
         foreach ($requestPacket as $ajaxRequest) {
 
-            $moduleID = $ajaxRequest->moduleID;
-            $moduleCode = $this->getModuleCode($moduleID);
+            $moduleID       = $ajaxRequest->moduleID;
+            $moduleCode     = $this->getModuleCode($moduleID);
             $moduleActionID = $ajaxRequest->moduleActionID;
 
             //			$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, 'Processing Ajax Action (' . $moduleActionID . ') for Module (' . $moduleCode . ')', self::TRACE_TYPE_DEBUG);
             $this->_logVerbose('Processing Ajax Action (' . $moduleActionID . ') for Module (' . $moduleCode . ')');
 
-            $data['sourceID'] = $ajaxRequest->sourceID;
+            $data['sourceID']         = $ajaxRequest->sourceID;
             $data['responseTargetID'] = $ajaxRequest->responseTargetID;
             $data['responseActionID'] = $ajaxRequest->responseActionID;
 
@@ -646,7 +733,7 @@ class phpAnvil2 extends anvilObjectAbstract
         $return = false;
 
         $moduleRefName = strtolower($moduleRefName);
-        $widget = strtolower($widget);
+        $widget        = strtolower($widget);
         //		$moduleCode = $this->getModuleCode($module);
         //		$moduleID = $moduleIDs[strtolower($moduleCode)];
 
@@ -664,8 +751,7 @@ class phpAnvil2 extends anvilObjectAbstract
 
             if ($this->module[$moduleRefName]->type === BaseModule::TYPE_CUSTOM) {
                 $filePath = APP_PATH . $filePath;
-            } else
-            {
+            } else {
                 $filePath = PHPANVIL2_FRAMEWORK_PATH . $filePath;
             }
 
@@ -773,8 +859,7 @@ class phpAnvil2 extends anvilObjectAbstract
 
             //---- Loop through All Connected Event Listeners for Matches
             $max = count($this->_eventListeners);
-            for ($i = 0; $i < $max; $i++)
-            {
+            for ($i = 0; $i < $max; $i++) {
                 //---- Check if Event Listener Matches the Triggered Event
                 if ($this->_eventListeners[$i]->event === $event) {
                     //---- Is callback valid?
@@ -808,7 +893,7 @@ class phpAnvil2 extends anvilObjectAbstract
         $module = strtolower($moduleRefName);
 
         $moduleCode = $this->getModuleCode($module);
-        $msg = "Uninstalling Module '" . $moduleCode . "'...";
+        $msg        = "Uninstalling Module '" . $moduleCode . "'...";
 
         $newModule = new ModuleModel($this->db);
 
@@ -838,7 +923,7 @@ class phpAnvil2 extends anvilObjectAbstract
                 $return = false;
             }
         } else {
-            $msg = 'Module (' . $moduleCode . ') is not installed.';
+            $msg    = 'Module (' . $moduleCode . ') is not installed.';
             $return = false;
         }
         //        FB::log($msg);
@@ -879,53 +964,55 @@ class phpAnvil2 extends anvilObjectAbstract
             //            fb::log(60, 'minute');
 
 
-            switch (true)
-            {
+            switch (true) {
                 // If difference is less than 60 seconds,
                 // seconds is a good interval of choice
                 case(strtotime('-1 min', $toDTS) < $fromDTS):
                     $datediff = $difference;
-                    $return = ($datediff == 1) ? $datediff . ' second ago'
+                    $return   = ($datediff == 1)
+                            ? $datediff . ' second ago'
                             : $datediff . ' seconds ago';
                     break;
                 // If difference is between 60 seconds and
                 // 60 minutes, minutes is a good interval
                 case(strtotime('-1 hour', $toDTS) < $fromDTS):
                     $datediff = floor($difference / 60);
-                    $return = ($datediff == 1) ? $datediff . ' minute ago'
+                    $return   = ($datediff == 1)
+                            ? $datediff . ' minute ago'
                             : $datediff . ' minutes ago';
                     break;
                 // If difference is between 1 hour and 24 hours
                 // hours is a good interval
                 case(strtotime('-1 day', $toDTS) < $fromDTS):
                     $datediff = floor($difference / 60 / 60);
-                    $return = ($datediff == 1) ? $datediff . ' hour ago'
+                    $return   = ($datediff == 1)
+                            ? $datediff . ' hour ago'
                             : $datediff . ' hours ago';
                     break;
                 // If difference is between 1 day and 7 days
                 // days is a good interval
                 case(strtotime('-1 week', $toDTS) < $fromDTS):
                     $day_difference = 1;
-                    while (strtotime('-' . $day_difference . ' day', $toDTS) >= $fromDTS)
-                    {
+                    while (strtotime('-' . $day_difference . ' day', $toDTS) >= $fromDTS) {
                         $day_difference++;
                     }
 
                     $datediff = $day_difference;
-                    $return = ($datediff == 1) ? 'yesterday'
+                    $return   = ($datediff == 1)
+                            ? 'yesterday'
                             : $datediff . ' days ago';
                     break;
                 // If difference is between 1 week and 30 days
                 // weeks is a good interval
                 case(strtotime('-1 month', $toDTS) < $fromDTS):
                     $week_difference = 1;
-                    while (strtotime('-' . $week_difference . ' week', $toDTS) >= $fromDTS)
-                    {
+                    while (strtotime('-' . $week_difference . ' week', $toDTS) >= $fromDTS) {
                         $week_difference++;
                     }
 
                     $datediff = $week_difference;
-                    $return = ($datediff == 1) ? 'last week'
+                    $return   = ($datediff == 1)
+                            ? 'last week'
                             : $datediff . ' weeks ago';
                     break;
                 // If difference is between 30 days and 365 days
@@ -935,13 +1022,13 @@ class phpAnvil2 extends anvilObjectAbstract
                 // the 'incorrect' value for a day
                 case(strtotime('-1 year', $toDTS) < $fromDTS):
                     $months_difference = 1;
-                    while (strtotime('-' . $months_difference . ' month', $toDTS) >= $fromDTS)
-                    {
+                    while (strtotime('-' . $months_difference . ' month', $toDTS) >= $fromDTS) {
                         $months_difference++;
                     }
 
                     $datediff = $months_difference;
-                    $return = ($datediff == 1) ? $datediff . ' month ago'
+                    $return   = ($datediff == 1)
+                            ? $datediff . ' month ago'
                             : $datediff . ' months ago';
 
                     break;
@@ -953,13 +1040,13 @@ class phpAnvil2 extends anvilObjectAbstract
                 // a year has gone by
                 case(strtotime('-1 year', $toDTS) >= $fromDTS):
                     $year_difference = 1;
-                    while (strtotime('-' . $year_difference . ' year', $toDTS) >= $fromDTS)
-                    {
+                    while (strtotime('-' . $year_difference . ' year', $toDTS) >= $fromDTS) {
                         $year_difference++;
                     }
 
                     $datediff = $year_difference;
-                    $return = ($datediff == 1) ? $datediff . ' year ago'
+                    $return   = ($datediff == 1)
+                            ? $datediff . ' year ago'
                             : $datediff . ' years ago';
                     break;
             }
@@ -1074,11 +1161,13 @@ class phpAnvil2 extends anvilObjectAbstract
 
     public function pluralize($count, $text)
     {
-        return $count . (($count == 1) ? (" $text") : (" ${text}s"));
+        return $count . (($count == 1)
+                ? (" $text")
+                : (" ${text}s"));
     }
 
 
-    public function ago($i)
+    public function ago($i, $abbreviate = false)
     {
         if (!is_numeric($i)) {
             date_default_timezone_set($this->regional->dateTimeZone->getName());
@@ -1086,21 +1175,36 @@ class phpAnvil2 extends anvilObjectAbstract
             date_default_timezone_set('UTC');
         }
 
+        $appendText = '';
         $m = time() - $i;
-        $o = 'just now';
-        $t = array('year'   => 31556926,
-                   'month'  => 2629744,
-                   'week'   => 604800,
-                   'day'    => 86400,
-                   'hour'   => 3600,
-                   'minute' => 60,
-                   'second' => 1);
+
+        if ($abbreviate) {
+            $o          = 'now';
+            $t          = array('Y'   => 31556926,
+                                'M'  => 2629744,
+                                'W'   => 604800,
+                                'D'    => 86400,
+                                'h'   => 3600,
+                                'm' => 60);
+        } else {
+            $o = 'just now';
+            $t = array('year'   => 31556926,
+                       'month'  => 2629744,
+                       'week'   => 604800,
+                       'day'    => 86400,
+                       'hour'   => 3600,
+                       'minute' => 60,
+                       'second' => 1);
+            $appendText = ' ago';
+        }
+
         foreach ($t as $u => $s) {
             if ($s <= $m) {
                 $v = floor($m / $s);
                 $o = "$v $u" . ($v == 1
                         ? ''
-                        : 's') . ' ago';
+                        : (!$abbreviate ? 's'
+                        : '')) . $appendText;
                 break;
             }
         }
@@ -1183,14 +1287,17 @@ class phpAnvil2 extends anvilObjectAbstract
     }
 
 
-    public function generateToken($length = 8)
+    public function generateToken($length = 8, $numbersOnly = false)
     {
-        $charset = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if ($numbersOnly) {
+            $charset = "1234567890";
+        } else {
+            $charset = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        }
         $maxLen = strlen($charset) - 1;
 
         $token = '';
-        for ($i = 0; $i < $length; $i++)
-        {
+        for ($i = 0; $i < $length; $i++) {
             $token .= $charset[rand(0, $maxLen)];
         }
 

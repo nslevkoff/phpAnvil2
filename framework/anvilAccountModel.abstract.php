@@ -106,6 +106,7 @@ abstract class anvilAccountModelAbstract extends anvilRSModelAbstract
 
         if (!empty($this->token)) {
             setcookie($phpAnvil->application->cookieAccountToken, $phpAnvil->encrypt($this->token), time() + 60 * 60 * 24 * 365, '/');
+//            setcookie($phpAnvil->application->cookieAccountToken, $phpAnvil->encrypt($this->token), time() + $phpAnvil->session->innactiveTimeout, '/');
         }
     }
 

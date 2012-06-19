@@ -69,10 +69,10 @@ class anvilNav extends anvilContainer
         return $objNavDropdown;
     }
 
-    public function addLink($text, $url = '#', $active = false, $type = anvilLink::TYPE_DEFAULT, $size = anvilLink::SIZE_DEFAULT)
+    public function addLink($text, $url = '#', $active = false, $type = anvilLink::TYPE_DEFAULT, $size = anvilLink::SIZE_DEFAULT, $properties = null)
     {
         $objNavItem = new anvilNavItem('', $active);
-        $objNavItem->addControl(new anvilLink('', $text, $url, $type, $size));
+        $objNavItem->addControl(new anvilLink('', $text, $url, $type, $size, $properties));
         $this->addControl($objNavItem);
 
         return $objNavItem;

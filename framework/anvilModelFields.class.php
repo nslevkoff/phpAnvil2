@@ -10,6 +10,7 @@ class anvilModelFields extends anvilObjectAbstract
     protected $_fields = array();
     protected $_fieldIndex = array();
 
+    //** anvilModelAbstract */
     public $model;
 
 
@@ -20,8 +21,7 @@ class anvilModelFields extends anvilObjectAbstract
 
     public function exists($fieldName)
     {
-        if (is_numeric($fieldName))
-        {
+        if (is_numeric($fieldName)) {
             $fieldName = $this->_fieldIndex[$fieldName];
         }
 
@@ -39,7 +39,8 @@ class anvilModelFields extends anvilObjectAbstract
 
     /**
      * @param string $fieldName
-     * @param bool $addIfNotExist
+     * @param bool   $addIfNotExist
+     *
      * @return anvilModelField
      */
     public function field($fieldName, $addIfNotExist = false)
@@ -48,19 +49,16 @@ class anvilModelFields extends anvilObjectAbstract
 
 //        $this->_logDebug($fieldName, '$fieldName');
 
-        if (is_numeric($fieldName))
-        {
+        if (is_numeric($fieldName)) {
             $fieldName = $this->_fieldIndex[$fieldName];
         }
 
-        if (array_key_exists($fieldName, $this->_fields))
-        {
+        if (array_key_exists($fieldName, $this->_fields)) {
             $return = $this->_fields[$fieldName];
         } else {
-            if ($addIfNotExist)
-            {
+            if ($addIfNotExist) {
                 $this->_fields[$fieldName] = $this->_newfield($fieldName);
-                $this->_fieldIndex[] = $fieldName;
+                $this->_fieldIndex[]       = $fieldName;
 
                 $return = $this->_fields[$fieldName];
             }
@@ -73,15 +71,14 @@ class anvilModelFields extends anvilObjectAbstract
     public function &__get($fieldName)
     {
 
-        if (!array_key_exists($fieldName, $this->_fields))
-        {
+        if (!array_key_exists($fieldName, $this->_fields)) {
             $this->_fields[$fieldName] = $this->_newfield($fieldName);
-            $this->_fieldIndex[] = $fieldName;
+            $this->_fieldIndex[]       = $fieldName;
         }
 
 //        if (isset($this->_fields[$fieldName]))
 //        {
-            $return = $this->_fields[$fieldName];
+        $return = $this->_fields[$fieldName];
 //        }
 
         return $return;
@@ -97,15 +94,40 @@ class anvilModelFields extends anvilObjectAbstract
     }
 
 
+    public function getChangedArray()
+    {
+        $return = array();
+        $changedIndex = 0;
+
+        $count = $this->count();
+
+        for ($i = 0; $i < $count; $i++) {
+            $field = $this->_fields[$this->_fieldIndex[$i]];
+            /** @var $field anvilModelField **/
+
+            if ($field->changed) {
+                $return[$changedIndex]['name'] = $field->name;
+                $return[$changedIndex]['fieldName'] = $field->fieldName;
+                $return[$changedIndex]['displayName'] = $field->displayName;
+                $return[$changedIndex]['from'] = $field->priorValue;
+                $return[$changedIndex]['to'] = $field->value;
+
+                $changedIndex++;
+            }
+        }
+
+        return $return;
+    }
+
+
     public function isChanged()
     {
         $count = $this->count();
 
-        for ($i = 0; $i < $count; $i++)
-        {
+        for ($i = 0; $i < $count; $i++) {
             if ($this->_fields[$this->_fieldIndex[$i]]->changed) {
                 return true;
-            };
+            }
         }
 
         return false;
@@ -115,8 +137,7 @@ class anvilModelFields extends anvilObjectAbstract
     public function reset()
     {
         $count = $this->count();
-        for ($i = 0; $i < $count; $i++)
-        {
+        for ($i = 0; $i < $count; $i++) {
             if (isset($this->_fields[$this->_fieldIndex[$i]]->defaultValue)) {
                 $this->_fields[$this->_fieldIndex[$i]]->value = $this->_fields[$this->_fieldIndex[$i]]->defaultValue;
             } else {
@@ -131,8 +152,7 @@ class anvilModelFields extends anvilObjectAbstract
     {
         $count = $this->count();
 
-        for ($i = 0; $i < $count; $i++)
-        {
+        for ($i = 0; $i < $count; $i++) {
             $this->_fields[$this->_fieldIndex[$i]]->changed = false;
         }
     }
@@ -144,8 +164,7 @@ class anvilModelFields extends anvilObjectAbstract
 
 //        $count = $this->count();
 
-        foreach($this->_fields as $name => $object)
-        {
+        foreach ($this->_fields as $name => $object) {
             $newArray[$object->name] = $object->value;
         }
 

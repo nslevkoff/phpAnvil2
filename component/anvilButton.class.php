@@ -122,6 +122,10 @@ class anvilButton extends anvilControlAbstract
         }
         $return .= '"';
 
+        if ($this->style) {
+            $return .= ' style="' . $this->style . '"';
+        }
+
         //---- Type
         if ($this->actionType != self::ACTION_TYPE_SIMPLE) {
             $return .= ' type="';
@@ -135,7 +139,11 @@ class anvilButton extends anvilControlAbstract
 //            if ($this->actionType == self::ACTION_TYPE_IMAGE) {
 //                $return .= ' src="' . $this->value . '"';
 //            } else {
-        $return .= ' name="' . $this->name . '"';
+
+        if ($this->name != '') {
+            $return .= ' name="' . $this->name . '"';
+        }
+
         if ($this->value != '') {
             $return .= ' value="' . $this->value . '"';
         } else {

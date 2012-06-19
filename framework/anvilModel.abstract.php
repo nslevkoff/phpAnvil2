@@ -34,6 +34,9 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
 
 //    public $idFieldName = 'id';
 
+    /** @var phpAnvil2 */
+    protected $_core;
+
     protected $_isLoaded = false;
 
     public $autoLoadAll = false;
@@ -47,7 +50,9 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
 
         parent::__construct();
 
-        $this->enableLog();
+//        $this->enableLog();
+
+        $this->_core = $phpAnvil;
 
         $this->_newFields();
 
@@ -62,6 +67,15 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
             $this->formName = $formName;
         }
 
+    }
+
+    public function __destruct()
+    {
+//        if (isset($this->fields)) {
+//            $this->fields->__destruct();
+//        }
+
+        parent::__destruct();
     }
 
 
@@ -136,7 +150,7 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
             //            $field->defaultValue = $defaultValue;
             $field->value = $value;
 
-            $this->_logDebug($this->fields);
+//            $this->_logDebug($this->fields);
         }
 
         return true;
@@ -422,6 +436,7 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
                 if ($objRS->read()) {
                     $this->fields->field($this->primaryFieldName)->value = $objRS->data('id');
                 }
+                $objRS->close();
             }
 
             $this->resetChanged();

@@ -35,6 +35,7 @@ abstract class anvilUserModelAbstract extends anvilRSModelAbstract
         $this->fields->accountID->fieldType = anvilModelField::DATA_TYPE_NUMBER;
 
         $this->fields->firstName->fieldName = 'first_name';
+
         $this->fields->lastName->fieldName  = 'last_name';
 
         $this->fields->email->fieldName = 'email';
@@ -198,8 +199,10 @@ abstract class anvilUserModelAbstract extends anvilRSModelAbstract
         global $phpAnvil;
 
         if (!empty($this->token)) {
-            setcookie($phpAnvil->application->cookieUserID, $phpAnvil->encrypt($this->id), time() + 60 * 60 * 24 * 365, '/');
-            setcookie($phpAnvil->application->cookieUserToken, $phpAnvil->encrypt($this->token), time() + 60 * 60 * 24 * 365, '/');
+//            setcookie($phpAnvil->application->cookieUserID, $phpAnvil->encrypt($this->id), time() + 60 * 60 * 24 * 365, '/');
+//            setcookie($phpAnvil->application->cookieUserToken, $phpAnvil->encrypt($this->token), time() + 60 * 60 * 24 * 365, '/');
+            setcookie($phpAnvil->application->cookieUserID, $phpAnvil->encrypt($this->id), time() + $phpAnvil->session->innactiveTimeout, '/');
+            setcookie($phpAnvil->application->cookieUserToken, $phpAnvil->encrypt($this->token), time() + $phpAnvil->session->innactiveTimeout, '/');
         }
     }
 

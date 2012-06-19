@@ -26,6 +26,8 @@ class anvilDataEntry extends anvilEntry
         $name = $field->formName . '[' . $field->name . ']';
 
         parent::__construct($id, $name, $size, $field->value, $properties);
+
+        $this->required = $field->required;
     }
 
 

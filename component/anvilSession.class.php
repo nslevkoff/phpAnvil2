@@ -50,9 +50,12 @@ class anvilSession extends anvilDynamicObjectAbstract
     public $timezoneOffset = '';
     public $dateTimeZone;
 
+    private $_isConsole = false;
 
     public function __construct($dataConnection = null)
     {
+
+        $this->_isConsole = PHP_SAPI == 'cli';
 
         $this->dataConnection = $dataConnection;
 
@@ -70,6 +73,8 @@ class anvilSession extends anvilDynamicObjectAbstract
      */
     public function detect()
     {
+//        global $phpAnvil;
+
         if ($this->_detectExecuted) {
             //			$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, 'Already Executed - skipping...');
             //            FB::info('Already Executed - skipping...');
@@ -82,7 +87,12 @@ class anvilSession extends anvilDynamicObjectAbstract
             $this->thisVisitDTS = date('Y-m-d H:i:s');
 
             #---- Detect User IP
-            $this->userIP = $_SERVER['REMOTE_ADDR'];
+            if ($this->_isConsole) {
+                $this->userIP = getHostByName(SITE_DOMAIN);
+            } else {
+                $this->userIP = $_SERVER['REMOTE_ADDR'];
+            }
+
             //			$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, 'User IP = ' . $this->userIP);
             $this->_logVerbose('User IP = ' . $this->userIP);
             //            FB::log($this->userIP, '$this->userIP');
@@ -822,7 +832,12 @@ class anvilSession extends anvilDynamicObjectAbstract
             //			$sql .= ',' . $this->dataConnection->dbDTS($this->thisVisitDTS);
             $sql .= ',Now()';
             $sql .= ',' . $this->dataConnection->dbString($this->userAgent);
-            $sql .= ',' . $this->dataConnection->dbString('http://' . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"]);
+
+            if ($this->_isConsole) {
+                $sql .= ',' . $this->dataConnection->dbString('** Console **');
+            } else {
+                $sql .= ',' . $this->dataConnection->dbString('http://' . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"]);
+            }
 
             if (isset($_SERVER["HTTP_REFERER"])) {
                 //$this->_strReferrer = $_SERVER["HTTP_REFERER"];

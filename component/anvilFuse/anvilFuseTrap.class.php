@@ -87,6 +87,8 @@ class anvilFuseTrap extends anvilDynamicObjectAbstract
     public $echoExceptions = true;
     public $echoTrace = false;
 
+    private $_isConsole = false;
+    private $_remoteIP = '';
 
     #----------------------------------------------
     #---- anvilFuseTrap Methods
@@ -95,6 +97,11 @@ class anvilFuseTrap extends anvilDynamicObjectAbstract
     public function __construct()
     {
 //        $this->enableLog();
+        $this->_isConsole = PHP_SAPI == 'cli';
+
+        if (!$this->_isConsole) {
+            $this->_remoteIP = $_SERVER['REMOTE_ADDR'];
+        }
     }
 
 
@@ -479,11 +486,12 @@ class anvilFuseTrap extends anvilDynamicObjectAbstract
                 //				$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, 'Adding new event...');
                 //                $this->_logVerbose('Adding new event...');
 
+
                 $return = $anvilFuseWS->newEvent(
                     $type,
                     $this->applicationID,
                     $this->applicationVersion,
-                    $_SERVER['REMOTE_ADDR'],
+                    $this->_remoteIP,
                     $subject,
                     $number,
                     $message,
@@ -521,7 +529,7 @@ class anvilFuseTrap extends anvilDynamicObjectAbstract
 
                 }
                 $objEvent->version = $this->applicationVersion;
-                $objEvent->userIP = $_SERVER['REMOTE_ADDR'];
+                $objEvent->userIP = $this->_remoteIP;
                 $objEvent->userID = $this->userID;
                 $objEvent->name = substr($subject, 0, 255);
                 $objEvent->number = $number;
@@ -555,7 +563,7 @@ class anvilFuseTrap extends anvilDynamicObjectAbstract
                 $logAppend .= 'Type: ' . $types[$type] . "\r\n";
                 $logAppend .= 'Application ID: ' . $this->applicationID . "\r\n";
                 $logAppend .= 'Application version: ' . $this->applicationVersion . "\r\n";
-                $logAppend .= 'User IP: ' . $_SERVER['REMOTE_ADDR'] . "\r\n";
+                $logAppend .= 'User IP: ' . $this->_remoteIP . "\r\n";
                 $logAppend .= 'Number: ' . $number . "\r\n";
                 $logAppend .= 'Name: ' . $subject . "\r\n";
                 $logAppend .= 'Details: ' . $message . "\r\n";

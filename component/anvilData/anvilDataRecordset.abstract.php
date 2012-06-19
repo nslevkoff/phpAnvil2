@@ -9,10 +9,10 @@ require_once PHPANVIL2_COMPONENT_PATH . 'anvilObject.abstract.php';
 /**
  * anvilData Recordset Abstract Class
  *
- * @version        1.1
+ * @version         1.1
  * @date            10/06/2011
- * @author        Nick Slevkoff <nick@slevkoff.com>
- * @copyright     Copyright (c) 2009-2011 Nick Slevkoff (http://www.slevkoff.com)
+ * @author          Nick Slevkoff <nick@slevkoff.com>
+ * @copyright       Copyright (c) 2009-2011 Nick Slevkoff (http://www.slevkoff.com)
  * @ingroup         phpAnvilTools anvilData anvilData_MySQL
  */
 class anvilDataRecordsetAbstract extends anvilObjectAbstract
@@ -27,16 +27,18 @@ class anvilDataRecordsetAbstract extends anvilObjectAbstract
     public $rowNumber = 0;
     public $sql;
 
+
     public function __construct($sql = null, $result = null, $anvilDataConnection = null)
     {
-        $this->result = $result;
-        $this->sql = $sql;
+        $this->result               = $result;
+        $this->sql                  = $sql;
         $this->_anvilDataConnection = $anvilDataConnection;
 
         $this->_hasRows = $result == true;
 
         $this->enableLog();
     }
+
 
     public function processError($number, $message = '', $detail = '')
     {
@@ -57,6 +59,12 @@ class anvilDataRecordsetAbstract extends anvilObjectAbstract
         }
     }
 
+
+    public function close()
+    {
+    }
+
+
     public function data($column, $dataType = 0)
     {
         global $phpAnvil;
@@ -65,7 +73,7 @@ class anvilDataRecordsetAbstract extends anvilObjectAbstract
 
         if ($dataType > 0) {
             $regional = $phpAnvil->regional;
-            $value = $return;
+            $value    = $return;
 
             switch ($dataType) {
                 case anvilModelField::DATA_TYPE_DATE:
@@ -94,8 +102,18 @@ class anvilDataRecordsetAbstract extends anvilObjectAbstract
                     }
                     break;
 
+                case anvilModelField::DATA_TYPE_PHONE:
                 case anvilModelField::DATA_TYPE_STRING:
+//                    if ($column == 'detail') {
+//                        $this->_logDebug($value, '$value');
+//                    }
+
                     $return = stripslashes($value);
+
+//                    if ($column == 'detail') {
+//                    $this->_logDebug($return, '$return');
+//                    }
+
                     break;
 
                 case anvilModelField::DATA_TYPE_BOOLEAN:
@@ -128,6 +146,7 @@ class anvilDataRecordsetAbstract extends anvilObjectAbstract
     {
         return true;
     }
+
 
     public function toArray($rows = array())
     {

@@ -48,7 +48,7 @@ class anvilGrid extends anvilControlAbstract
 
     public $striped = false;
     public $bordered = false;
-    public $condensed = true;
+    public $condensed = false;
 
 
     public $statePrefix = 'ag';
@@ -75,6 +75,7 @@ class anvilGrid extends anvilControlAbstract
 
     public $rowAltColorEnabled = true;
 
+    /** @var anvilGridColumns */
     public $columns;
 
     public $columnCalcEnabled = false;
@@ -657,8 +658,10 @@ class anvilGrid extends anvilControlAbstract
                             //                                $this->_logDebug($columnOptions, '$columnOptions #2');
 
                             $content = $this->applyColumnCalc($this->rowData, $objColumn->name, $content);
-                        } else {
+                        } elseif ($columnOptions) {
                             $content = $this->applyColumnCalc($this->rowData, $objColumn->name, $objRS->data($objColumn->name, $columnOptions->dataType));
+                        } else {
+                            $content = $this->applyColumnCalc($this->rowData, $objColumn->name, $objRS->data($objColumn->name));
                         }
 
                         $useColumnURL = false;
@@ -687,7 +690,11 @@ class anvilGrid extends anvilControlAbstract
                             $html .= 'cell';
                         }
 
-                        //                        if (($columnOptions && !empty($columnOptions->url)) || (!empty($this->rowURL) && $columnOptions && $columnOptions->rowClickable)) {
+                        if ($columnOptions && !empty($columnOptions->class)) {
+                            $html .= ' ' . $columnOptions->class;
+                        }
+
+                            //                        if (($columnOptions && !empty($columnOptions->url)) || (!empty($this->rowURL) && $columnOptions && $columnOptions->rowClickable)) {
                         if ($useColumnURL || $useRowURL) {
                             $html .= ' link';
                         } else {
@@ -1226,6 +1233,7 @@ class anvilGridColumn
     public $format;
     public $formanvilDecimals;
     public $headerEnabled = true;
+    public $class;
     public $customClass;
     public $css;
     public $style;

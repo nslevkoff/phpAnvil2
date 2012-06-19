@@ -108,7 +108,7 @@ class anvilButton extends anvilFormControlAbstract
             $this->type = $this->_actionTypeDefault[$this->actionType];
         }
 
-        parent::__construct($id, $name, $properties, $traceEnabled);
+        parent::__construct($id, '', $properties, $traceEnabled);
     }
 
 

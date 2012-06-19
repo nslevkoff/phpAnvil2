@@ -48,7 +48,7 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
     {
         parent::__construct();
 
-        $this->enableLog();
+//        $this->enableLog();
 
         $this->_template = $this->_application->newTemplate();
         $this->_head   = new anvilHTMLResponseHead();
@@ -158,7 +158,7 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
 
 
         //---- Assign Tokens to Template ---------------------------------------
-        $this->_logDebug($this->_tokenArray, 'tokenArray');
+//        $this->_logDebug($this->_tokenArray, 'tokenArray');
 
         $tokenKeys = array_keys($this->_tokenArray);
         $count = count($tokenKeys);

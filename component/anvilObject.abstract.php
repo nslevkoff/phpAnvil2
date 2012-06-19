@@ -142,6 +142,16 @@ abstract class anvilObjectAbstract
 //        return true;
     }
 
+    public function __destruct()
+    {
+        foreach ($this as $index => $value) {
+//            if (is_object($index)) {
+//                $this->$index->__destruct();
+//            }
+            unset($this->$index);
+        }
+    }
+
 
     //==== OLD Trace Functions for Backwards Compatibility =====================
     /**

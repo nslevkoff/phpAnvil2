@@ -96,6 +96,8 @@ class anvilData_mysql_Recordset extends anvilDataRecordsetAbstract
 
 
 	public function close() {
+        parent::close();
+
 		mysql_free_result($this->result);
 	}
 
