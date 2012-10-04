@@ -33,6 +33,7 @@ class anvilModelField
     protected $_displayName;
     public $defaultValue = null;
     protected $_value;
+    public $valueNameArray = array();
     public $changed = false;
     public $priorValue;
 
@@ -51,13 +52,18 @@ class anvilModelField
     public $required = false;
     public $validationRegEx;
 
+    public $activity = true;
 
-    public function __construct($model, $name = '')
+    private $_regional;
+
+    public function __construct(anvilModelAbstract $model, $name = '')
     {
         //        $this->model = $model;
         $this->name      = $name;
         $this->tableName = $model->primaryTableName;
         $this->formName  = $model->formName;
+
+        $this->_regional = $model->regional;
     }
 
 
@@ -126,10 +132,20 @@ class anvilModelField
     {
         switch (strtolower($name)) {
             case 'value':
-                if ($this->_value != $value) {
+
+//                echo '<!--- ' . $this->name . ': ' . $this->_value;
+
+                if ($this->_value !== $value && !(is_null($this->_value) && empty($value))) {
+//                    echo ' != ';
+//                    echo '<!--- ' . $this->name . ' changed from ' . $this->_value . ' to ' . $value . '. -->' . PHP_EOL;
+
                     $this->priorValue = $this->_value;
                     $this->changed    = true;
+                } else {
+//                    echo ' == ';
                 }
+//                echo $value . ' -->' . PHP_EOL;
+
 
                 $this->_value = $value;
                 break;
@@ -157,6 +173,8 @@ class anvilModelField
      */
     public function toSave($dataConnection)
     {
+        global $phpAnvil;
+
         $return = '';
 
         switch ($this->fieldType) {
@@ -166,23 +184,7 @@ class anvilModelField
 
             case self::DATA_TYPE_DATE:
 
-                $value = isset($this->_value)
-                        ? $this->_value
-                        : ($this->allowNull
-                                ? null
-                                : $this->defaultValue);
-
-                $return = $value;
-
-                if (!is_null($value)) {
-                    $value = new DateTime($value, new DateTimeZone('UTC'));
-
-                    $return = $value->format($dataConnection->dateFormat);
-                    $return = $dataConnection->dbDate($return);
-                }
-
-                break;
-            case self::DATA_TYPE_DTS:
+//                echo '<!-- ' . $this->name . ': this->_value = ' . $this->_value . ' -->' . PHP_EOL;
 
                 $value = !empty($this->_value)
                         ? $this->_value
@@ -193,7 +195,46 @@ class anvilModelField
                 $return = $value;
 
                 if (!is_null($value)) {
-                    $value = new DateTime($value, new DateTimeZone('UTC'));
+//                    echo '<!-- ' . $this->name . ': value = ' . $this->_value . ' -->' . PHP_EOL;
+
+                    $value = new DateTime($value);
+
+//                    if (isset($this->_regional)) {
+//                        $value = new DateTime($value, $this->_regional->dateTimeZone);
+//                    } else {
+//                        $value = new DateTime($value, $phpAnvil->regional->dateTimeZone);
+//                    }
+
+//                    $value->setTimezone(new DateTimeZone('UTC'));
+
+                    $return = $value->format($dataConnection->dateFormat);
+                    $return = $dataConnection->dbDate($return);
+                } else {
+//                    echo '<!-- ' . $this->name . ': value IS NULL -->' . PHP_EOL;
+                }
+
+
+                break;
+            case self::DATA_TYPE_DTS:
+
+                $value = isset($this->_value)
+                        ? $this->_value
+                        : ($this->allowNull
+                                ? null
+                                : $this->defaultValue);
+
+                $return = $value;
+
+                if (!is_null($value)) {
+//                    $value = new DateTime($value, new DateTimeZone('UTC'));
+                    if (isset($this->_regional)) {
+                        $value = new DateTime($value, $this->_regional->dateTimeZone);
+                    } else {
+                        $value = new DateTime($value, $phpAnvil->regional->dateTimeZone);
+                    }
+
+//                    $value = new DateTime($value, new DateTimeZone('UTC'));
+                    $value->setTimezone(new DateTimeZone('UTC'));
 
                     $return = $value->format($dataConnection->dtsFormat);
                     $return = $dataConnection->dbDTS($return);
@@ -247,7 +288,7 @@ class anvilModelField
             case self::DATA_TYPE_DECIMAL:
             case self::DATA_TYPE_FLOAT:
                 $return = isset($this->_value)
-                        ? floatval($this->_value)
+                        ? floatval(str_replace(',', '', $this->_value))
                         :
                         ($this->allowNull
                                 ? null
@@ -256,11 +297,22 @@ class anvilModelField
                                         : 0));
                 break;
 
+            case self::DATA_TYPE_INTEGER:
             case self::DATA_TYPE_NUMBER:
+
+                $return = isset($this->_value)
+                        ? intval(str_replace(',', '', $this->_value))
+                        : ($this->allowNull
+                                ? null
+                                : (isset($this->defaultValue)
+                                        ? $this->defaultValue
+                                        : 0));
+                break;
+
             default:
 
                 $return = isset($this->_value)
-                        ? intval($this->_value)
+                        ? $this->_value
                         : ($this->allowNull
                                 ? null
                                 : (isset($this->defaultValue)

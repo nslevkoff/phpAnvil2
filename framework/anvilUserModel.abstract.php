@@ -15,6 +15,8 @@ require_once 'anvilRSModel.abstract.php';
  * @property int    $supportingAccountID
  * @property int    $supportingUserID
  * @property bool   $enableDebug
+ * @property string $tempToken
+ * @property string $tempTokenDTS
  */
 abstract class anvilUserModelAbstract extends anvilRSModelAbstract
 {
@@ -43,12 +45,15 @@ abstract class anvilUserModelAbstract extends anvilRSModelAbstract
         $this->fields->timezoneID->fieldName = 'timezone_id';
         $this->fields->timezoneID->fieldType = anvilModelField::DATA_TYPE_NUMBER;
 
+        $this->fields->password->activity = false;
         $this->fields->password->fieldName = 'password';
 //        $this->fields->token->fieldName    = 'token';
 
+        $this->fields->lastLoginDTS->activity = false;
         $this->fields->lastLoginDTS->fieldName = 'last_login_dts';
         $this->fields->lastLoginDTS->fieldType = anvilModelField::DATA_TYPE_DTS;
 
+        $this->fields->lastLoginSessionID->activity = false;
         $this->fields->lastLoginSessionID->fieldName = 'last_login_session_id';
         $this->fields->lastLoginSessionID->fieldType = anvilModelField::DATA_TYPE_NUMBER;
 
@@ -61,6 +66,12 @@ abstract class anvilUserModelAbstract extends anvilRSModelAbstract
         $this->fields->enableDebug->fieldName = 'enable_debug';
         $this->fields->enableDebug->fieldType = anvilModelField::DATA_TYPE_BOOLEAN;
 
+        $this->fields->tempToken->activity = false;
+        $this->fields->tempToken->fieldName = 'temp_token';
+
+        $this->fields->tempTokenDTS->activity = false;
+        $this->fields->tempTokenDTS->fieldName = 'temp_token_dts';
+        $this->fields->tempTokenDTS->fieldType = anvilModelField::DATA_TYPE_DTS;
     }
 
 
@@ -123,14 +134,15 @@ abstract class anvilUserModelAbstract extends anvilRSModelAbstract
 
     public function login($email = '', $password = '')
     {
+        global $phpAnvil;
 
         if (empty($email)) {
             $email = $_POST['email'];
         }
 
         if (empty($password)) {
-            //            $password = $this->encrypt($_POST['password']);
-            $password = $_POST['password'];
+            $password = $phpAnvil->hash($_POST['password']);
+//            $password = $_POST['password'];
         }
 
         $return = $this->loadByLogin($email, $password);
@@ -144,10 +156,30 @@ abstract class anvilUserModelAbstract extends anvilRSModelAbstract
         $sql = 'SELECT *';
         $sql .= ' FROM ' . $this->primaryTableName;
         $sql .= ' WHERE email=' . $this->dataConnection->dbString($email);
-        $sql .= ' AND record_status_id != ' . self::RECORD_STATUS_DELETED;
+        $sql .= ' AND record_status_id = ' . self::RECORD_STATUS_ACTIVE;
 
         return $this->load($sql);
     }
+
+
+    public function loadByTempToken($token = '')
+    {
+//        $this->_logDebug($token);
+
+        if (empty($token)) {
+            $token = $this->tempToken;
+        }
+
+        $sql = 'SELECT *';
+        $sql .= ' FROM ' . $this->primaryTableName;
+        $sql .= ' WHERE temp_token=' . $this->dataConnection->dbString($token);
+        $sql .= ' AND record_status_id != ' . self::RECORD_STATUS_DELETED;
+
+//        $this->_logDebug($sql);
+
+        return $this->load($sql);
+    }
+
 
 
     public function loadByToken($token = '')
@@ -185,6 +217,10 @@ abstract class anvilUserModelAbstract extends anvilRSModelAbstract
             if ($this->loadByToken($token) && $this->id == $id) {
                 $msg = 'User Cookie Detected = [' . $this->id . '] ' . $this->token;
                 $return = true;
+            } else {
+                $msg = 'User Cookie Token and ID Mismatched! Treating as new user...';
+                $this->resetFields();
+                $this->id = 0;
             }
         }
 
@@ -215,11 +251,17 @@ abstract class anvilUserModelAbstract extends anvilRSModelAbstract
         setcookie($phpAnvil->application->cookieUserToken, '', time() - 3600, '/');
     }
 
-    public function hashPassword()
+    public function hashPassword($password = '')
     {
         global $phpAnvil;
 
-        $this->password = $phpAnvil->hash($this->password);
+        if (empty($password)) {
+            $password = $this->password;
+        }
+
+        $this->password = $phpAnvil->hash($password);
+
+        return $this->password;
     }
 
 
@@ -242,7 +284,25 @@ abstract class anvilUserModelAbstract extends anvilRSModelAbstract
 
         //---- Generate Token --------------------------------------------------
         if (empty($this->token)) {
-            $this->token = $phpAnvil->generateToken(8);
+//            $this->token = $phpAnvil->generateToken(8);
+
+            $isUnique = false;
+            $token    = '';
+
+            while (!$isUnique) {
+                $token = $phpAnvil->generateToken(8);
+
+                //---- Verify Token is Unique
+                $testSQL = 'SELECT user_id';
+                $testSQL .= ' FROM ' . $this->primaryTableName;
+                $testSQL .= ' WHERE token = ' . $phpAnvil->db->dbString($token);
+
+                $testRS = $phpAnvil->db->execute($testSQL);
+
+                $isUnique = !$testRS->read();
+            }
+
+            $this->token = $token;
         }
 
         //---- Save the Record

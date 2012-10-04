@@ -1,5 +1,4 @@
 <?php
-//require_once 'anvilButton.class.php';
 require_once 'anvilCheckBox.class.php';
 require_once 'anvilComboBox.class.php';
 require_once 'anvilControlGroup.class.php';

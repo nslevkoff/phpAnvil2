@@ -21,6 +21,7 @@ abstract class anvilAccountModelAbstract extends anvilRSModelAbstract
         $this->fields->token->fieldName = 'token';
 
         $this->fields->name->fieldName = 'name';
+        $this->fields->name->required = true;
 
         $this->fields->email->fieldName = 'email';
     }

@@ -39,6 +39,8 @@ class anvilForm extends anvilContainer
     public $footerEnabled = true;
     public $target;
 
+    public $validation = true;
+
 
     public function __construct($id = '', $method = self::METHOD_POST, $action = '', $type = self::TYPE_DEFAULT, $properties = null)
     {
@@ -114,6 +116,10 @@ class anvilForm extends anvilContainer
 
         if ($this->class) {
             $return .= ' ' . $this->class;
+        }
+
+        if ($this->validation) {
+            $return .= ' form-validation';
         }
         $return .= '"';
 

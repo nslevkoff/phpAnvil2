@@ -35,8 +35,8 @@ class anvilDataFactory extends anvilObjectAbstract
 	* @param $traceEnabled
     *   (optional) Setting to TRUE will enable anvilFuse tracing. [FALSE]
 	*/
-	public function __construct($traceEnabled = false) {
-		parent::__construct($traceEnabled);
+	public function __construct() {
+		parent::__construct();
 	}
 
 

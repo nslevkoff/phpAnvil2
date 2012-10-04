@@ -44,17 +44,19 @@ class anvilCheckBox extends anvilFormControlAbstract
 //        }
 
         //==== LABEL ===========================================================
-        //---- Class -----------------------------------------------------------
-        $return .= '<label class="checkbox';
+        if (!empty($this->text)) {
+            //---- Class -----------------------------------------------------------
+            $return .= '<label class="checkbox';
 
-        if ($this->class) {
-            $return .= ' ' . $this->class;
-        }
-        $return .= '"';
+            if ($this->class) {
+                $return .= ' ' . $this->class;
+            }
+            $return .= '"';
 
 //        $return .= ' for="' . $this->name . '"';
 
-        $return .= '>';
+            $return .= '>';
+        }
 
         //==== INPUT ===========================================================
         $return .= '<input type="checkbox"';
@@ -74,11 +76,22 @@ class anvilCheckBox extends anvilFormControlAbstract
         if ($this->disabled) {
             $return .= ' disabled="disabled"';
         }
-        $return .= '>';
 
-        $return .= $this->text;
+        if ($this->class) {
+            $return .= ' class="' . $this->class . '"';
+        }
 
-        $return .= '</label>';
+        if ($this->style) {
+            $return .= ' style="' . $this->style . '"';
+        }
+
+        $return .= ' />';
+
+        if (!empty($this->text)) {
+            $return .= $this->text;
+
+            $return .= '</label>';
+        }
 
         return $return;
     }

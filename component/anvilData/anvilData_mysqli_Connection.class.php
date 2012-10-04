@@ -28,23 +28,6 @@ class anvilData_mysqli_Connection extends anvilDataConnectionAbstract implements
 	const VERSION	= '1.0';
 	const ENGINE    = 'mysqli';
 
-//    const FORMAT_DATE = 'Y-m-d';
-//    const FORMAT_DTS = 'Y-m-d H:i:s';
-
-    public $dateFormat = 'Y-m-d';
-    public $dtsFormat = 'Y-m-d H:i:s';
-
-
-//	private $_connection;
-
-//    public $server;
-//    public $database;
-//    public $username;
-//    public $password;
-//    public $persistent;
-
-//    public $tablePrefix;
-
 
 	/**
 	* construct
@@ -63,26 +46,12 @@ class anvilData_mysqli_Connection extends anvilDataConnectionAbstract implements
     public function __construct($server, $database, $username, $password,
         $persistent = false, $tablePrefix = '')
     {
+        $this->dateFormat = 'Y-m-d';
+        $this->dtsFormat  = 'Y-m-d H:i:s';
+
         parent::__construct($server, $database, $username, $password,
             $persistent, $tablePrefix);
 
-//        unset($this->server);
-//        unset($this->database);
-//        unset($this->username);
-//        unset($this->password);
-//        unset($this->persistent);
-
-//		$this->addProperty('server', 'localhost');
-//		$this->addProperty('database', '');
-//		$this->addProperty('username', '');
-//		$this->addProperty('password', '');
-//		$this->addProperty('persistent', false);
-
-//		$this->server = $server;
-//		$this->database = $database;
-//		$this->username = $username;
-//		$this->password = $password;
-//		$this->persistent = $persistent;
 	}
 
 

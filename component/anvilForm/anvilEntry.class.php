@@ -11,6 +11,7 @@
 */
 
 
+require_once PHPANVIL2_COMPONENT_PATH . 'anvilContainer.class.php';
 require_once 'anvilFormControl.abstract.php';
 
 
@@ -74,12 +75,19 @@ class anvilEntry extends anvilFormControlAbstract {
 	const TYPE_PASSWORD	= 2;
 	const TYPE_FILE		= 3;
 
+    /** @var anvilContainer */
+    public $append;
+
+    /** @var anvilContainer */
+    public $prepend;
+
     public $appendText;
     public $disabled = false;
     public $onKeyPress;
     public $length;
     public $maxLength;
     public $prependText;
+    public $readOnly = false;
     public $size;
     public $type = self::TYPE_NORMAL;
     public $value;
@@ -115,7 +123,10 @@ class anvilEntry extends anvilFormControlAbstract {
 
 		parent::__construct($id, $name, $properties);
 
-		$this->size = $size;
+        $this->prepend = new anvilContainer();
+        $this->append  = new anvilContainer();
+
+        $this->size = $size;
 //        $this->type = $type;
 //		$this->maxLength = $maxLength;
 		$this->value = $value;
@@ -127,7 +138,10 @@ class anvilEntry extends anvilFormControlAbstract {
     {
 
         $return = '';
-        
+
+        $appendHTML = $this->append->renderContent();
+        $prependHTML = $this->prepend->renderContent();
+
 //        if ($this->wrapEnabled) {
 //            $return .= '<p class="' . $this->wrapClass . '">';
 //        }
@@ -135,7 +149,7 @@ class anvilEntry extends anvilFormControlAbstract {
 //        $return .= $this->renderLabel();
 
         //---- Render Prepend or Start Append Wrapper --------------------------
-        if (!empty($this->prependText) || !empty($this->appendText)) {
+        if (!empty($prependHTML) || !empty($this->prependText) || !empty($appendHTML) || !empty($this->appendText)) {
 
 //            if (!empty($this->appendText)) {
 //                $return .= '<div class="input-append">';
@@ -145,14 +159,16 @@ class anvilEntry extends anvilFormControlAbstract {
 //            }
 
                 $return .= '<div class="';
-            if (!empty($this->appendText)) {
+            if (!empty($appendHTML) || !empty($this->appendText)) {
                 $return .= ' input-append';
             }
 
-            if (!empty($this->prependText)) {
+            if (!empty($prependHTML) || !empty($this->prependText)) {
                 $return .= ' input-prepend';
             }
             $return .= '">';
+
+            $return .= $prependHTML;
 
             if (!empty($this->prependText)) {
                 $return .= '<span class="add-on">' . $this->prependText . '</span>';
@@ -193,6 +209,10 @@ class anvilEntry extends anvilFormControlAbstract {
 			$return .= ' maxlength="' . $this->maxLength . '"';
 		}
 
+        if ($this->readOnly) {
+            $return .= ' readonly="readonly"';
+        }
+
         $return .= ' class="';
 
 //        if ($this->size != self::SIZE_LENGTH) {
@@ -203,9 +223,14 @@ class anvilEntry extends anvilFormControlAbstract {
             $return .= ' ' . $this->class;
         }
 
-        if ($this->validation && $this->required) {
-            $return .= ' required';
+        if ($this->validation) {
+            $return .= ' anvil-validation';
+
+            if ($this->required) {
+                $return .= ' required';
+            }
         }
+
 
             $return .= '"';
 
@@ -254,10 +279,14 @@ class anvilEntry extends anvilFormControlAbstract {
 
 
         //---- Render Append or Close Prepend Wrapper --------------------------
-        if (!empty($this->prependText) || !empty($this->appendText)) {
+//        if (!empty($this->prependText) || !empty($this->appendText)) {
+        if (!empty($prependHTML) || !empty($this->prependText) || !empty($appendHTML) || !empty($this->appendText)) {
             if (!empty($this->appendText)) {
                 $return .= '<span class="add-on">' . $this->appendText . '</span>';
             }
+
+            $return .= $appendHTML;
+
 //            if (!empty($this->appendText)) {
 //                $return .= '<span class="add-on">' . $this->appendText . '</span>';
 //                $return .= '</div>';
@@ -268,7 +297,7 @@ class anvilEntry extends anvilFormControlAbstract {
 
         //---- Render Validation Placeholder -----------------------------------
         if ($this->validation && $this->required) {
-            $return .= '<span class="help-inline">';
+            $return .= '<span class="help-validation">';
             $return .= '<span class="label"></span>';
             $return .= '<span class="description"></span>';
             $return .= '</span>';

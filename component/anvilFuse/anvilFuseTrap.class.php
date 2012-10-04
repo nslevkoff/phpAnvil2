@@ -422,6 +422,19 @@ class anvilFuseTrap extends anvilDynamicObjectAbstract
     }
 
 
+    public function clearErrorHandlers() {
+        $this->_errorHandlerEventType = NULL;
+        $this->_errorHandlerTypes     = NULL;
+        $this->_errorHandlerCallback  = NULL;
+        $this->_errorHandlerDieAfter  = NULL;
+
+        $this->_errorHandlerEventType = array();
+        $this->_errorHandlerTypes     = array();
+        $this->_errorHandlerCallback  = array();
+        $this->_errorHandlerDieAfter  = array();
+    }
+
+
     /**
      * Add an error handler callback.
      */

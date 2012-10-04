@@ -64,6 +64,11 @@ class anvilDataRecordsetAbstract extends anvilObjectAbstract
     {
     }
 
+    public function count()
+    {
+        return 0;
+    }
+
 
     public function data($column, $dataType = 0)
     {
@@ -79,26 +84,27 @@ class anvilDataRecordsetAbstract extends anvilObjectAbstract
                 case anvilModelField::DATA_TYPE_DATE:
 
                     if (!empty($value) && strtolower($value) != 'null') {
-                        if (isset($regional->dateTimeZone)) {
-                            $dateTime = new DateTime($value, $regional->dateTimeZone);
-                            $return   = $dateTime->format($regional->dateFormat);
-                        } else {
-                            $dateTime = new DateTime($value, new DateTimeZone('PST'));
-                            $return   = $dateTime->format($regional->dateFormat);
-                        }
+                        $dateTime = new DateTime($value);
+//                        $dateTime = new DateTime($value, new DateTimeZone('UTC'));
+//                        if (isset($regional->dateTimeZone)) {
+//                            $dateTime->setTimezone($regional->dateTimeZone);
+//                        } else {
+//                            $dateTime->setTimezone(new DateTimeZone('PST'));
+//                        }
+                        $return = $dateTime->format($regional->dateFormat);
                     }
                     break;
 
                 case anvilModelField::DATA_TYPE_DTS:
                 case anvilModelField::DATA_TYPE_ADD_DTS:
                     if (!empty($value) && strtolower($value) != 'null') {
+                        $dateTime = new DateTime($value, new DateTimeZone('UTC'));
                         if (isset($regional->dateTimeZone)) {
-                            $dateTime = new DateTime($value, $regional->dateTimeZone);
-                            $return   = $dateTime->format($regional->dtsFormat);
+                            $dateTime->setTimezone($regional->dateTimeZone);
                         } else {
-                            $dateTime = new DateTime($value, new DateTimeZone('PST'));
-                            $return   = $dateTime->format($regional->dtsFormat);
+                            $dateTime->setTimezone(new DateTimeZone('PST'));
                         }
+                        $return = $dateTime->format($regional->dtsFormat);
                     }
                     break;
 

@@ -288,13 +288,20 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
             case anvilModelField::DATA_TYPE_DATE:
 
                 if (!empty($value) && strtolower($value) != 'null') {
-                    if (isset($this->regional->dateTimeZone)) {
-                        $dateTime = new DateTime($value, $this->regional->dateTimeZone);
-                        $return = $dateTime->format($this->regional->dateFormat);
-                    } else {
-                        $dateTime  = new DateTime($value, new DateTimeZone('PST'));
-                        $return = $dateTime->format($this->regional->dateFormat);
-                    }
+//                    if (isset($this->regional->dateTimeZone)) {
+//                        $dateTime = new DateTime($value, $this->regional->dateTimeZone);
+//                        $return = $dateTime->format($this->regional->dateFormat);
+//                    } else {
+//                        $dateTime  = new DateTime($value, new DateTimeZone('PST'));
+//                        $return = $dateTime->format($this->regional->dateFormat);
+//                    }
+
+                    $this->_logDebug($value, '$value');
+
+                    $dateTime = new DateTime($value);
+                    $return   = $dateTime->format($this->regional->dateFormat);
+
+                    $this->_logDebug($return, '$return');
                 }
                 break;
 
@@ -341,56 +348,58 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
 
             $primaryValue = $this->fields->field($this->primaryFieldName)->value;
 
+            if (!empty($primaryValue)) {
+                $sql = 'SELECT ';
 
-            $sql = 'SELECT ';
+                if ($this->autoLoadAll) {
+                    $sql .= '*';
+                } else {
+                    $count = $this->fields->count();
 
-            if ($this->autoLoadAll) {
-                $sql .= '*';
-            } else {
-                $count = $this->fields->count();
+                    for ($i = 0; $i < $count; $i++) {
+                        $dataFields .= ', ' . $this->fields->field($i)->fieldName;
+                    }
 
-                for ($i = 0; $i < $count; $i++)
-                {
-                    $dataFields .= ', ' . $this->fields->field($i)->fieldName;
+                    $sql .= substr($dataFields, 2);
                 }
 
-                $sql .= substr($dataFields, 2);
+                $sql .= ' FROM ' . $this->primaryTableName;
+                $sql .= ' WHERE ' . $this->primaryColumnName . '=' . intval($primaryValue);
             }
-
-            $sql .= ' FROM ' . $this->primaryTableName;
-            $sql .= ' WHERE ' . $this->primaryColumnName . '=' . intval($primaryValue);
-
-            //            if (!empty($this->dataFilter)) {
-            //                $sql .= ' AND ' . $this->dataFilter;
-            //            }
         }
 
-        //        $this->_logDebug($sql, '$sql');
 
-        $objRS = $this->dataConnection->execute($sql);
+        if (!empty($sql)) {
+//            $this->_logDebug($sql, '$sql');
 
-        if ($objRS->read()) {
+            $objRS = $this->dataConnection->execute($sql);
+
+            if ($objRS->read()) {
 
 
-            $count = $this->fields->count();
+                $count = $this->fields->count();
 
-            for ($i = 0; $i < $count; $i++)
-            {
+                for ($i = 0; $i < $count; $i++) {
 //                $dbValue = $objRS->data($this->fields->field($i)->fieldName);
 
 //                $this->fields->field($i)->value = $objRS->data($this->fields->field($i)->fieldName);
 //                $this->fields->field($i)->value = $this->formatForDisplay($dbValue, $this->fields->field($i)->fieldType);
-                $this->fields->field($i)->value = $objRS->data($this->fields->field($i)->fieldName, $this->fields->field($i)->fieldType);
+                    $this->fields->field($i)->value = $objRS->data($this->fields->field($i)->fieldName, $this->fields->field($i)->fieldType);
 
+                }
+
+
+                $return = true;
             }
+            $objRS->close();
 
-
-            $return = true;
+            $this->resetChanged();
+        } else {
+            $this->resetFields();
+            $this->fields->field($this->primaryFieldName)->value = 0;
         }
-        $objRS->close();
 
         $this->_isLoaded = $return;
-        $this->resetChanged();
 
         return $return;
     }
@@ -424,6 +433,8 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
         if (empty($sql)) {
             $return = true;
         } else {
+            $this->_logDebug($sql, '$sql');
+
             $return = $this->dataConnection->execute($sql);
 
             if ($this->isNew()) {
@@ -457,10 +468,10 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
                 if ($this->fields->exists($name)) {
                     $return++;
 
-                    if ($this->fields->field($name)->value != $newValue) {
-                        $this->fields->field($name)->priorValue = $this->fields->field($name)->value;
-                        $this->fields->field($name)->changed    = true;
-                    }
+//                    if ($this->fields->field($name)->value != $newValue) {
+//                        $this->fields->field($name)->priorValue = $this->fields->field($name)->value;
+//                        $this->fields->field($name)->changed    = true;
+//                    }
 
                     $this->fields->field($name)->value = $newValue;
                 }
@@ -474,6 +485,13 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
     {
         return $this->setFieldValues($_POST[$this->formName]);
     }
+
+    public function setFormName($name)
+    {
+        $this->formName = $name;
+        $this->fields->setFormName($name);
+    }
+
 
     public function toArray()
     {

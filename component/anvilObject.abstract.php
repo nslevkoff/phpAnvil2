@@ -6,6 +6,10 @@
  * @copyright     Copyright (c) 2010-2012 Nick Slevkoff (http://www.slevkoff.com)
  *
  */
+
+$logStartTime = microtime(true);
+
+
 abstract class anvilObjectAbstract
 {
     /**
@@ -129,6 +133,8 @@ abstract class anvilObjectAbstract
 
 //    protected $_core;
 
+    protected $_logTime = true;
+
 
     public function __construct($properties = null)
     {
@@ -249,6 +255,7 @@ abstract class anvilObjectAbstract
     protected function _log($detail, $title = '', $logLevel = self::LOG_LEVEL_DEBUG)
     {
         global $phpAnvil;
+        global $logStartTime;
 
         if (isset($phpAnvil) && is_object($phpAnvil) && $logLevel <= $this->logLevel && $this->isLogEnabled()) {
             $backTrace = debug_backtrace();
@@ -265,6 +272,15 @@ abstract class anvilObjectAbstract
 
 //            $extendedTitle = '[' . $backTrace[2]['class'] . '->' . $backTrace[2]['function'] . ': Line ' . $backTrace[1]['line'] . '] ' . $title;
             $extendedTitle = $backTrace[2]['class'] . '->' . $backTrace[2]['function'] . ' (' . $backTrace[1]['line'] . ') ' . $title;
+
+            if ($this->_logTime) {
+                $currentTime = microtime(true);
+                $elapsedTime = number_format(($currentTime - $logStartTime), 2, '.', '');
+//                $elapsedTime = $currentTime - $logStartTime;
+
+                $title = '[' . $elapsedTime . '] ' . $title;
+                $extendedTitle = '[' . $elapsedTime . '] ' . $extendedTitle;
+            }
 
             //---- Output to FirePHP/FireBug -----------------------------------
             switch ($logLevel)
@@ -367,10 +383,16 @@ abstract class anvilObjectAbstract
      */
     protected function _logGroup($name, $parameters = array())
     {
-//        global $phpAnvil;
+        global $logStartTime;
+
+        if ($this->_logTime) {
+            $currentTime = microtime(true);
+            $elapsedTime = number_format(($currentTime - $logStartTime), 2, '.', '');
+
+            $name         = '[' . $elapsedTime . '] ' . $name;
+        }
 
         fb::group($name, $parameters);
-//        $phpAnvil->_log->startGroup($name);
     }
 
 

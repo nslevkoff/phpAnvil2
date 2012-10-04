@@ -76,7 +76,20 @@ class anvilPageNav extends anvilControlAbstract
         $this->imagePath = $this->getBasePath() . '/images/';
 
         #---- Auto Detect Current Page
-        $this->currentPage = isset($_GET[$this->qsPrefix . 'pg']) ? $_GET[$this->qsPrefix . 'pg'] : 1;
+        $sessionKey = '';
+        if ($id == 'pageNav') {
+            $this->currentPage = isset($_GET[$this->qsPrefix . 'pg'])
+                    ? intval($_GET[$this->qsPrefix . 'pg'])
+                            : 1;
+        } else {
+            $sessionKey        = 'pageNav.current.' . $this->id;
+            $this->currentPage = (isset($_GET[$this->qsPrefix . 'pg'])
+                    ? intval($_GET[$this->qsPrefix . 'pg'])
+                    : (isset($_SESSION[$sessionKey])
+                            ? intval($_SESSION[$sessionKey])
+                            : 1));
+        }
+
         if ((int)$this->currentPage < 2) {
             $this->itemOffset = 0;
             $this->currentPage = 1;
@@ -84,6 +97,9 @@ class anvilPageNav extends anvilControlAbstract
             $this->itemOffset = ((int)$this->currentPage - 1) * (int)$this->itemsPerPage;
         }
 
+        if ($id != 'pageNav') {
+            $_SESSION[$sessionKey] = $this->currentPage;
+        }
     }
 
 

@@ -33,8 +33,10 @@ abstract class anvilBPAbstract extends anvilObjectAbstract
     /** @var bpTaskmodel */
     protected $_task;
 
+    protected $_savedOutput = '';
 
-	function __construct($batch = null, $task = null)
+
+	function __construct(&$batch = null, &$task = null)
     {
         global $phpAnvil;
 
@@ -66,6 +68,31 @@ abstract class anvilBPAbstract extends anvilObjectAbstract
         return $return;
     }
 
+
+    protected function _output($text, $eol = true, $fromTask = true)
+    {
+        if (isset($this->_batch)) {
+            if (!empty($this->_savedOutput)) {
+                $this->_batch->output .= $this->_savedOutput;
+                $this->_savedOutput = '';
+            }
+
+            $this->_batch->output($text, $eol);
+
+            if ($fromTask && isset($this->_task)) {
+                $this->_task->output($text, $eol);
+            }
+        } else {
+            $this->_savedOutput .= $text;
+
+            echo $text;
+
+            if ($eol) {
+                $this->_savedOutput .= PHP_EOL;
+                echo PHP_EOL;
+            }
+        }
+    }
 
     function process()
     {

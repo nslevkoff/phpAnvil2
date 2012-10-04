@@ -16,7 +16,7 @@ class anvilLabel extends anvilControlAbstract
     const TYPE_IMPORTANT = 3;
     const TYPE_INFO = 4;
 
-    private $_typeClass = array(
+    public $typeClass = array(
         '',
         'label-success',
         'label-warning',
@@ -42,6 +42,7 @@ class anvilLabel extends anvilControlAbstract
 
         $this->type = $type;
         $this->value = $value;
+        $this->class = $this->typeClass[$this->type];
 
     }
 
@@ -49,7 +50,7 @@ class anvilLabel extends anvilControlAbstract
     public function renderContent()
     {
         $return = '<span class="label';
-        $return .= ' ' . $this->_typeClass[$this->type];
+        $return .= ' ' . $this->class;
         $return .= '">' . $this->value . '</span>';
 
         return $return;

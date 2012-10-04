@@ -30,6 +30,13 @@ class anvilTabPanel extends anvilPanel
 //        $this->addControl($this->tabs);
     }
 
+
+    public function addHeader($title)
+    {
+        return $this->tabs->addHeader($title);
+    }
+
+
     /**
      * @param string $id
      * @param string $title

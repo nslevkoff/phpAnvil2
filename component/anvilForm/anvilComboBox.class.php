@@ -12,6 +12,7 @@ class anvilComboBox extends anvilFormControlAbstract {
 	const VERSION        	= '1.0';
 
     private $_sizeClass = array(
+        'spanAuto',
         'input-mini',
         'input-small',
         'input-medium',
@@ -32,24 +33,25 @@ class anvilComboBox extends anvilFormControlAbstract {
         'span12'
     );
 
-    const SIZE_MINI    = 0;
-    const SIZE_SMALL   = 1;
-    const SIZE_MEDIUM  = 2;
-    const SIZE_LARGE   = 3;
-    const SIZE_XLARGE  = 4;
-    const SIZE_XXLARGE = 5;
-    const SIZE_SPAN1   = 6;
-    const SIZE_SPAN2   = 7;
-    const SIZE_SPAN3   = 8;
-    const SIZE_SPAN4   = 9;
-    const SIZE_SPAN5   = 10;
-    const SIZE_SPAN6   = 11;
-    const SIZE_SPAN7   = 12;
-    const SIZE_SPAN8   = 13;
-    const SIZE_SPAN9   = 14;
-    const SIZE_SPAN10  = 15;
-    const SIZE_SPAN11  = 16;
-    const SIZE_SPAN12  = 17;
+    const SIZE_AUTO = 0;
+    const SIZE_MINI    = 1;
+    const SIZE_SMALL   = 2;
+    const SIZE_MEDIUM  = 3;
+    const SIZE_LARGE   = 4;
+    const SIZE_XLARGE  = 5;
+    const SIZE_XXLARGE = 6;
+    const SIZE_SPAN1   = 7;
+    const SIZE_SPAN2   = 8;
+    const SIZE_SPAN3   = 9;
+    const SIZE_SPAN4   = 10;
+    const SIZE_SPAN5   = 11;
+    const SIZE_SPAN6   = 12;
+    const SIZE_SPAN7   = 13;
+    const SIZE_SPAN8   = 14;
+    const SIZE_SPAN9   = 15;
+    const SIZE_SPAN10  = 16;
+    const SIZE_SPAN11  = 17;
+    const SIZE_SPAN12  = 18;
 
     protected $_preItems = array();
 	protected $_postItems = array();
@@ -65,8 +67,12 @@ class anvilComboBox extends anvilFormControlAbstract {
     public $value;
 //    public $wrapEnabled = false;
 
+    //---- Validation Properties
+    public $validation = true;
+    public $required = false;
 
-	public function __construct($id = '', $name = '', $size = self::SIZE_MEDIUM, $value = '', $properties = array()) {
+
+    public function __construct($id = '', $name = '', $size = self::SIZE_MEDIUM, $value = '', $properties = array()) {
 //		$this->_traceEnabled = $traceEnabled;
 
 //        $this->enableLog();
@@ -119,20 +125,35 @@ class anvilComboBox extends anvilFormControlAbstract {
 		#---- Render the Combo Box Starting Tag
 		$return .= '<select';
 
+
+        //---- ID
 		if ($this->id) {
 			$return .= ' id="' . $this->id . '"';
 		}
 
+        //---- Name
 		if ($this->name) {
 			$return .= ' name="' . $this->name . '"';
 		}
 
+        //---- Class
         $return .= ' class="' . $this->_sizeClass[$this->size];
+
         if ($this->class) {
             $return .= ' ' . $this->class;
         }
+
+        if ($this->validation) {
+            $return .= ' anvil-validation';
+
+            if ($this->required) {
+                $return .= ' required';
+            }
+        }
+
         $return .= '"';
 
+        //---- Style
         if ($this->style) {
             $return .= ' style="' . $this->style . '"';
         }
@@ -223,7 +244,7 @@ class anvilComboBox extends anvilFormControlAbstract {
 					}
 
 
-					$return .= '>' . $objRS->data($this->dataName, DATA_TYPE_STRING) . "</option>\n";
+					$return .= '>' . $objRS->data($this->dataName, DATA_TYPE_STRING) . '</option>' . PHP_EOL;
 
 				} while($objRS->read());
 
@@ -282,7 +303,7 @@ class anvilComboBox extends anvilFormControlAbstract {
                         $return .= ' selected="selected"';
                     }
 
-                    $return .= '>' . $files[$i] . "</option>\n";
+                    $return .= '>' . $files[$i] . '</option>' . PHP_EOL;
                 }
             }
 
@@ -298,14 +319,22 @@ class anvilComboBox extends anvilFormControlAbstract {
 			}
 
 
-			$return .= '>' . $this->_postItems[key($this->_postItems)] . "</option>\n";
+			$return .= '>' . $this->_postItems[key($this->_postItems)] . '</option>' . PHP_EOL;
 
 
 			next($this->_postItems);
 		}
 
 		#---- Render the Combo Box Ending Tag
-		$return .= '</select>' . "\n";
+		$return .= '</select>' . PHP_EOL;
+
+        //---- Render Validation Placeholder -----------------------------------
+        if ($this->validation && $this->required) {
+            $return .= '<span class="help-validation">';
+            $return .= '<span class="label"></span>';
+            $return .= '<span class="description"></span>';
+            $return .= '</span>';
+        }
 
 //        fb::log($return);
 //        if ($this->wrapEnabled) {

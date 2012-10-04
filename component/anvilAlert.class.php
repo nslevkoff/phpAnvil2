@@ -35,6 +35,7 @@ class anvilAlert extends anvilContainer
     public $message;
     public $block = false;
     public $closeable = true;
+    public $iconClass = '';
 
 
     public function __construct($id = 0, $type = self::TYPE_DEFAULT, $title = '', $message = '', $properties = null)
@@ -86,6 +87,10 @@ class anvilAlert extends anvilContainer
             $return .= '<a class="close" data-dismiss="alert">×</a>';
         }
 
+        if (!empty($this->iconClass)) {
+            $return .= '<div class="alert-icon"><i class="' . $this->iconClass . '"></i></div>';
+        }
+
         //---- Title
         if (!empty($this->title)) {
             $return .= '<h4 class="alert-heading">';
@@ -93,7 +98,7 @@ class anvilAlert extends anvilContainer
         }
 
         //---- Message
-        $return .= $this->message;
+        $return .= '<p class="alert-content">' . $this->message . '</p>';
         $return .= $this->renderControls();
 
         $return .= '</div>';

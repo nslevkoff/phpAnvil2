@@ -31,10 +31,13 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
      */
     protected $_head;
 
+    /** @var array */
+//    protected $_body = array();
+
     /**
      * @var array
      */
-    public $page = array();
+//    public $page = array();
 
     private $_preClientScript;
     private $_postClientScript;
@@ -69,6 +72,9 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
 
         $this->_tokenArray['webPath'] = $this->_site->webPath;
 //        $this->_webPath = $this->_site->webPath;
+
+        $this->_tokenArray['body'] = array();
+        $this->_tokenArray['body']['class'] = '';
 
         return true;
 	}
@@ -125,6 +131,9 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
 
 //        $this->_assign('page', $this->page);
 
+//        $this->_tokenArray['body'] = $this->_body;
+
+
         //---- Prepare Breadcrumbs ---------------------------------------------
         $count = count($this->_breadcrumbTitle);
 
@@ -174,7 +183,7 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
 
     protected function _display()
     {
-        global $phpAnvil;
+//        global $phpAnvil;
 
 //        $appTokens = array(
 //            'name'          => $phpAnvil->application->name,
@@ -196,14 +205,18 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
         $this->_tokenArray['app']['alerts'] = $alerts;
 
 
-
         if (is_object($this->_template)) {
+            $this->_logVerbose('Cloning template for use...');
             $this->_template = clone $this->_template;
         }
 
+        $this->_logVerbose('Assigning tokens...');
         $this->_assignTokens();
 
+        $this->_logVerbose('Rendering controls...');
         $this->_displayControls();
+
+        $this->_logVerbose('Rendering complete, template engine has the wheel...');
 
         return $this->_template->display($this->_templateFilename);
 
@@ -241,7 +254,7 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
     }
 
 
-    private function _renderAlertType($type, $typeName)
+    private function _renderAlertType($type, $typeName, $iconClass = '')
     {
         $html = '';
 
@@ -262,6 +275,11 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
 //                $this->_logDebug($message, '$message');
 
                 $objAlert = new anvilAlert('', $type, $message[0], $message[1]);
+
+                if (!empty($iconClass)) {
+                    $objAlert->iconClass = $iconClass;
+                }
+
                 $html .= $objAlert->renderContent();
             }
 
@@ -277,10 +295,10 @@ abstract class anvilHTMLControllerAbstract extends anvilControllerAbstract
     protected function _renderAlerts()
     {
         $html = '';
-        $html .= $this->_renderAlertType(anvilAlert::TYPE_ERROR, 'error');
-        $html .= $this->_renderAlertType(anvilAlert::TYPE_WARNING, 'warning');
-        $html .= $this->_renderAlertType(anvilAlert::TYPE_SUCCESS, 'success');
-        $html .= $this->_renderAlertType(anvilAlert::TYPE_INFO, 'info');
+        $html .= $this->_renderAlertType(anvilAlert::TYPE_ERROR, 'error', 'icon-exclamation-sign');
+        $html .= $this->_renderAlertType(anvilAlert::TYPE_WARNING, 'warning', 'icon-warning-sign');
+        $html .= $this->_renderAlertType(anvilAlert::TYPE_SUCCESS, 'success', 'icon-ok-sign');
+        $html .= $this->_renderAlertType(anvilAlert::TYPE_INFO, 'info', 'icon-info-sign');
 
         return $html;
     }

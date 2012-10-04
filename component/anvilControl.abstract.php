@@ -105,7 +105,9 @@ abstract class anvilControlAbstract extends anvilObjectAbstract
      */
     public $outerTemplateID;
 
+    /** @var phpAnvil2 */
     protected $_core;
+
 
     public function __construct($id = null, $properties = null)
     {

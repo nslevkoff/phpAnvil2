@@ -10,12 +10,16 @@ require_once 'anvilContainer.class.php';
  */
 class anvilTabItem extends anvilContainer
 {
+    const TYPE_HEADER = 1;
+    const TYPE_DIVIDER = 2;
+    const TYPE_TAB = 3;
 
     public $active = false;
-    public $title;
-    public $url;
-    public $rightIcon;
     public $rightCounter;
+    public $rightIcon;
+    public $title;
+    public $type = self::TYPE_TAB;
+    public $url;
 
 
     public function __construct($id, $title = '', $url = '', $active = false, $properties = null)

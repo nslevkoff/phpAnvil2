@@ -31,7 +31,8 @@ class anvilMemo extends anvilFormControlAbstract
         'span9',
         'span10',
         'span11',
-        'span12'
+        'span12',
+        'input-full'
     );
 
     const SIZE_MINI    = 0;
@@ -52,6 +53,7 @@ class anvilMemo extends anvilFormControlAbstract
     const SIZE_SPAN10  = 15;
     const SIZE_SPAN11  = 16;
     const SIZE_SPAN12  = 17;
+    const SIZE_FULL = 18;
 
     public $rows;
     public $size = self::SIZE_MEDIUM;

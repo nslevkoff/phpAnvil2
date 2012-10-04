@@ -26,6 +26,8 @@ class anvilDataComboBox extends anvilComboBox
         $name = $field->formName . '[' . $field->name . ']';
 
         parent::__construct($id, $name, $size, $field->value, $properties);
+
+        $this->required = $field->required;
     }
 
 

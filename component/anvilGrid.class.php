@@ -66,6 +66,7 @@ class anvilGrid extends anvilControlAbstract
 
     public $htmlID = 'anvilGrid';
 
+    public $dataRowsOnly = false;
     public $headerEnabled = true;
 
     public $pageNavHeaderEnabled = true;
@@ -95,6 +96,7 @@ class anvilGrid extends anvilControlAbstract
 
     public $rowURL;
     public $rowURLKeyColumn;
+    public $rowURLTarget;
 
     public $dateFormat = '%m/%d/%Y';
     public $dtsFormat = '%m/%d/%Y %I:%M:%S';
@@ -114,6 +116,8 @@ class anvilGrid extends anvilControlAbstract
     public $baseQueryString;
     public $rowHoverClass = 'rowHover';
 
+    public $rowNumber = 0;
+    public $firstRowCallback;
 
     public function __construct(
         $anvilDataConnection = null,
@@ -277,7 +281,7 @@ class anvilGrid extends anvilControlAbstract
             }
 
             //---- Render anvilPageNav Header -------------------------------------
-            if ($this->pageNavHeaderEnabled) {
+            if ($this->pageNavHeaderEnabled && !$this->dataRowsOnly) {
                 $html .= $pageNavHTML;
             }
         }
@@ -396,28 +400,30 @@ class anvilGrid extends anvilControlAbstract
 
         if ($objRS->read()) {
 
-            $html .= '<table';
+            if (!$this->dataRowsOnly) {
+                $html .= '<table';
 
-            //---- ID ----------------------------------------------------------
-            if ($this->id) {
-                $html .= ' id="' . $this->id . '"';
+                //---- ID ----------------------------------------------------------
+                if ($this->id) {
+                    $html .= ' id="' . $this->id . '"';
+                }
+
+                //---- Class -------------------------------------------------------
+                $html .= ' class="table';
+
+                if ($this->striped) {
+                    $html .= ' table-striped';
+                }
+
+                if ($this->bordered) {
+                    $html .= ' table-bordered';
+                }
+
+                if ($this->condensed) {
+                    $html .= ' table-condensed';
+                }
+                $html .= '">';
             }
-
-            //---- Class -------------------------------------------------------
-            $html .= ' class="table';
-
-            if ($this->striped) {
-                $html .= ' table-striped';
-            }
-
-            if ($this->bordered) {
-                $html .= ' table-bordered';
-            }
-
-            if ($this->condensed) {
-                $html .= ' table-condensed';
-            }
-            $html .= '">';
 
             $columnCount = $objRS->columns->count();
 
@@ -428,7 +434,7 @@ class anvilGrid extends anvilControlAbstract
             #---- Render Column Header
             #----------------------------------------------
 
-            if ($this->headerEnabled) {
+            if ($this->headerEnabled && !$this->dataRowsOnly) {
                 $html .= '<thead><tr>';
                 for ($objRS->columns->moveFirst(); $objRS->columns->hasMore(); $objRS->columns->moveNext())
                 {
@@ -536,11 +542,14 @@ class anvilGrid extends anvilControlAbstract
             #----------------------------------------------
 
             $isAltRow = true;
-            $html .= '<tbody>';
+
+            if (!$this->dataRowsOnly) {
+                $html .= '<tbody>';
+            }
 
 
             #---- Filter Row -----------------------------------------------
-            if ($this->filterRowEnabled) {
+            if ($this->filterRowEnabled && !$this->dataRowsOnly) {
                 $html .= '<tr class="filterRow">';
                 for ($objRS->columns->moveFirst(); $objRS->columns->hasMore(); $objRS->columns->moveNext())
                 {
@@ -588,9 +597,10 @@ class anvilGrid extends anvilControlAbstract
 
 
             //---- Grid Rows -----------------------------------------------
+            $this->rowNumber = 0;
             do
             {
-
+                $this->rowNumber++;
 
                 $this->rowData = $objRS->getRowArray();
 
@@ -624,7 +634,17 @@ class anvilGrid extends anvilControlAbstract
                     }
                 }
 
+                if ($this->dataRowsOnly && $this->rowNumber === 1) {
+                    $this->rowClass .= ' row-section';
+                }
+
                 //                    FB::log($this->rowClass, 'rowClass');
+
+
+                //---- Execute First Row Callback (if set) ---------------------
+                if ($this->rowNumber == 1 && !empty($this->firstRowCallback)) {
+                    $html .= call_user_func($this->firstRowCallback, $this);
+                }
 
 
                 #---- Execute Row Begin Callback
@@ -633,6 +653,8 @@ class anvilGrid extends anvilControlAbstract
                 //                    if (!empty($this->rowRenderBeginCallback)) {
                 //                        call_user_func($this->rowRenderBeginCallback, $this);
                 //                    }
+
+
 
 
                 //                    $html .= '<tr class="' . $this->rowClass . '" onmouseover="this.toggleClass(\'' . $rowHoverClass . '\', true);" onmouseout="this.className=\'' . $this->rowClass . '\';">';
@@ -659,6 +681,7 @@ class anvilGrid extends anvilControlAbstract
 
                             $content = $this->applyColumnCalc($this->rowData, $objColumn->name, $content);
                         } elseif ($columnOptions) {
+//                            $this->_logDebug($columnOptions->dataType, 'Grid Column: ' . $objColumn->name);
                             $content = $this->applyColumnCalc($this->rowData, $objColumn->name, $objRS->data($objColumn->name, $columnOptions->dataType));
                         } else {
                             $content = $this->applyColumnCalc($this->rowData, $objColumn->name, $objRS->data($objColumn->name));
@@ -735,7 +758,13 @@ class anvilGrid extends anvilControlAbstract
                             if (!empty($this->rowURLKeyColumn)) {
                                 $html .= htmlentities($this->rowData[$this->rowURLKeyColumn]);
                             }
-                            $html .= '">';
+                            $html .= '"';
+
+                            if (!empty($this->rowURLTarget)) {
+                                $html .= ' target="' . $this->rowURLTarget . '"';
+                            }
+
+                            $html .= '>';
 
                             if (empty($content)) {
                                 $html .= '&nbsp;';
@@ -787,14 +816,17 @@ class anvilGrid extends anvilControlAbstract
                 $html .= '</tr>';
             } while ($objRS->read());
 
-            $html .= '</tbody>';
+
+            if (!$this->dataRowsOnly) {
+                $html .= '</tbody>';
+            }
 
 
             #----------------------------------------------
             #---- Render Column Footer
             #----------------------------------------------
 
-            if ($this->columnTotalEnabled) {
+            if ($this->columnTotalEnabled && !$this->dataRowsOnly) {
                 $html .= '<tfoot><tr class="footer">';
                 for ($objRS->columns->moveFirst(); $objRS->columns->hasMore(); $objRS->columns->moveNext()) {
                     $objColumn     = $objRS->columns->current();
@@ -880,14 +912,16 @@ class anvilGrid extends anvilControlAbstract
             }
 
 
-            $html .= '</table>';
+            if (!$this->dataRowsOnly) {
+                $html .= '</table>';
+            }
 
             #---- Add Page Navigation to Bottom of Grid
             //                if ($this->pageNavBottomEnabled && $totalPages > 1) {
             //                    $html .= $pageNavHTML;
             //                }
 
-        } else {
+        } elseif (!$this->dataRowsOnly) {
             if ($this->noRecordsMsgEnabled && $this->noRecordsMsg != '') {
                 $html .= '<div class="noData">' . $this->noRecordsMsg . '</div>';
             }
@@ -895,6 +929,7 @@ class anvilGrid extends anvilControlAbstract
             //                    $html .= '<div class="noData">No records available.</div>';
             //                }
         }
+
         //if (TRACE && $this->_isTraceEnabled) DevTrap::addTraceInfo(__FILE__, __METHOD__, __LINE__, '$objRS->close();');
         $objRS->close();
         //        }
@@ -909,7 +944,7 @@ class anvilGrid extends anvilControlAbstract
 
 
         //---- Render anvilPageNav Footer -----------------------------------------
-        if (isset($this->anvilPageNav) && $this->pageNavFooterEnabled) {
+        if (isset($this->anvilPageNav) && $this->pageNavFooterEnabled && !$this->dataRowsOnly) {
             $html .= $pageNavHTML;
         }
 

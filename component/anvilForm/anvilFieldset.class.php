@@ -12,6 +12,7 @@ class anvilFieldset extends anvilContainer
 
     public $title;
     public $actions;
+    public $titleActions;
 
 
     public function __construct($id = '', $title = '', $properties = null)
@@ -22,6 +23,7 @@ class anvilFieldset extends anvilContainer
         parent::__construct($id, $properties);
 
         $this->title = $title;
+        $this->titleActions = new anvilContainer();
 
         $this->actions = new anvilContainer();
     }
@@ -38,7 +40,23 @@ class anvilFieldset extends anvilContainer
         $return .= '>';
 
         if (!empty($this->title)) {
-            $return .= '<legend>' . $this->title . '</legend>';
+            //---- TODO: Revert back to <legend> tag once Chrome and Safari
+            //---- fix their browsers not rendering margins on legend tags
+            //---- within fieldsets.
+//            $return .= '<legend>' . $this->title;
+            $return .= '<div class="legend">' . $this->title;
+        }
+
+        $titleActions = $this->titleActions->renderControls();
+        if (!empty($titleActions)) {
+            $return .= '<div class="actions">';
+            $return .= $titleActions;
+            $return .= '</div>';
+        }
+
+        if (!empty($this->title)) {
+//            $return .= '</legend>';
+            $return .= '</div>';
         }
 
         $return .= $this->renderControls();

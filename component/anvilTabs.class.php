@@ -49,6 +49,17 @@ class anvilTabs extends anvilContainer
     }
 
 
+    public function addHeader($title)
+    {
+        $objTab = new anvilTabItem('', $title);
+        $objTab->type = anvilTabItem::TYPE_HEADER;
+
+        $this->_tabs->addControl($objTab);
+
+        return $objTab;
+    }
+
+
     /**
      * @param string $id
      * @param string $title
@@ -79,24 +90,45 @@ class anvilTabs extends anvilContainer
             /** @var $objTab anvilTabItem  */
 
             $return .= '<li';
-            if ($objTab->active) {
-                $return .= ' class="active"';
-            }
-            $return .= '>';
 
-            if (!empty($objTab->url)) {
-                $return .= '<a href="' . $objTab->url . '">';
+            if ($objTab->type == anvilTabItem::TYPE_HEADER) {
+                $return .= ' class="nav-header">';
+                $return .= $objTab->title;
+
             } else {
-                $tabID++;
-                $return .= '<a href="#' . $objTab->id . '" data-toggle="tab">';
-            }
+                if ($objTab->active) {
+                    $return .= ' class="active"';
+                }
+                $return .= '>';
 
-            $return .= $objTab->title;
+                if (!empty($objTab->url)) {
+                    $return .= '<a href="' . $objTab->url . '">';
+                } else {
+                    $tabID++;
+                    $return .= '<a href="#' . $objTab->id . '" data-toggle="tab">';
+                }
 
-            if (!empty($objTab->rightIcon)) {
-                $return .= ' <span class="pull-right"><i class="' . $objTab->rightIcon . '"></i></span>';
+                $return .= $objTab->title;
+
+                if (isset($objTab->rightCounter) || !empty($objTab->rightIcon)) {
+                    $return .= ' <span class="pull-right">';
+
+                    if (isset($objTab->rightCounter)) {
+                        $return .= '<span class="badge">' . $objTab->rightCounter . '</span>';
+                    }
+
+                    if (!empty($objTab->rightIcon)) {
+                        $return .= '<i class="' . $objTab->rightIcon . '"></i>';
+                    } else {
+                        $return .= '<i class="icon-none icon-caret-right"></i>';
+                    }
+
+                    $return .= '</span>';
+                }
+                $return .= '</a>';
             }
-            $return .= '</a></li>';
+            $return .= '</li>';
+
         }
 
         return $return;

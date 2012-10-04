@@ -22,6 +22,7 @@ class anvilButton extends anvilControlAbstract
     const ACTION_TYPE_IMAGE  = 4;
     const ACTION_TYPE_DELETE = 5;
     const ACTION_TYPE_DISABLE = 6;
+    const ACTION_TYPE_TOGGLE = 7;
 
     private $_actionTypeText = array(
         '',
@@ -30,7 +31,8 @@ class anvilButton extends anvilControlAbstract
         'button',
         'image',
         'submit',
-        'submit'
+        'submit',
+        'button'
     );
 
     private $_actionTypeDefault = array(
@@ -40,7 +42,8 @@ class anvilButton extends anvilControlAbstract
         0,
         0,
         5,
-        4
+        4,
+        0
     );
 
 
@@ -78,12 +81,16 @@ class anvilButton extends anvilControlAbstract
 
     //---- Properties ----------------------------------------------------------
     public $actionType = self::ACTION_TYPE_DEFAULT;
+    public $checked = false;
     public $confirmMsg;
     public $name = 'btn';
     public $size = self::SIZE_DEFAULT;
     public $type;
     public $text;
     public $value = '';
+
+    public $dataDismiss;
+    public $ariaHidden;
 
 
     public function __construct($id = '', $text = 'Submit', $actionType = self::ACTION_TYPE_DEFAULT, $type = self::TYPE_DEFAULT, $size = self::SIZE_DEFAULT, $properties = array())
@@ -117,9 +124,18 @@ class anvilButton extends anvilControlAbstract
             $return .= ' ' . $this->_typeClass[$this->type];
         }
 
+        if ($this->actionType == self::ACTION_TYPE_TOGGLE) {
+            $return .= ' btn-toggle';
+        }
+
         if ($this->class) {
             $return .= ' ' . $this->class;
         }
+
+        if ($this->checked) {
+            $return .= ' active';
+        }
+
         $return .= '"';
 
         if ($this->style) {
@@ -127,13 +143,11 @@ class anvilButton extends anvilControlAbstract
         }
 
         //---- Type
-        if ($this->actionType != self::ACTION_TYPE_SIMPLE) {
+        if (!empty($this->_actionTypeText[$this->actionType])) {
             $return .= ' type="';
             $return .= $this->_actionTypeText[$this->actionType];
             $return .= '"';
-
         }
-
 
 //        if ($this->value) {
 //            if ($this->actionType == self::ACTION_TYPE_IMAGE) {
@@ -152,6 +166,13 @@ class anvilButton extends anvilControlAbstract
 //            }
 //        }
 
+        if ($this->dataDismiss) {
+            $return .= ' data-dismiss="' . $this->dataDismiss . '"';
+        }
+
+        if ($this->ariaHidden) {
+            $return .= ' aria-hidden="' . $this->ariaHidden . '"';
+        }
 
 
         if ($this->confirmMsg) {

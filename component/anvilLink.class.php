@@ -55,6 +55,7 @@ class anvilLink extends anvilControlAbstract
     public $layers;
     public $confirmMessage;
 
+    public $target;
     public $type;
     public $size;
 
@@ -100,6 +101,11 @@ class anvilLink extends anvilControlAbstract
         } else {
             $render .= ' href="javascript:void(0);"';
         }
+
+        if ($this->target) {
+            $render .= ' target="' . $this->target . '"';
+        }
+
 
         //---- Class
         $render .= ' class="';

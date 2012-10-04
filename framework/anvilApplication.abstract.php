@@ -5,6 +5,10 @@ require_once(PHPANVIL2_COMPONENT_PATH . 'anvilObject.abstract.php');
 abstract class anvilApplicationAbstract extends anvilObjectAbstract
 {
 
+    /** @var phpAnvil2 */
+    public $core;
+
+
     public $name = 'New Application';
     public $refName = 'App';
     public $version = '0.1';
@@ -43,33 +47,38 @@ abstract class anvilApplicationAbstract extends anvilObjectAbstract
 
 	function __construct()
     {
-		return true;
+        global $phpAnvil;
+
+        $this->core = $phpAnvil;
+
+        return true;
 	}
 
 
     function init()
     {
-        global $phpAnvil;
+//        global $phpAnvil;
 
         $return = false;
 
         $this->loadConfig();
 
-        $phpAnvil->triggerEvent('application.init');
+//        $this->core->triggerEvent('application.init');
 
 
         //---- Check if Site is Set
-        if (isset($phpAnvil->site))
+        if (isset($this->core->site))
         {
             //---- Initialize the Site
-            $phpAnvil->site->init();
+            $this->core->site->init();
             $return = true;
 
-            $this->defaultURL = $phpAnvil->site->webPath;
+            $this->defaultURL = $this->core->site->webPath;
             $this->loginURL = $this->defaultURL . 'Login/';
 
         } else {
-            FB::error('Site not set in phpAnvil.');
+            $this->_logError('Site not set in phpAnvil.');
+//            FB::error('Site not set in phpAnvil.');
         }
 
         return $return;
@@ -78,21 +87,22 @@ abstract class anvilApplicationAbstract extends anvilObjectAbstract
 
     function open()
     {
-        global $phpAnvil;
+//        global $phpAnvil;
 
         $return = false;
 
-        $phpAnvil->triggerEvent('application.open');
+//        $phpAnvil->triggerEvent('application.open');
 
 
         //---- Check if Site is Set
-        if (isset($phpAnvil->site))
+        if (isset($this->core->site))
         {
             //---- Initialize the Site
-            $phpAnvil->site->open();
+            $this->core->site->open();
             $return = true;
         } else {
-            FB::error('Site not set in phpAnvil.');
+//            FB::error('Site not set in phpAnvil.');
+            $this->_logError('Site not set in phpAnvil.');
         }
 
         return $return;
@@ -110,7 +120,7 @@ abstract class anvilApplicationAbstract extends anvilObjectAbstract
             $phpAnvil->site->close();
             $return = true;
         } else {
-            FB::error('Site not set in phpAnvil.');
+            $this->_logError('Site not set in phpAnvil.');
         }
 
         $phpAnvil->triggerEvent('application.close');

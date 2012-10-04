@@ -129,11 +129,11 @@ class phpAnvil2 extends anvilObjectAbstract
         $this->isCLI = PHP_SAPI == 'cli';
         $this->isConsole = $this->isCLI;
 
-        if ($this->isCLI) {
-            $this->sourceTypeID = self::SOURCE_TYPE_BP;
-        } else {
+//        if ($this->isCLI) {
+//            $this->sourceTypeID = self::SOURCE_TYPE_BP;
+//        } else {
             $this->sourceTypeID = self::SOURCE_TYPE_USER;
-        }
+//        }
 
 
 //        $this->addProperty('isNewSession', false);
@@ -256,6 +256,7 @@ class phpAnvil2 extends anvilObjectAbstract
 
 
         //---- Start Session
+        $this->_logVerbose('Starting session...');
         $this->session->dataConnection = $this->db;
         //        $this->session->enableTrace();
         //        $this->session->innactiveTimeout = 60 * 60;
@@ -278,6 +279,7 @@ class phpAnvil2 extends anvilObjectAbstract
         //---- Check if Application is Set
         if (isset($this->application)) {
             //---- Open the Application
+            $this->_logVerbose('Opening application...');
             $return = $this->application->open();
 
         } else {
@@ -425,33 +427,49 @@ class phpAnvil2 extends anvilObjectAbstract
                         $this->controller[$fullControllerName] = new $controllerClassName();
                     }
 
-                    $this->controller[$fullControllerName]->module  = $this->module[$moduleRefName];
-                    $this->controller[$fullControllerName]->refName = $controllerName;
+                    $controller = $this->controller[$fullControllerName];
+                    /** @var $controller anvilControllerAbstract */
 
-                    $return = $this->controller[$fullControllerName]->init();
+//                    $this->controller[$fullControllerName]->module  = $this->module[$moduleRefName];
+//                    $this->controller[$fullControllerName]->refName = $controllerName;
+                    $controller->module = $this->module[$moduleRefName];
+                    $controller->refName = $controllerName;
+
+//                    $return = $this->controller[$fullControllerName]->init();
+                    $return = $controller->init();
                     if ($return) {
                         //                        if (!empty($_GET)) {
-                        $return = $this->controller[$fullControllerName]->processGET();
+//                        $return = $this->controller[$fullControllerName]->processGET();
+                        $return = $controller->processGET();
                         //                        }
                         if ($return && !empty($_POST)) {
-                            $return = $this->controller[$fullControllerName]->processPOST();
+//                            $return = $this->controller[$fullControllerName]->processPOST();
+                            $return = $controller->processPOST();
                         }
-                        if ($return && empty($this->controller[$fullControllerName]->redirectURL)) {
-                            $return = $this->controller[$fullControllerName]->open();
+//                        if ($return && empty($this->controller[$fullControllerName]->redirectURL)) {
+                        if ($return && empty($controller->redirectURL)) {
+//                                $return = $this->controller[$fullControllerName]->open();
+                            $return = $controller->open();
                             if (!$return) {
                                 //                            FB::warn('Controller (' . $fullControllerName . ') failed to open.');
                                 $this->_logWarning('Controller (' . $fullControllerName . ') failed to open.');
                                 //                            header('Location: ' . $phpAnvil->controller[$fullControllerName]->redirectURL);
                             }
                         }
-                        $return = $this->controller[$fullControllerName]->close();
+
+                        $this->_logVerbose('Closing controller...');
+
+//                        $return = $this->controller[$fullControllerName]->close();
+                        $return = $controller->close();
 
                     }
 
-                    if (!empty($this->controller[$fullControllerName]->redirectURL)) {
-                        $this->_logVerbose('Redirecting...');
+//                    if (!empty($this->controller[$fullControllerName]->redirectURL)) {
+                    if (!empty($controller->redirectURL)) {
+                            $this->_logVerbose('Redirecting...');
 
-                        $redirectURL = $this->controller[$fullControllerName]->redirectURL;
+//                        $redirectURL = $this->controller[$fullControllerName]->redirectURL;
+                        $redirectURL = $controller->redirectURL;
                         if (substr($redirectURL, 0, 4) != 'http') {
                             $redirectURL = $this->site->webPath . $redirectURL;
                         }
@@ -790,7 +808,7 @@ class phpAnvil2 extends anvilObjectAbstract
     public function execute()
     {
         //        FB::group('Initializing...');
-        $this->_logGroup('Initializing...');
+        $this->_logGroup('Initializing... [M: ' . $this->formatBytes(memory_get_usage(true)) . ']');
 
         if ($this->init()) {
             $this->_logGroupEnd();
@@ -799,22 +817,22 @@ class phpAnvil2 extends anvilObjectAbstract
 
 //            $this->_logDebug('Opening...');
 
-            $this->_logGroup('Opening...');
+            $this->_logGroup('Opening... [M: ' . $this->formatBytes(memory_get_usage(true)) . ']');
 
             $this->open();
 
             $this->_logGroupEnd();
             //            FB::groupEnd();
             //            FB::group('Closing...');
-            $this->_logGroup('Closing...');
+            $this->_logGroup('Closing... [M: ' . $this->formatBytes(memory_get_usage(true)) . ']');
 
             $this->close();
         } else {
-            $this->_logError('Initializing failed...');
+            $this->_logError('Initializing failed... [M: ' . $this->formatBytes(memory_get_usage(true)) . ']');
         }
         $this->_logGroupEnd();
         //        FB::groupEnd();
-        $this->_logInfo('END OF LINE.');
+        $this->_logInfo('END OF LINE. [pM: ' . $this->formatBytes(memory_get_peak_usage(true)) . ']');
         //        FB::info('END OF LINE.');
     }
 
@@ -850,9 +868,10 @@ class phpAnvil2 extends anvilObjectAbstract
     {
         $return = false;
 
-        if (array_key_exists($event, $this->_connectedEvents)) {
+//        if (array_key_exists($event, $this->_connectedEvents)) {
+        if ($return && array_key_exists($event, $this->_connectedEvents)) {
 
-            //            $msg = 'Triggering event (' . $event . ')...';
+                //            $msg = 'Triggering event (' . $event . ')...';
             //            $this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $msg, self::TRACE_TYPE_INFO);
             //            FB::info($msg);
             $this->_logVerbose('Triggering event (' . $event . ')...');
@@ -1167,41 +1186,48 @@ class phpAnvil2 extends anvilObjectAbstract
     }
 
 
-    public function ago($i, $abbreviate = false)
+    public function ago($time, $abbreviate = false)
     {
-        if (!is_numeric($i)) {
+        if (!is_numeric($time)) {
             date_default_timezone_set($this->regional->dateTimeZone->getName());
-            $i = strtotime($i);
+            $time = strtotime($time);
             date_default_timezone_set('UTC');
         }
 
         $appendText = '';
-        $m = time() - $i;
+        $difference = time() - $time;
 
         if ($abbreviate) {
-            $o          = 'now';
-            $t          = array('Y'   => 31556926,
+            $return          = 'now';
+
+            $timeNameArray          = array('Y'   => 31556926,
                                 'M'  => 2629744,
                                 'W'   => 604800,
                                 'D'    => 86400,
                                 'h'   => 3600,
                                 'm' => 60);
         } else {
-            $o = 'just now';
-            $t = array('year'   => 31556926,
-                       'month'  => 2629744,
-                       'week'   => 604800,
-                       'day'    => 86400,
-                       'hour'   => 3600,
-                       'minute' => 60,
-                       'second' => 1);
-            $appendText = ' ago';
+            $return = 'just now';
+
+            $timeNameArray = array(' year'   => 31556926,
+                                   ' month'  => 2629744,
+                                   ' week'   => 604800,
+                                   ' day'    => 86400,
+                                   ' hour'   => 3600,
+                                   ' minute' => 60,
+                                   ' second' => 1);
+
+            if ($difference >= 0) {
+                $appendText = ' ago';
+            }
         }
 
-        foreach ($t as $u => $s) {
-            if ($s <= $m) {
-                $v = floor($m / $s);
-                $o = "$v $u" . ($v == 1
+        foreach ($timeNameArray as $timeName => $timeSeconds) {
+            if ($timeSeconds <= $difference) {
+
+                $timeDisplayAmount = floor($difference / $timeSeconds);
+
+                $return = "$timeDisplayAmount$timeName" . ($timeDisplayAmount == 1
                         ? ''
                         : (!$abbreviate ? 's'
                         : '')) . $appendText;
@@ -1209,7 +1235,7 @@ class phpAnvil2 extends anvilObjectAbstract
             }
         }
 
-        return $o;
+        return $return;
     }
 
 
@@ -1241,7 +1267,7 @@ class phpAnvil2 extends anvilObjectAbstract
     }
 
 
-    public function getDTS($dts = '', $timeZone = '', $format = '')
+    public function getDTS($dts = '', $fromTimeZone = '', $format = '', $toTimeZone = '')
     {
         if (empty($dts)) {
             //            $dts = date('c');
@@ -1249,8 +1275,14 @@ class phpAnvil2 extends anvilObjectAbstract
             $dts = null;
         }
 
-        if (!empty($timeZone)) {
-            $value = new DateTime($dts, new DateTimeZone($timeZone));
+        if (!empty($fromTimeZone)) {
+            $value = new DateTime($dts, new DateTimeZone($fromTimeZone));
+
+            if (!empty($toTimeZone)) {
+                $value->setTimezone(new DateTimeZone($toTimeZone));
+            } elseif (isset($this->regional->dateTimeZone)) {
+                $value->setTimezone($this->regional->dateTimeZone);
+            }
         } elseif (isset($this->regional->dateTimeZone)) {
             $value = new DateTime($dts, $this->regional->dateTimeZone);
         } else {
@@ -1284,6 +1316,24 @@ class phpAnvil2 extends anvilObjectAbstract
             $key = $this->application->cryptKey;
         }
         return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($value), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
+    }
+
+
+    public function formatBytes($bytes, $precision = 2)
+    {
+        $units = array('B', 'KB', 'MB', 'GB', 'TB');
+
+        $bytes = max($bytes, 0);
+        $pow   = floor(($bytes
+                ? log($bytes)
+                : 0) / log(1024));
+        $pow   = min($pow, count($units) - 1);
+
+        // Uncomment one of the following alternatives
+//        $bytes /= pow(1024, $pow);
+        $bytes /= (1 << (10 * $pow));
+
+        return round($bytes, $precision) . ' ' . $units[$pow];
     }
 
 
