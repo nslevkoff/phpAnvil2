@@ -55,6 +55,13 @@ class anvilNav extends anvilContainer
         $this->type = $type;
     }
 
+    public function addControl($control)
+    {
+        $objNavItem = new anvilNavItem('', false);
+        $objNavItem->addControl($control);
+        parent::addControl($objNavItem);
+    }
+
     public function addDivider()
     {
         $this->addControl(new anvilLiteral('', '<li class="divider-vertical"></li>'));
@@ -73,7 +80,7 @@ class anvilNav extends anvilContainer
     {
         $objNavItem = new anvilNavItem('', $active);
         $objNavItem->addControl(new anvilLink('', $text, $url, $type, $size, $properties));
-        $this->addControl($objNavItem);
+        parent::addControl($objNavItem);
 
         return $objNavItem;
     }

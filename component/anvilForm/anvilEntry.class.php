@@ -1,14 +1,14 @@
 <?php
 /**
-* @file
-* @author		Nick Slevkoff <nick@slevkoff.com>
-* @copyright 	Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
-* @license
-* 	This source file is subject to the new BSD license that is
-* 	bundled with this package in the file LICENSE.txt. It is also
-* 	available on the Internet at:  http://www.phpanvil.com/LICENSE.txt
-* @ingroup 		phpAnvilTools
-*/
+ * @file
+ * @author        Nick Slevkoff <nick@slevkoff.com>
+ * @copyright     Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
+ * @license
+ *     This source file is subject to the new BSD license that is
+ *     bundled with this package in the file LICENSE.txt. It is also
+ *     available on the Internet at:  http://www.phpanvil.com/LICENSE.txt
+ * @ingroup         phpAnvilTools
+ */
 
 
 require_once PHPANVIL2_COMPONENT_PATH . 'anvilContainer.class.php';
@@ -16,17 +16,18 @@ require_once 'anvilFormControl.abstract.php';
 
 
 /**
-* Text Entry Control
-*
-* @version		1.0.2
-* @date			12/21/2010
-* @author		Nick Slevkoff <nick@slevkoff.com>
-* @copyright 	Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
-* @ingroup 		phpAnvilTools
-*/
-class anvilEntry extends anvilFormControlAbstract {
+ * Text Entry Control
+ *
+ * @version        1.0.2
+ * @date            12/21/2010
+ * @author        Nick Slevkoff <nick@slevkoff.com>
+ * @copyright     Copyright (c) 2010 Nick Slevkoff (http://www.slevkoff.com)
+ * @ingroup         phpAnvilTools
+ */
+class anvilEntry extends anvilFormControlAbstract
+{
 
-	const VERSION        = '1.0.2';
+    const VERSION = '1.0.2';
 
     private $_sizeClass = array(
         'spanAuto',
@@ -71,9 +72,9 @@ class anvilEntry extends anvilFormControlAbstract {
     const SIZE_SPAN12 = 18;
 
 
-    const TYPE_NORMAL	= 1;
-	const TYPE_PASSWORD	= 2;
-	const TYPE_FILE		= 3;
+    const TYPE_NORMAL = 1;
+    const TYPE_PASSWORD = 2;
+    const TYPE_FILE = 3;
 
     /** @var anvilContainer */
     public $append;
@@ -81,6 +82,7 @@ class anvilEntry extends anvilFormControlAbstract {
     /** @var anvilContainer */
     public $prepend;
 
+    public $accept;
     public $appendText;
     public $disabled = false;
     public $onKeyPress;
@@ -100,10 +102,12 @@ class anvilEntry extends anvilFormControlAbstract {
 
     //---- Validation Properties
     public $validation = true;
+    public $validationHelp = false;
     public $required = false;
 
 
-	public function __construct($id = '', $name = 'unknown', $size = self::SIZE_MEDIUM, $value = '', $properties = null) {
+    public function __construct($id = '', $name = 'unknown', $size = self::SIZE_MEDIUM, $value = '', $properties = null)
+    {
 //		$this->_traceEnabled = $traceEnabled;
 
         $this->enableLog();
@@ -121,20 +125,20 @@ class anvilEntry extends anvilFormControlAbstract {
 //        $this->addProperty('wrapEnabled', false);
 //        $this->addProperty('wrapClass', 'inputWrap');
 
-		parent::__construct($id, $name, $properties);
+        parent::__construct($id, $name, $properties);
 
         $this->prepend = new anvilContainer();
-        $this->append  = new anvilContainer();
+        $this->append = new anvilContainer();
 
         $this->size = $size;
 //        $this->type = $type;
 //		$this->maxLength = $maxLength;
-		$this->value = $value;
+        $this->value = $value;
 
 //        $this->_logdebug('|' . $value . '|', $this->name . '=');
-	}
+    }
 
-	public function renderContent()
+    public function renderContent()
     {
 
         $return = '';
@@ -145,7 +149,7 @@ class anvilEntry extends anvilFormControlAbstract {
 //        if ($this->wrapEnabled) {
 //            $return .= '<p class="' . $this->wrapClass . '">';
 //        }
-        
+
 //        $return .= $this->renderLabel();
 
         //---- Render Prepend or Start Append Wrapper --------------------------
@@ -158,7 +162,7 @@ class anvilEntry extends anvilFormControlAbstract {
 //                $return .= '<span class="add-on">' . $this->prependText . '</span>';
 //            }
 
-                $return .= '<div class="';
+            $return .= '<div class="';
             if (!empty($appendHTML) || !empty($this->appendText)) {
                 $return .= ' input-append';
             }
@@ -177,37 +181,37 @@ class anvilEntry extends anvilFormControlAbstract {
 
 
         //---- Render INPUT Tag ------------------------------------------------
-		$return .= '<input type="';
+        $return .= '<input type="';
 
-		switch ($this->type) {
-			case self::TYPE_PASSWORD:
-				$return .= 'password';
-				break;
-			case self::TYPE_FILE:
-				$return .= 'file';
-				break;
-			case self::TYPE_NORMAL:
-			default:
-				$return .= 'text';
-				break;
-		}
-		$return .= '"';
+        switch ($this->type) {
+            case self::TYPE_PASSWORD:
+                $return .= 'password';
+                break;
+            case self::TYPE_FILE:
+                $return .= 'file';
+                break;
+            case self::TYPE_NORMAL:
+            default:
+                $return .= 'text';
+                break;
+        }
+        $return .= '"';
 
-		if ($this->id) {
-			$return .= ' id="' . $this->id . '"';
-		}
+        if ($this->id) {
+            $return .= ' id="' . $this->id . '"';
+        }
 
-		if ($this->name) {
-			$return .= ' name="' . $this->name . '"';
-		}
+        if ($this->name) {
+            $return .= ' name="' . $this->name . '"';
+        }
 
-		if ($this->length) {
-			$return .= ' size="' . $this->length . '"';
-		}
+        if ($this->length) {
+            $return .= ' size="' . $this->length . '"';
+        }
 
-		if ($this->maxLength) {
-			$return .= ' maxlength="' . $this->maxLength . '"';
-		}
+        if ($this->maxLength) {
+            $return .= ' maxlength="' . $this->maxLength . '"';
+        }
 
         if ($this->readOnly) {
             $return .= ' readonly="readonly"';
@@ -216,7 +220,7 @@ class anvilEntry extends anvilFormControlAbstract {
         $return .= ' class="';
 
 //        if ($this->size != self::SIZE_LENGTH) {
-            $return .= $this->_sizeClass[$this->size];
+        $return .= $this->_sizeClass[$this->size];
 //        }
 
         if ($this->class) {
@@ -232,7 +236,7 @@ class anvilEntry extends anvilFormControlAbstract {
         }
 
 
-            $return .= '"';
+        $return .= '"';
 
         if ($this->style) {
             $return .= ' style="' . $this->style . '"';
@@ -245,27 +249,30 @@ class anvilEntry extends anvilFormControlAbstract {
 //		if (!empty($this->value) || ($this->value == 0 && !is_null($this->value))) {
         if ($this->value != '' || ($this->value == 0 && !is_null($this->value))) {
 //			$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $this->name . ' = SUCCESS!', DevTrace::TYPE_DEBUG);
-			$return .= ' value="' . $this->value . '"';
-		} else {
+            $return .= ' value="' . str_replace('"', '&quot;', $this->value) . '"';
+        } else {
 //			$this->_addTraceInfo(__FILE__, __METHOD__, __LINE__, $this->name . ' = FAILED! (' . $this->value . ')', DevTrace::TYPE_DEBUG);
-		}
+        }
+
+        if ($this->accept) {
+            $return .= ' accept="' . $this->accept . '"';
+        }
 
 //        if ($this->validation && $this->required) {
 //            $return .= ' onchange="validateRequired();"';
 //        }
 
-            if (!empty($this->onKeyPress))
-        {
+        if (!empty($this->onKeyPress)) {
             $return .= ' onkeypress="' . $this->onKeyPress . '"';
         } else if ($this->defaultButtonID) {
-			$return .= ' onkeypress="enterSubmit(event, \'' . $this->defaultButtonID . '\');"';
-		}
+            $return .= ' onkeypress="enterSubmit(event, \'' . $this->defaultButtonID . '\');"';
+        }
 
-		/*
-		if (isset($this->_onChange)) {
-			$return .= ' onChange="' . $this->_onChange . '"';
-		}
-		*/
+        /*
+        if (isset($this->_onChange)) {
+            $return .= ' onChange="' . $this->_onChange . '"';
+        }
+        */
 
         if ($this->disabled) {
             $return .= ' disabled="disabled"';
@@ -275,7 +282,7 @@ class anvilEntry extends anvilFormControlAbstract {
             $return .= ' placeholder="' . $this->placeholder . '"';
         }
 
-		$return .= ' />';
+        $return .= ' />';
 
 
         //---- Render Append or Close Prepend Wrapper --------------------------
@@ -291,12 +298,12 @@ class anvilEntry extends anvilFormControlAbstract {
 //                $return .= '<span class="add-on">' . $this->appendText . '</span>';
 //                $return .= '</div>';
 //            } elseif (!empty($this->prependText)) {
-                $return .= '</div>';
+            $return .= '</div>';
 //            }
         }
 
         //---- Render Validation Placeholder -----------------------------------
-        if ($this->validation && $this->required) {
+        if ($this->validation && ($this->required || $this->validationHelp)) {
             $return .= '<span class="help-validation">';
             $return .= '<span class="label"></span>';
             $return .= '<span class="description"></span>';
@@ -311,20 +318,22 @@ class anvilEntry extends anvilFormControlAbstract {
 //			$return .= '<input type="hidden" name="MAX_FILE_SIZE" value="' . $this->_maxFileSize . '">';
 //		}
 
-		return $return;
-	}
+        return $return;
+    }
 
-	public function renderPreClientScript() {
-		$return = '';
-		$return .= parent::renderPreClientScript();
-		return $return;
-	}
+    public function renderPreClientScript()
+    {
+        $return = '';
+        $return .= parent::renderPreClientScript();
+        return $return;
+    }
 
-	public function renderPostClientScript() {
-		$return = '';
-		$return .= parent::renderPostClientScript();
-		return $return;
-	}
+    public function renderPostClientScript()
+    {
+        $return = '';
+        $return .= parent::renderPostClientScript();
+        return $return;
+    }
 }
 
 ?>

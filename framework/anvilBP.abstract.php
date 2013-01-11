@@ -71,6 +71,8 @@ abstract class anvilBPAbstract extends anvilObjectAbstract
 
     protected function _output($text, $eol = true, $fromTask = true)
     {
+        global $phpAnvil;
+
         if (isset($this->_batch)) {
             if (!empty($this->_savedOutput)) {
                 $this->_batch->output .= $this->_savedOutput;
@@ -88,11 +90,22 @@ abstract class anvilBPAbstract extends anvilObjectAbstract
             echo $text;
 
             if ($eol) {
+                if (!$phpAnvil->isCLI) {
+                    echo '<br>';
+//                    ob_flush();
+                }
+
                 $this->_savedOutput .= PHP_EOL;
                 echo PHP_EOL;
             }
         }
     }
+
+    public function output($text, $eol = true, $fromTask = true)
+    {
+        $this->_output($text, $eol, $fromTask);
+    }
+
 
     function process()
     {

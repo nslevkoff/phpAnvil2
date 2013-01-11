@@ -37,6 +37,11 @@ class anvilFieldset extends anvilContainer
         if (!empty($this->class)) {
             $return .= ' class="' . $this->class . '"';
         }
+
+        if ($this->style) {
+            $return .= ' style="' . $this->style . '"';
+        }
+
         $return .= '>';
 
         if (!empty($this->title)) {

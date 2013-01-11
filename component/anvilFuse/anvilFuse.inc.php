@@ -43,13 +43,15 @@ function emailDebugTrace() {
 }
 
 function sendDebugTrace($message = '') {
-	global $objFuseTrap, $options;
+//	global $objFuseTrap, $options;
+    global $objFuseTrap;
 
-    fb::log($options, $options);
+//    fb::log($options, $options);
     
-	$subject = '[' . $options['app']['code'] . '] Debug Trace';
+//	$subject = '[' . $options['app']['code'] . '] Debug Trace';
+    $subject = 'Debug Trace';
 
-	$objFuseTrap->sendToServer(anvilFuseTrap::EVENT_TYPE_DEBUG, $subject, 0, $message, __FILE__, __LINE__);
+    $objFuseTrap->sendToServer(anvilFuseTrap::EVENT_TYPE_DEBUG, $subject, 0, $message, __FILE__, __LINE__);
 }
 
 ?>

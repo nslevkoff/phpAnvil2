@@ -31,10 +31,10 @@ class anvilButtonDropdown extends anvilContainer
 
     }
 
-    public function addLink($text, $url = '', $active = false)
+    public function addLink($text, $url = '', $active = false, $properties = null)
     {
         $objNavItem = new anvilNavItem('', $active);
-        $objNavItem->addControl(new anvilLink('', $text, $url));
+        $objNavItem->addControl(new anvilLink('', $text, $url, anvilLink::TYPE_DEFAULT, anvilLink::SIZE_DEFAULT, $properties));
         $this->addControl($objNavItem);
 
         return $objNavItem;

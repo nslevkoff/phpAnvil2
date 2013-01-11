@@ -21,6 +21,7 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
 
     public $regional;
 
+    public $primaryTableID;
     public $primaryTableName;
 
     //---- Primary Key Column Name in the DB Table
@@ -428,12 +429,12 @@ abstract class anvilModelAbstract extends anvilObjectAbstract
 
         //        echo '.. Save SQL = ' . $sql . ' ..' . "\n";
 
-        $this->_logVerbose($sql, 'Save SQL');
+//        $this->_logVerbose($sql, 'Save SQL');
 
         if (empty($sql)) {
             $return = true;
         } else {
-            $this->_logDebug($sql, '$sql');
+//            $this->_logDebug($sql, '$sql');
 
             $return = $this->dataConnection->execute($sql);
 

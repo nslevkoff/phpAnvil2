@@ -84,7 +84,7 @@ class anvilContainer extends anvilControlAbstract
         for ($this->controls->moveFirst(); $this->controls->hasMore(); $this->controls->moveNext()) {
             $objControl = $this->controls->current();
 
-            $this->_logVerbose('Rendering Control (id_' . $objControl->id . ')...');
+//            $this->_logVerbose('Rendering Control (id_' . $objControl->id . ')...');
 
             $this->preRenderControl($objControl);
             if ($this->innerTemplate != '' && is_object($_anvilTemplate)) {

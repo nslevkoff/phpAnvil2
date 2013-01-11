@@ -12,6 +12,7 @@ class anvilNavDropdown extends anvilContainer
 {
 
     public $title;
+    public $linkClass;
 
     public function __construct($id = '', $title = '', $properties = null)
     {
@@ -29,10 +30,10 @@ class anvilNavDropdown extends anvilContainer
 
     }
 
-    public function addLink($text, $url = '', $active = false)
+    public function addLink($text, $url = '', $active = false, $properties = null)
     {
         $objNavItem = new anvilNavItem('', $active);
-        $objNavItem->addControl(new anvilLink('', $text, $url));
+        $objNavItem->addControl(new anvilLink('', $text, $url, anvilLink::TYPE_DEFAULT, anvilLink::SIZE_DEFAULT, $properties));
         $this->addControl($objNavItem);
 
         return $objNavItem;
@@ -42,9 +43,18 @@ class anvilNavDropdown extends anvilContainer
     public function renderContent()
     {
 
-        $return = '<li class="dropdown">';
+        $return = '<li class="dropdown';
 
-        $return .= '<a href="#" class="dropdown-toggle" data-toggle="dropdown">';
+        if ($this->class) {
+            $return .= ' ' . $this->class;
+        }
+        $return .= '">';
+
+        $return .= '<a href="#" class="dropdown-toggle';
+        if ($this->linkClass) {
+            $return .= ' ' . $this->linkClass;
+        }
+        $return .= '" data-toggle="dropdown">';
         $return .= $this->title;
         $return .= '<b class="caret"></b>';
         $return .= '</a>';

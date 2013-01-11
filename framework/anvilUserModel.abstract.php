@@ -17,6 +17,7 @@ require_once 'anvilRSModel.abstract.php';
  * @property bool   $enableDebug
  * @property string $tempToken
  * @property string $tempTokenDTS
+ * @property string $tempTokenExpireDTS
  */
 abstract class anvilUserModelAbstract extends anvilRSModelAbstract
 {
@@ -72,6 +73,10 @@ abstract class anvilUserModelAbstract extends anvilRSModelAbstract
         $this->fields->tempTokenDTS->activity = false;
         $this->fields->tempTokenDTS->fieldName = 'temp_token_dts';
         $this->fields->tempTokenDTS->fieldType = anvilModelField::DATA_TYPE_DTS;
+
+        $this->fields->tempTokenExpireDTS->activity = false;
+        $this->fields->tempTokenExpireDTS->fieldName = 'temp_token_expire_dts';
+        $this->fields->tempTokenExpireDTS->fieldType = anvilModelField::DATA_TYPE_DTS;
     }
 
 

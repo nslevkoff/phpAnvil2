@@ -44,6 +44,8 @@ abstract class anvilApplicationAbstract extends anvilObjectAbstract
     //---- Application Encryption Key - OVERRIDE PER APPLICATION ---------------
     public $cryptKey = 'anvil';
 
+    public $forceSSL = false;
+
 
 	function __construct()
     {
@@ -152,7 +154,7 @@ abstract class anvilApplicationAbstract extends anvilObjectAbstract
         {
             include_once $filePath;
 
-            FB::info('Application config file, ' . $this->configFilename . ', loaded.');
+            $this->_logVerbose('Application config file, ' . $this->configFilename . ', loaded.');
 
             $return = true;
         }

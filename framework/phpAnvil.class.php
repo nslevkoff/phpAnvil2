@@ -117,10 +117,12 @@ class phpAnvil2 extends anvilObjectAbstract
     /** @var Mobile_Detect */
     public $mobileDetect;
 
+    public $logLevelOverride;
+
 
     public function __construct()
     {
-        global $options;
+//        global $options;
 
         $this->enableLog();
 
@@ -180,6 +182,8 @@ class phpAnvil2 extends anvilObjectAbstract
             $requestPath = $_SERVER['SCRIPT_URL'];
             $this->requestPathArray = explode('/', $requestPath);
         }
+
+
 //        $this->_logDebug($requestPath, '$requestPath2');
 //        $this->_logDebug($this->requestPathArray, '$this->requestPathArray');
         //        $this->webRootPath = str_replace('index.php', '', $_SERVER["SCRIPT_NAME"]);
@@ -215,6 +219,20 @@ class phpAnvil2 extends anvilObjectAbstract
 //            $this->_logDebug('Post application.init...');
 
             if ($return) {
+
+                if ($this->application->forceSSL && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on')) {
+                    if (!headers_sent()) {
+                        header("Status: 301 Moved Permanently");
+                        header(sprintf(
+                            'Location: https://%s%s',
+                            $_SERVER['HTTP_HOST'],
+                            $_SERVER['REQUEST_URI']
+                        ));
+                        exit();
+                    }
+                }
+
+
                 $this->application->requestedModule = !empty($this->moduleOverride)
                         ? $this->moduleOverride
                         : (isset($_GET[$this->qsModule])
@@ -624,11 +642,11 @@ class phpAnvil2 extends anvilObjectAbstract
 
             //---- Build File Path to the Controller
             $filePath = 'bp/' . $controllerName . '.bp.php';
+            $filePath = APP_PATH . $filePath;
 
-            if (file_exists(APP_PATH . $filePath)) {
-                $filePath = APP_PATH . $filePath;
+            if (file_exists($filePath)) {
             } else {
-                $this->_logError('BP Controller (' . $controllerName . ') not found.');
+                $this->_logError('BP Controller (' . $controllerName . ') not found in path: ' . $filePath);
                 $return = false;
             }
 

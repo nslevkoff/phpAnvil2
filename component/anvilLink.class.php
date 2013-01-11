@@ -23,6 +23,7 @@ class anvilLink extends anvilControlAbstract
     const TYPE_DANGER  = 5;
     const TYPE_PRIMARY = 6;
     const TYPE_INVERSE = 7;
+    const TYPE_TOGGLE = 8;
 
     private $_typeClass = array(
         '',
@@ -32,7 +33,8 @@ class anvilLink extends anvilControlAbstract
         'btn-warning',
         'btn-danger',
         'btn-primary',
-        'btn-inverse'
+        'btn-inverse',
+        'btn-toggle'
     );
 
     //---- Sizes ---------------------------------------------------------------
@@ -49,6 +51,7 @@ class anvilLink extends anvilControlAbstract
     );
 
     //---- Properties ----------------------------------------------------------
+    public $checked = false;
     public $text;
     public $url;
     public $onClick;
@@ -126,7 +129,16 @@ class anvilLink extends anvilControlAbstract
         if ($this->class) {
             $render .= ' ' . $this->class;
         }
+
+        if ($this->checked) {
+            $render .= ' active';
+        }
+
         $render .= '"';
+
+        if ($this->dataPlacement) {
+            $render .= ' data-placement="' . $this->dataPlacement . '"';
+        }
 
         if (!empty($this->tooltip)) {
             $render .= ' rel="tooltip" title="' . $this->tooltip . '"';

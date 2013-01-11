@@ -51,7 +51,13 @@ class anvilLabel extends anvilControlAbstract
     {
         $return = '<span class="label';
         $return .= ' ' . $this->class;
-        $return .= '">' . $this->value . '</span>';
+        $return .= '"';
+
+        if ($this->style) {
+            $return .= ' style="' . $this->style . '"';
+        }
+
+        $return .= '>' . $this->value . '</span>';
 
         return $return;
     }

@@ -62,6 +62,7 @@ abstract class anvilRSModelAbstract extends anvilModelAbstract
     );
 
     protected $_saveActivity = true;
+//    public $activityAccountID;
     public $activityDescription = '';
     public $activityDetail = '';
     public $activityTypeIDOverride = 0;
@@ -71,6 +72,7 @@ abstract class anvilRSModelAbstract extends anvilModelAbstract
     {
         parent::__construct($primaryTableName, $primaryFieldName, $formName);
 
+//        $this->activityAccountID = $this->_core->application->account->id;
 //        $this->enableLog();
 
 
@@ -89,7 +91,7 @@ abstract class anvilRSModelAbstract extends anvilModelAbstract
         $this->fields->recordStatusID->fieldName = 'record_status_id';
         $this->fields->recordStatusID->fieldType = anvilModelField::DATA_TYPE_NUMBER;
         $this->fields->recordStatusID->valueNameArray = $this->recordStatusNames;
-        $this->recordStatusID                    = self::RECORD_STATUS_ACTIVE;
+        $this->fields->recordStatusID->defaultValue = self::RECORD_STATUS_ACTIVE;
 
         $this->fields->recordStatusDTS->fieldName = 'record_status_dts';
         $this->fields->recordStatusDTS->fieldType = anvilModelField::DATA_TYPE_DTS;
@@ -182,6 +184,24 @@ abstract class anvilRSModelAbstract extends anvilModelAbstract
         $this->_saveActivity = false;
     }
 
+    public function duplicate()
+    {
+        $return = clone $this;
+
+        $return->id = 0;
+        $return->addDTS = '';
+        $return->addSourceTypeID = '';
+        $return->addSourceID = '';
+        $return->recordStatusDTS = '';
+        $return->recordStatusID = self::RECORD_STATUS_ACTIVE;
+        $return->recordStatusSourceTypeID = '';
+        $return->recordStatusSourceID = '';
+        $return->importDTS = '';
+        $return->importSourceTypeID = '';
+        $return->importSourceID = '';
+
+        return $return;
+    }
 
     #---- Flag the Data Record as Active
     public function enable()
@@ -232,40 +252,26 @@ abstract class anvilRSModelAbstract extends anvilModelAbstract
             }
 
             if ($this->_saveActivity) {
-                $activity                  = new ActivityModel();
-                $activity->accountID       = $this->_core->application->account->id;
-                $activity->targetTableName = $this->primaryTableName;
-                $activity->activityTypeID  = ActivityModel::TYPE_UPDATED;
 
-                $activity->description = $this->activityDescription;
+                $activityTypeID = ActivityModel::TYPE_UPDATED;
 
                 //---- Save Activity
                 if ($this->activityTypeIDOverride) {
-                    $activity->activityTypeID = $this->activityTypeIDOverride;
-                    $activity->detail         = $this->activityDetail;
+                    $activityTypeID = $this->activityTypeIDOverride;
                 } elseif ($this->isNew()) {
-                    $activity->activityTypeID = ActivityModel::TYPE_ADDED;
+                    $activityTypeID = ActivityModel::TYPE_ADDED;
                 } else {
-
-                    //---- Get Changed Field Array ---------------------------------
-
-                    $changedArray = $this->fields->getChangedActivityArray();
-
-//                    $this->enableLog();
-//                    $this->_logError($changedArray, '$changedArray');
-
-                    $activity->detail = json_encode($changedArray);
 
                     if ($this->fields->recordStatusID->changed) {
                         switch ($this->recordStatusID) {
                             case self::RECORD_STATUS_ACTIVE:
-                                $activity->activityTypeID = ActivityModel::TYPE_ENABLED;
+                                $activityTypeID = ActivityModel::TYPE_ENABLED;
                                 break;
                             case self::RECORD_STATUS_DISABLED:
-                                $activity->activityTypeID = ActivityModel::TYPE_DISABLED;
+                                $activityTypeID = ActivityModel::TYPE_DISABLED;
                                 break;
                             case self::RECORD_STATUS_DELETED:
-                                $activity->activityTypeID = ActivityModel::TYPE_DELETED;
+                                $activityTypeID = ActivityModel::TYPE_DELETED;
                                 break;
                         }
                     }
@@ -273,11 +279,9 @@ abstract class anvilRSModelAbstract extends anvilModelAbstract
 
                 $return = parent::save($sql, $id_sql);
 
-                $activity->targetID = $this->id;
-                $activity->save();
-
-                $activity->__destruct();
-                unset($activity);
+                if ($activityTypeID != ActivityModel::TYPE_UPDATED || ($activityTypeID == ActivityModel::TYPE_UPDATED && !empty($this->activityDescription))) {
+                    $this->saveActivity($activityTypeID, $this->activityDescription);
+                }
 
             } else {
                 $return = parent::save($sql, $id_sql);
@@ -290,6 +294,29 @@ abstract class anvilRSModelAbstract extends anvilModelAbstract
         return $return;
     }
 
+
+    public function saveActivity($activityTypeID, $description = '')
+    {
+        $activity                  = new ActivityModel();
+
+        if ($this->isField('accountID')) {
+            $activity->accountID = $this->accountID;
+        } else {
+            $activity->accountID = $this->_core->application->account->id;
+        }
+
+        $activity->targetTableID = $this->primaryTableID;
+        $activity->targetTableName = $this->primaryTableName;
+        $activity->targetID = $this->id;
+        $activity->activityTypeID  = $activityTypeID;
+        $activity->description = $description;
+
+        $activity->save();
+
+        $activity->__destruct();
+        unset($activity);
+
+    }
 
     #---- Flag the Data Record as Active
     public function unDelete()

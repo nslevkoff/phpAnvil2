@@ -68,9 +68,9 @@ class anvilTabs extends anvilContainer
      *
      * @return anvilTabItem
      */
-    public function addTab($id, $title, $url = '', $active = false)
+    public function addTab($id, $title, $url = '', $active = false, $properties = null)
     {
-        $objTab = new anvilTabItem($id, $title, $url, $active);
+        $objTab = new anvilTabItem($id, $title, $url, $active, $properties);
 
         $this->_tabs->addControl($objTab);
 
@@ -96,8 +96,18 @@ class anvilTabs extends anvilContainer
                 $return .= $objTab->title;
 
             } else {
+                $class = '';
+
+                if ($objTab->class) {
+                    $class .= $objTab->class;
+                }
+
                 if ($objTab->active) {
-                    $return .= ' class="active"';
+                    $class .= ' active';
+                }
+
+                if ($class) {
+                    $return .= ' class="' . $class . '"';
                 }
                 $return .= '>';
 

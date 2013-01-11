@@ -8,7 +8,7 @@
  */
 
 $logStartTime = microtime(true);
-
+//$anvilLogLevelOverride = -1;
 
 abstract class anvilObjectAbstract
 {
@@ -66,6 +66,7 @@ abstract class anvilObjectAbstract
      */
     public $logLevel = self::LOG_LEVEL_WARNING;
 //    public $logLevel = self::LOG_LEVEL_ALL;
+    protected static $_logLevelOverride = -1;
 
 
     //==== OLD Trace Constants =================================================
@@ -134,6 +135,7 @@ abstract class anvilObjectAbstract
 //    protected $_core;
 
     protected $_logTime = true;
+
 
 
     public function __construct($properties = null)
@@ -385,14 +387,16 @@ abstract class anvilObjectAbstract
     {
         global $logStartTime;
 
-        if ($this->_logTime) {
-            $currentTime = microtime(true);
-            $elapsedTime = number_format(($currentTime - $logStartTime), 2, '.', '');
+        if ($this->isLogEnabled()) {
+            if ($this->_logTime) {
+                $currentTime = microtime(true);
+                $elapsedTime = number_format(($currentTime - $logStartTime), 2, '.', '');
 
-            $name         = '[' . $elapsedTime . '] ' . $name;
+                $name = '[' . $elapsedTime . '] ' . $name;
+            }
+
+            fb::group($name, $parameters);
         }
-
-        fb::group($name, $parameters);
     }
 
 
@@ -407,8 +411,10 @@ abstract class anvilObjectAbstract
     protected function _logGroupEnd($name = '')
     {
 //        global $phpAnvil;
+        if ($this->isLogEnabled()) {
 
-        fb::groupEnd($name);
+            fb::groupEnd($name);
+        }
 
 //        $phpAnvil->_log->endGroup($name);
     }
@@ -488,7 +494,20 @@ abstract class anvilObjectAbstract
      */
     public function enableLog($logLevel = self::LOG_LEVEL_ALL)
     {
-        $this->logLevel = $logLevel;
+         if (self::$_logLevelOverride > -1) {
+//             fb::log(static::$_logLevelOverride, 'enableLog (override)');
+
+             $this->logLevel = self::$_logLevelOverride;
+         } else {
+//             fb::log($logLevel, 'enableLog');
+
+             $this->logLevel = $logLevel;
+        }
+    }
+
+    public static function setLogOverride($logLevel = self::LOG_LEVEL_WARNING)
+    {
+        self::$_logLevelOverride = $logLevel;
     }
 
 
@@ -503,6 +522,10 @@ abstract class anvilObjectAbstract
      */
     public function isLogEnabled()
     {
+        if (self::$_logLevelOverride == self::LOG_LEVEL_DISABLED) {
+            return false;
+        }
+
         return $this->logLevel > self::LOG_LEVEL_DISABLED;
     }
 

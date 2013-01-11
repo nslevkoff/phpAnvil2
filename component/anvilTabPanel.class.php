@@ -44,9 +44,9 @@ class anvilTabPanel extends anvilPanel
      * @param bool $active
      * @return anvilTabItem
      */
-    public function addTab($id, $title, $url = '', $active = false)
+    public function addTab($id, $title, $url = '', $active = false, $properties = null)
     {
-        return $this->tabs->addTab($id, $title, $url, $active);
+        return $this->tabs->addTab($id, $title, $url, $active, $properties);
     }
 
     protected function _renderBody()

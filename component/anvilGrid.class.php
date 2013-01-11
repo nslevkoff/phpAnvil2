@@ -70,7 +70,7 @@ class anvilGrid extends anvilControlAbstract
     public $headerEnabled = true;
 
     public $pageNavHeaderEnabled = true;
-    public $pageNavFooterEnabled = false;
+    public $pageNavFooterEnabled = true;
 
     public $mainClass;
 
@@ -106,6 +106,7 @@ class anvilGrid extends anvilControlAbstract
 
     public $recordStatusEnabled = true;
 
+    /** @var anvilPageNav */
     public $anvilPageNav;
 
     public $filterRowEnabled = false;
@@ -281,7 +282,7 @@ class anvilGrid extends anvilControlAbstract
             }
 
             //---- Render anvilPageNav Header -------------------------------------
-            if ($this->pageNavHeaderEnabled && !$this->dataRowsOnly) {
+            if ($this->pageNavHeaderEnabled && !$this->dataRowsOnly && ($this->anvilPageNav->totalItems >= 5)) {
                 $html .= $pageNavHTML;
             }
         }
@@ -751,7 +752,11 @@ class anvilGrid extends anvilControlAbstract
                             if (!empty($columnOptions->urlColumn)) {
                                 $html .= htmlentities($this->rowData[$columnOptions->urlColumn]);
                             }
-                            $html .= '">';
+                            $html .= '"';
+                            if (!empty($columnOptions->urlTarget)) {
+                                $html .= ' target="' . $columnOptions->urlTarget . '"';
+                            }
+                            $html .= '>';
                             //                        } elseif (!empty($this->rowURL) && $columnOptions && $columnOptions->rowClickable) {
                         } elseif ($useRowURL) {
                             $html .= '<a href="' . htmlentities($this->_processTokens($this->rowURL, $this->rowData));
@@ -944,7 +949,7 @@ class anvilGrid extends anvilControlAbstract
 
 
         //---- Render anvilPageNav Footer -----------------------------------------
-        if (isset($this->anvilPageNav) && $this->pageNavFooterEnabled && !$this->dataRowsOnly) {
+        if (isset($this->anvilPageNav) && $this->pageNavFooterEnabled && !$this->dataRowsOnly && ($this->anvilPageNav->totalItems >= 15)) {
             $html .= $pageNavHTML;
         }
 
@@ -1023,7 +1028,7 @@ class anvilGrid extends anvilControlAbstract
     public function setColumnFormat($columnName, $formanvilType, $decimals = 0)
     {
         $this->_columnFormat[$columnName]            = $formanvilType;
-        $this->_columnFormanvilDecimals[$columnName] = $decimals;
+        $this->_columnFormatDecimals[$columnName] = $decimals;
 
         if ($formanvilType != self::COLUMN_FORMAT_NONE) {
             $this->justifyColumn($columnName, 'right');
@@ -1043,16 +1048,16 @@ class anvilGrid extends anvilControlAbstract
             //            switch ($this->_columnFormat[$columnName]) {
             switch ($columnOptions->format) {
                 case self::COLUMN_FORMAT_PERCENT:
-//                    $newData = number_format($columnData, $this->_columnFormanvilDecimals[$columnName]) . '%';
-                    $newData = number_format($columnData, $columnOptions->formanvilDecimals) . '%';
+//                    $newData = number_format($columnData, $this->_columnFormatDecimals[$columnName]) . '%';
+                    $newData = number_format($columnData, $columnOptions->formatDecimals) . '%';
                     break;
                 case self::COLUMN_FORMAT_MONEY:
-//                    $newData = '$' . number_format($columnData, $this->_columnFormanvilDecimals[$columnName]);
-                    $newData = '$' . number_format($columnData, $columnOptions->formanvilDecimals);
+//                    $newData = '$' . number_format($columnData, $this->_columnFormatDecimals[$columnName]);
+                    $newData = '$' . number_format($columnData, $columnOptions->formatDecimals);
                     break;
                 case self::COLUMN_FORMAT_NUMBER:
-//                    $newData = number_format($columnData, $this->_columnFormanvilDecimals[$columnName]);
-                    $newData = number_format($columnData, $columnOptions->formanvilDecimals);
+//                    $newData = number_format($columnData, $this->_columnFormatDecimals[$columnName]);
+                    $newData = number_format($columnData, $columnOptions->formatDecimals);
                     break;
                 case self::COLUMN_FORMAT_DATE:
                     $newData = strftime($this->dateFormat, strtotime($columnData));
@@ -1262,11 +1267,12 @@ class anvilGridColumn
     public $sortable = true;
     public $url;
     public $urlColumn;
+    public $urlTarget;
     public $rowClickable = true;
     public $justify;
     public $renderCallback;
     public $format;
-    public $formanvilDecimals;
+    public $formatDecimals;
     public $headerEnabled = true;
     public $class;
     public $customClass;

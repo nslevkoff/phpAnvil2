@@ -104,7 +104,22 @@ class anvilDataRecordsetAbstract extends anvilObjectAbstract
                         } else {
                             $dateTime->setTimezone(new DateTimeZone('PST'));
                         }
+
+//                        $this->_logDebug($regional->dtsFormat, '$regional->dtsFormat');
                         $return = $dateTime->format($regional->dtsFormat);
+                    }
+                    break;
+
+                case anvilModelField::DATA_TYPE_DATE_STRING:
+
+                    if (!empty($value) && strtolower($value) != 'null') {
+                        $return = date($regional->dateFormat, strtotime($value));
+                    }
+                    break;
+
+                case anvilModelField::DATA_TYPE_DTS_STRING:
+                    if (!empty($value) && strtolower($value) != 'null') {
+                        $return = date($regional->dtsFormat, strtotime($value));
                     }
                     break;
 

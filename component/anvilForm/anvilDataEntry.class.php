@@ -19,6 +19,8 @@ class anvilDataEntry extends anvilEntry
     {
 
 //        $this->enableLog();
+//        $this->_logDebug($field, '$field');
+//        $this->_logDebug($field->value, '$field->value');
 
         $this->field = $field;
 

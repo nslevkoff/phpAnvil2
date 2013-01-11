@@ -7,15 +7,22 @@ class anvilModelField
 {
     const DATA_TYPE_IGNORE  = 0;
     const DATA_TYPE_BOOLEAN = 1;
+
+    //---- Date Data Types -------------------------------------------------
     const DATA_TYPE_DATE    = 2;
+    const DATA_TYPE_ADD_DTS = 6;
     const DATA_TYPE_DTS     = 3;
 
+    //---- Date Data Types Without Timezone Conversions ----------------------
+    const DATA_TYPE_DATE_STRING = 14;
+    const DATA_TYPE_DTS_STRING = 15;
+
+    //---- Numeric Data Types
     const DATA_TYPE_NUMBER  = 4;
     const DATA_TYPE_NUMERIC = self::DATA_TYPE_NUMBER;
     const DATA_TYPE_INTEGER = self::DATA_TYPE_NUMBER;
 
     const DATA_TYPE_STRING  = 5;
-    const DATA_TYPE_ADD_DTS = 6;
 
     const DATA_TYPE_FLOAT   = 7;
     const DATA_TYPE_DECIMAL = self::DATA_TYPE_FLOAT;
@@ -27,11 +34,12 @@ class anvilModelField
     const DATA_TYPE_SSN        = 12;
     const DATA_TYPE_ARRAY      = 13;
 
+
 //    public $model;
 
     public $name;
     protected $_displayName;
-    public $defaultValue = null;
+    protected $_defaultValue = null;
     protected $_value;
     public $valueNameArray = array();
     public $changed = false;
@@ -76,6 +84,10 @@ class anvilModelField
                 $return = $this->_value;
                 break;
 
+            case 'defaultvalue':
+                $return = $this->_defaultValue;
+                break;
+
             case 'displayname':
                 if ($this->_displayName <> '') {
                     $return = $this->_displayName;
@@ -106,6 +118,16 @@ class anvilModelField
                     #---- return false so that empty() works correctly with 0 numbers.
                 } else {
                     $return = $value != '';
+                }
+                break;
+
+            case 'defaultvalue':
+                $defaultValue = $this->_defaultValue;
+
+                if ($defaultValue === 0 && !is_null($defaultValue)) {
+                    #---- return false so that empty() works correctly with 0 numbers.
+                } else {
+                    $return = $defaultValue != '';
                 }
                 break;
 
@@ -150,6 +172,13 @@ class anvilModelField
                 $this->_value = $value;
                 break;
 
+            case 'defaultvalue':
+                $this->_defaultValue = $value;
+
+                //---- Set current value to Default as well
+                $this->_value = $value;
+                break;
+
             case 'displayname':
                 $this->_displayName = $value;
                 break;
@@ -183,63 +212,70 @@ class anvilModelField
                 break;
 
             case self::DATA_TYPE_DATE:
-
-//                echo '<!-- ' . $this->name . ': this->_value = ' . $this->_value . ' -->' . PHP_EOL;
-
                 $value = !empty($this->_value)
                         ? $this->_value
                         : ($this->allowNull
                                 ? null
-                                : $this->defaultValue);
+                                : $this->_defaultValue);
 
                 $return = $value;
 
                 if (!is_null($value)) {
-//                    echo '<!-- ' . $this->name . ': value = ' . $this->_value . ' -->' . PHP_EOL;
-
                     $value = new DateTime($value);
-
-//                    if (isset($this->_regional)) {
-//                        $value = new DateTime($value, $this->_regional->dateTimeZone);
-//                    } else {
-//                        $value = new DateTime($value, $phpAnvil->regional->dateTimeZone);
-//                    }
-
-//                    $value->setTimezone(new DateTimeZone('UTC'));
-
                     $return = $value->format($dataConnection->dateFormat);
                     $return = $dataConnection->dbDate($return);
-                } else {
-//                    echo '<!-- ' . $this->name . ': value IS NULL -->' . PHP_EOL;
                 }
-
-
                 break;
-            case self::DATA_TYPE_DTS:
 
-                $value = isset($this->_value)
+            case self::DATA_TYPE_DTS:
+                $value = isset($this->_value) && $this->_value !== ''
                         ? $this->_value
                         : ($this->allowNull
                                 ? null
-                                : $this->defaultValue);
+                                : $this->_defaultValue);
 
                 $return = $value;
 
                 if (!is_null($value)) {
-//                    $value = new DateTime($value, new DateTimeZone('UTC'));
                     if (isset($this->_regional)) {
                         $value = new DateTime($value, $this->_regional->dateTimeZone);
                     } else {
                         $value = new DateTime($value, $phpAnvil->regional->dateTimeZone);
                     }
 
-//                    $value = new DateTime($value, new DateTimeZone('UTC'));
                     $value->setTimezone(new DateTimeZone('UTC'));
 
                     $return = $value->format($dataConnection->dtsFormat);
                     $return = $dataConnection->dbDTS($return);
                 }
+                break;
 
+            case self::DATA_TYPE_DATE_STRING:
+                $value = !empty($this->_value)
+                    ? $this->_value
+                    : ($this->allowNull
+                        ? null
+                        : $this->_defaultValue);
+
+                $return = $value;
+
+                if (!is_null($value)) {
+                    $return = $dataConnection->dbDate($return);
+                }
+                break;
+
+            case self::DATA_TYPE_DTS_STRING:
+                $value = isset($this->_value) && $this->_value !== ''
+                    ? $this->_value
+                    : ($this->allowNull
+                        ? null
+                        : $this->_defaultValue);
+
+                $return = $value;
+
+                if (!is_null($value)) {
+                    $return = $dataConnection->dbDTS($return);
+                }
                 break;
 
             case self::DATA_TYPE_PHONE:
@@ -255,8 +291,8 @@ class anvilModelField
                         ? $dataConnection->dbString($value)
                         : ($this->allowNull
                                 ? null
-                                : (isset($this->defaultValue)
-                                        ? $dataConnection->dbString($this->defaultValue)
+                                : (isset($this->_defaultValue)
+                                        ? $dataConnection->dbString($this->_defaultValue)
                                         : $dataConnection->dbString('')));
 
                 if ($return == '') {
@@ -271,8 +307,8 @@ class anvilModelField
                         ? $dataConnection->dbString($this->_value)
                         : ($this->allowNull
                                 ? null
-                                : (isset($this->defaultValue)
-                                        ? $dataConnection->dbString($this->defaultValue)
+                                : (isset($this->_defaultValue)
+                                        ? $dataConnection->dbString($this->_defaultValue)
                                         : $dataConnection->dbString('')));
 
                 if ($return == '') {
@@ -287,27 +323,40 @@ class anvilModelField
 
             case self::DATA_TYPE_DECIMAL:
             case self::DATA_TYPE_FLOAT:
-                $return = isset($this->_value)
+                $return = isset($this->_value) && $this->_value !== ''
                         ? floatval(str_replace(',', '', $this->_value))
                         :
                         ($this->allowNull
                                 ? null
-                                : (isset($this->defaultValue)
-                                        ? $this->defaultValue
+                                : (isset($this->_defaultValue)
+                                        ? $this->_defaultValue
                                         : 0));
                 break;
 
             case self::DATA_TYPE_INTEGER:
             case self::DATA_TYPE_NUMBER:
+//                echo '<!-- ' . $this->name . ': this->_value = ' . $this->_value . ' -->' . PHP_EOL;
+//            fb::log($this);
 
-                $return = isset($this->_value)
+//            if ($this->allowNull) {
+//                fb::log('Allows null.');
+//            }
+
+//            if (isset($this->_value) && $this->_value !== '') {
+//                fb::log('Value set.');
+//            }
+
+            $return = isset($this->_value) && $this->_value !== ''
                         ? intval(str_replace(',', '', $this->_value))
                         : ($this->allowNull
                                 ? null
-                                : (isset($this->defaultValue)
-                                        ? $this->defaultValue
+                                : (isset($this->_defaultValue)
+                                        ? $this->_defaultValue
                                         : 0));
-                break;
+
+//            fb::log($return, '$return');
+
+            break;
 
             default:
 
@@ -315,8 +364,8 @@ class anvilModelField
                         ? $this->_value
                         : ($this->allowNull
                                 ? null
-                                : (isset($this->defaultValue)
-                                        ? $this->defaultValue
+                                : (isset($this->_defaultValue)
+                                        ? $this->_defaultValue
                                         : 0));
                 break;
         }

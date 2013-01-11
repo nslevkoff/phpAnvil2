@@ -108,6 +108,8 @@ abstract class anvilControlAbstract extends anvilObjectAbstract
     /** @var phpAnvil2 */
     protected $_core;
 
+    public $dataPlacement;
+
 
     public function __construct($id = null, $properties = null)
     {

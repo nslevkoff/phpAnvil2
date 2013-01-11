@@ -37,6 +37,7 @@ class anvilPageNav extends anvilControlAbstract
 
     public $currentPage = 1;
     public $totalPages = 1;
+    public $showPageCount = true;
 
     public $totalItems = 0;
     public $totalItemsName = 'Rows';
@@ -138,6 +139,15 @@ class anvilPageNav extends anvilControlAbstract
     }
 
 
+    public function reset()
+    {
+        $sessionKey = 'pageNav.current.' . $this->id;
+        $_SESSION[$sessionKey] = 1;
+
+        $this->itemOffset = 0;
+        $this->currentPage = 1;
+    }
+
     public function renderHTML($devTemplate = null)
     {
         return $this->render($devTemplate);
@@ -146,7 +156,7 @@ class anvilPageNav extends anvilControlAbstract
 
     public function render($devTemplate = null)
     {
-        global $phpAnvil;
+//        global $phpAnvil;
 
 //        fb::log($this->qsPrefix, '$this->qsPrefix');
 
@@ -295,7 +305,11 @@ class anvilPageNav extends anvilControlAbstract
 //                }
             } else {
 //                if ($this->useDIV) {
-                    $html .= '<li class="pages"><a href="#">' . $this->totalItems . '&nbsp;' . $this->totalItemsName . '&nbsp;in&nbsp;' . $this->totalPages . ' Pages:</a></li>';
+                    $html .= '<li class="pages"><a href="#">' . $this->totalItems . '&nbsp;' . $this->totalItemsName;
+                if ($this->showPageCount) {
+                    $html .= '&nbsp;in&nbsp;' . $this->totalPages . ' Pages';
+                }
+                $html .= ':</a></li>';
 //                } else {
 //                    $html .= '<td class="pages" width="100%">' . $this->totalItems . '&nbsp;' . $this->totalItemsName . '&nbsp;in&nbsp;' . $this->totalPages . '&nbsp;Pages:</td>';
 //                }
